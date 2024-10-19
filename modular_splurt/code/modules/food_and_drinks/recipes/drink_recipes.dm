@@ -14,7 +14,7 @@
 	mix_message = "The mixture turns a deep purple colour."
 
 /datum/chemical_reaction/wockyslush
-	name = "Wocky Slush"
+	name = "Wocky Slush!"
 	id = /datum/reagent/consumable/wockyslush
 	results = list(/datum/reagent/consumable/wockyslush = 5)
 	required_reagents = list(/datum/reagent/toxin/fentanyl = 1, /datum/reagent/consumable/ice = 1, /datum/reagent/consumable/lemon_lime = 1)
