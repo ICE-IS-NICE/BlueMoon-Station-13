@@ -7,7 +7,6 @@
 	/**
 	 * Players' power during votes is determined on their role: mob, antag or ghost.
 	 * Right now it is working only with PLURALITY_VOTING and APPROVAL_VOTING.
-	 * 										And only during autotransfer vote.
 	 *  */
 	var/use_vote_power = FALSE
 	var/vote_power = VOTE_WEIGHT_NORMAL
