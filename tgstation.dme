@@ -4210,6 +4210,7 @@
 #include "modular_bluemoon\code\controllers\subsystem\player_ranks\_player_rank_controller.dm"
 #include "modular_bluemoon\code\controllers\subsystem\player_ranks\mentor_controller.dm"
 #include "modular_bluemoon\code\controllers\subsystem\player_ranks\player_ranks.dm"
+#include "modular_bluemoon\code\controllers\subsystem\vote.dm"
 #include "modular_bluemoon\code\datums\action.dm"
 #include "modular_bluemoon\code\datums\bark.dm"
 #include "modular_bluemoon\code\datums\dna.dm"
