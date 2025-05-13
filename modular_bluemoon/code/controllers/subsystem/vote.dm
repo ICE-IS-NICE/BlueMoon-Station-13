@@ -29,8 +29,8 @@
 	if(!istype(C))
 		return VOTE_WEIGHT_NONE //Shouldnt be possible, but safety
 
-	// if(C.holder) //is admin
-	// 	return VOTE_WEIGHT_NORMAL
+	if(C.holder) //is admin
+		return VOTE_WEIGHT_NORMAL
 
 	var/mob/M = C.mob
 	if(!M || M.stat == DEAD || isobserver(M) || isnewplayer(M) || ismouse(M) || isdrone(M))
