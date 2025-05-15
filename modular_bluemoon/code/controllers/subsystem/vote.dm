@@ -39,6 +39,9 @@
 	//Antags control the story of the round, they should be able to delay evac in order to enact their
 	//fun and interesting plans
 	if(is_special_character(M))
+		//all ghost roles are considered as antags for some reason.
+		if(M.mind?.has_antag_datum(/datum/antagonist/ghost_role))
+			return VOTE_WEIGHT_NORMAL
 		return VOTE_WEIGHT_HIGH
 
 	//How long has this player been alive
