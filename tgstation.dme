@@ -4449,6 +4449,7 @@
 #include "modular_bluemoon\code\modules\mining\equipment\survival_pod.dm"
 #include "modular_bluemoon\code\modules\mob\emotes.dm"
 #include "modular_bluemoon\code\modules\mob\living.dm"
+#include "modular_bluemoon\code\modules\mob\mob.dm"
 #include "modular_bluemoon\code\modules\mob\mob_defines.dm"
 #include "modular_bluemoon\code\modules\mob\say.dm"
 #include "modular_bluemoon\code\modules\mob\say_vr.dm"

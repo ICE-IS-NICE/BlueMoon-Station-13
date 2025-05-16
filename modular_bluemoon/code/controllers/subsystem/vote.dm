@@ -2,6 +2,7 @@
 #define VOTE_WEIGHT_LOW    0.5
 #define VOTE_WEIGHT_NORMAL 1
 #define VOTE_WEIGHT_HIGH   2
+#define MINIMUM_VOTE_LIFETIME 5 MINUTES
 
 /datum/controller/subsystem/vote
 	/**
@@ -36,6 +37,10 @@
 	if(!M || M.stat == DEAD || isobserver(M) || isnewplayer(M) || ismouse(M) || isdrone(M))
 		return VOTE_WEIGHT_LOW
 
+	if((world.time - M.creation_time) <= MINIMUM_VOTE_LIFETIME)
+		//If you just spawned for the vote, your weight is still low
+		return VOTE_WEIGHT_LOW
+
 	//Antags control the story of the round, they should be able to delay evac in order to enact their
 	//fun and interesting plans
 	if(is_special_character(M))
@@ -63,3 +68,4 @@
 #undef VOTE_WEIGHT_LOW
 #undef VOTE_WEIGHT_NORMAL
 #undef VOTE_WEIGHT_HIGH
+#undef MINIMUM_VOTE_LIFETIME
