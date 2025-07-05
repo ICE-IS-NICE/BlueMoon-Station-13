@@ -201,7 +201,7 @@
 
 /obj/item/gun/ballistic/automatic/ak47/hatred/handle_suicide(mob/living/carbon/human/user, mob/living/carbon/human/target, params, bypass_timer)
 	var/is_glory = TRUE
-	if(target?.stat == DEAD/* || !target.client*/) // already dead bodies or npcs don't count
+	if(target?.stat == DEAD || !target.client) // already dead bodies or npcs don't count
 		is_glory = FALSE
 	. = ..()
 	if(!. || user == target || !is_glory)
