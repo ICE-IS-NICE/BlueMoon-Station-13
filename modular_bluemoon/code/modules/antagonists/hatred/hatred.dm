@@ -314,18 +314,34 @@
 // 	. = ..()
 // 	qdel(src)
 
+/obj/item/clothing/head/invisihat/hatred
+	name = "Veil of Hatred"
+	desc = "Once you felt <b><i>that</i></b> urge to commit relentless genocide of civilians, you clearly understood you were cursed... blessed... and... protected by invisible spirit of Hatred."
+	// clueless armor stats. A bit worse than red ert hardsuit and other types of hardsuits. decent versatile armor.
+	armor = list(MELEE = 50, BULLET = 50, LASER = 50, ENERGY = 50, BOMB = 50, BIO = 30, RAD = 10, FIRE = 75, ACID = 75, WOUND = 50)
+
+/obj/item/clothing/head/invisihat/hatred/equipped(mob/user, slot)
+	. = ..()
+	ADD_TRAIT(src, TRAIT_NODROP, "hatred")
+
+/obj/item/clothing/head/invisihat/hatred/dropped(mob/user)
+	. = ..()
+	if(!QDELETED(src))
+		visible_message("[src] рассыпается в прах на ваших глазах...")
+		qdel(src)
+
 /// OUTFIT ///
 
 /datum/outfit/hatred
 	name = "Hatred"
+	head = /obj/item/clothing/head/invisihat/hatred
 	// glasses = /obj/item/clothing/glasses/sunglasses
 	glasses = /obj/item/clothing/glasses/hud/health/sunglasses/aviators // to help player identify when a target is in crit so player can safely execute him
-	gloves = /obj/item/clothing/gloves/tackler/combat/insulated/infiltrator
-	shoes = /obj/item/clothing/shoes/jackboots/tall_default
 	uniform = /obj/item/clothing/under/rank/civilian/util/greyshirt
 	suit = /obj/item/clothing/suit/jacket/leather/overcoat/hatred
+	gloves = /obj/item/clothing/gloves/tackler/combat/insulated/infiltrator
+	shoes = /obj/item/clothing/shoes/jackboots/tall_default
 	id = /obj/item/card/id/stowaway_stolen
-	// head = /obj/item/clothing/head/helmet/space/syndicate/black/red
 	l_pocket = /obj/item/storage/bag/ammo/hatred
 	belt = /obj/item/storage/belt/military/hatred
 	// back = /obj/item/storage/backpack/duffelbag/durathread
