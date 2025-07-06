@@ -165,6 +165,7 @@
 /obj/item/gun/ballistic/automatic/ak47/hatred
 	name = "\improper AK-47 rifle of Hatred"
 	desc = "The scratches on this rifle say: \"The Genocide Machine\"."
+	resistance_flags = FIRE_PROOF | ACID_PROOF
 	var/mob/living/carbon/human/original_wielder = null
 
 /obj/item/gun/ballistic/automatic/ak47/hatred/Destroy()
@@ -224,7 +225,7 @@
 /obj/item/storage/bag/ammo/hatred/examine(mob/user)
 	. = ..()
 	. += span_notice("If you place an empty magazine into this phenomenal pouch next time you check it will be filled with bullets.")
-	. += span_notice("<b>Alt-Click</b> to open.")
+	. += span_notice("[span_bold("Alt-Click")] to open.")
 	. += span_notice("Once you lose this item it will turn into dust.")
 
 /obj/item/storage/bag/ammo/hatred/ComponentInitialize()
