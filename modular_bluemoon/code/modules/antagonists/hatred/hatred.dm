@@ -240,8 +240,9 @@
 
 /obj/item/storage/bag/ammo/hatred/Entered(atom/movable/AM, atom/oldLoc)
 	. = ..()
+	var/M = AM.type
 	qdel(AM)
-	new /obj/item/ammo_box/magazine/ak47(src)
+	new M(src)
 
 // TRAIT_NODROP doesn't work on items in pockets T_T
 /obj/item/storage/bag/ammo/hatred/MouseDrop(atom/over, src_location, over_location, src_control, over_control, params)
