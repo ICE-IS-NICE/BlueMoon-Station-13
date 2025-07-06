@@ -407,7 +407,7 @@
 	required_candidates = 1
 	weight = 9 // будет 7 или 8, так как этот антаг имеет высокие требования к количеству живых офицеров и в нагруженные динамики это требование будет невыполено. на время бета теста выставлено 9.
 	cost = 10
-	minimum_players = 60 // never spawn this antag on low pops!
+	minimum_players = 50 // never spawn this antag on low pops!
 	requirements = list(101,101,101,101,101,101,60,40,30,10) // I'm not sure how this works and I don't trust it. So I took it from nukers.
 	repeatable = FALSE // one man is enough to shake this station.
 	// makeBody = FALSE
@@ -417,9 +417,9 @@
 	. = ..()
 	if(. && !forced)
 		if(GLOB.security_level == SEC_LEVEL_GREEN) // разбавляем эксту внутривенно
-			if(length(SSjob.get_living_sec()) < 4)
+			if(length(SSjob.get_living_sec()) < 3)
 				return FALSE
-		else if(length(SSjob.get_living_sec()) < 5) // я желаю достойного сопротивления.
+		else if(length(SSjob.get_living_sec()) < 4) // я желаю достойного сопротивления.
 			return FALSE
 
 /datum/dynamic_ruleset/midround/from_ghosts/hatred/generate_ruleset_body(mob/applicant)
