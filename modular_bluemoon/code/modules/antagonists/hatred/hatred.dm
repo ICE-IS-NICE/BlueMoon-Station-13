@@ -76,18 +76,9 @@
 	var/mob/living/carbon/human/H = owner.current
 	if(!istype(H))
 		return
-	forge_objectives()
 	// randomize_human(H)
-	// H.set_species(/datum/species/human)
-	// H.gender = MALE
-	H.real_name = "The Man without a name"
-	H.dna.remove_all_mutations()
-	if((get_size(H) < 0.8  || 1.2 < get_size(H))) // better safe than sorry. players generally don't like invincible superheavy 200x sprite enemies. microsprite enemies too.
-		H.update_size(1)
-	if(H.mob_weight != MOB_WEIGHT_NORMAL)
-		H.mob_weight = MOB_WEIGHT_NORMAL
-		H.update_weight(H.mob_weight)
-	H.update_body()
+	make_authentic_body()
+	forge_objectives()
 	H.equipOutfit(/datum/outfit/hatred)
 	// ADD_TRAIT(H, TRAIT_STUNIMMUNE, "hatred") // Doesn't work against stunbatons anyway :(
 	ADD_TRAIT(H, TRAIT_SLEEPIMMUNE, "hatred") // I challenge you to a glorious fight!
@@ -96,6 +87,8 @@
 	ADD_TRAIT(H, TRAIT_IGNOREDAMAGESLOWDOWN, "hatred")
 	ADD_TRAIT(H, TRAIT_FEARLESS, "hatred")
 	ADD_TRAIT(H, TRAIT_STRONG_GRABBER, "hatred") // This way player will have less problems with his targets run/crawl away during glory kills
+	ADD_TRAIT(H, TRAIT_QUICKER_CARRY, "hatred")
+	ADD_TRAIT(H, TRAIT_NIGHT_VISION, "hatred")
 	appear_on_station()
 	allowed_z_levels += SSmapping.levels_by_trait(ZTRAIT_CENTCOM)
 	allowed_z_levels += SSmapping.levels_by_trait(ZTRAIT_RESERVED)
@@ -103,6 +96,35 @@
 	RegisterSignal(H, COMSIG_LIVING_LIFE, PROC_REF(check_hatred_off_station)) // almost like anchor implant, but doesn't hurt
 	addtimer(CALLBACK(src, PROC_REF(alarm_station)), 30 SECONDS, TIMER_DELETE_ME) // Give a player a moment to understand what's going on.
 	return ..()
+
+/datum/antagonist/hatred/proc/make_authentic_body()
+	var/mob/living/carbon/human/H = owner.current
+	H.real_name = "The Man without a name"
+	H.set_species(/datum/species/human)
+	H.gender = MALE
+	H.dna.remove_all_mutations()
+	H.skin_tone = "albino"
+	//H.hair_style = Curtains diagonal_bangs sunny vivi #000000 "Bonnie"
+	H.hair_style = "Curtains"
+	H.hair_color = sanitize_hexcolor("#000000")
+	H.facial_hair_style = "Beard (3 o\'Clock)" //"Shaved"
+	H.facial_hair_color = sanitize_hexcolor("#000000")
+	H.dna.update_ui_block(DNA_GENDER_BLOCK)
+	H.dna.update_ui_block(DNA_SKIN_TONE_BLOCK)
+	H.dna.update_ui_block(DNA_HAIR_STYLE_BLOCK)
+	H.dna.update_ui_block(DNA_HAIR_COLOR_BLOCK)
+	H.dna.update_ui_block(DNA_FACIAL_HAIR_STYLE_BLOCK)
+	H.dna.update_ui_block(DNA_FACIAL_HAIR_COLOR_BLOCK)
+	H.dna.features["legs"] = "Plantigrade"
+	H.dna.species.mutant_bodyparts["legs"] = "Plantigrade"
+	H.Digitigrade_Leg_Swap(TRUE)
+	// if((get_size(H) < 0.8  || 1.2 < get_size(H))) // better safe than sorry. players generally don't like invincible superheavy 200x sprite enemies. microsprite enemies too.
+	// 	H.update_size(1)
+	// if(H.mob_weight != MOB_WEIGHT_NORMAL)
+	// 	H.mob_weight = MOB_WEIGHT_NORMAL
+	// 	H.update_weight(H.mob_weight)
+	H.update_body()
+	H.update_hair()
 
 /datum/antagonist/hatred/proc/forge_objectives()
 	var/datum/objective/O = new /datum/objective/genocide()
@@ -142,7 +164,7 @@
 		priority_announce("На ваш объект ворвался особо опасный вооруженный преступник с целью массового убийства гражданских лиц. \
 							Нейтрализуйте угрозу любыми доступными способами. \
 							ЦК санкционирует персоналу станции против данной цели: использование летального вооружения, открытие огня без предупреждения и казнь на месте. \
-							Особые приметы: АК-47 и длинное кожаное пальто.", \
+							Особые приметы: мужчина в длинном черном кожаном пальто с длинными черными волосами и АК47.", \
 							"ВНИМАНИЕ: ОСОБО ОПАСНЫЙ ИНДИВИД", chosen_sound, has_important_message = TRUE)
 
 /datum/antagonist/hatred/on_removal()
@@ -341,7 +363,7 @@
 	glasses = /obj/item/clothing/glasses/hud/health/sunglasses/aviators // to help player identify when a target is in crit so player can safely execute him
 	uniform = /obj/item/clothing/under/rank/civilian/util/greyshirt
 	suit = /obj/item/clothing/suit/jacket/leather/overcoat/hatred
-	gloves = /obj/item/clothing/gloves/tackler/combat/insulated/infiltrator
+	gloves = /obj/item/clothing/gloves/tackler/combat/insulated
 	shoes = /obj/item/clothing/shoes/jackboots/tall_default
 	id = /obj/item/card/id/stowaway_stolen
 	l_pocket = /obj/item/storage/bag/ammo/hatred
@@ -403,9 +425,28 @@
 /datum/dynamic_ruleset/midround/from_ghosts/hatred/generate_ruleset_body(mob/applicant)
 	var/datum/mind/player_mind = new /datum/mind(applicant.key)
 	player_mind.active = TRUE
-	var/mob/living/carbon/human/body = makeBody(applicant)
-	// body.key = applicant.key
+	var/turf/entry_spawn_loc
+	if(length(GLOB.newplayer_start))
+		entry_spawn_loc = pick(GLOB.newplayer_start)
+	else
+		entry_spawn_loc = get_safe_random_station_turf(typesof(/area/centcom/evac))
+	var/mob/living/carbon/human/body = new (entry_spawn_loc)
 	player_mind.transfer_to(body)
 	message_admins("[ADMIN_LOOKUPFLW(body)] has been made into a Mass Shooter by the midround ruleset.")
 	log_game("DYNAMIC: [key_name(body)] was spawned as a Mass Shooter by the midround ruleset.")
 	return body
+
+/datum/admins/proc/makeMassShooter()
+	var/list/mob/candidates = pollGhostCandidates("Do you wish to be considered for the position of a Mass Shooter?", ROLE_OPERATIVE)
+	var/mob/applicant = pick_n_take(candidates)
+	var/datum/mind/player_mind = new /datum/mind(applicant.key)
+	player_mind.active = TRUE
+	var/turf/entry_spawn_loc
+	if(length(GLOB.newplayer_start))
+		entry_spawn_loc = pick(GLOB.newplayer_start)
+	else
+		entry_spawn_loc = get_safe_random_station_turf(typesof(/area/centcom/evac))
+	var/mob/living/carbon/human/body = new (entry_spawn_loc)
+	player_mind.transfer_to(body)
+	body.mind.make_MassShooter()
+	return TRUE
