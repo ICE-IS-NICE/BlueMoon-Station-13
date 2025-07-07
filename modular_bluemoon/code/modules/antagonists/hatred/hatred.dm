@@ -216,7 +216,7 @@
 	if(!user.mind.has_antag_datum(/datum/antagonist/hatred))
 		return ..()
 	var/is_glory = TRUE
-	if(target?.stat == DEAD/* || !target.client*/) // already dead bodies or npcs don't count
+	if(target?.stat == DEAD || !target.client) // already dead bodies or npcs don't count
 		is_glory = FALSE
 	. = ..()
 	if(!. || user == target || !is_glory)
