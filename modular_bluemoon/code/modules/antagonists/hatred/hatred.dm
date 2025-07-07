@@ -57,9 +57,9 @@
 	var/list/allowed_z_levels = list()
 	/**
 	 * Level of available gear is determined by a number of alive security officers and blueshields.
-	 * 0 = low guns: a pistol or double barrel shotgun.				// at least ?? alive officers NOT IMPLEMENTED YET!
-	 * 1 = default classic and serious guns: AK-47 or riot shotgun	// at least 3 alive officers (on green code)
-	 * 2 = ROBUST gear: +15 armor or +cursed belt					// at least 5 alive officers (on green code)
+	 * 0 = low guns: a pistol or double barrel shotgun. NOT IMPLEMENTED YET!
+	 * 1 = default classic and serious guns: AK-47 or riot shotgun
+	 * 2 = ROBUST gear: +15 armor or +cursed belt
 	 */
 	var/gear_level = 1
 	var/static/list/low_guns = list("Pistol", "Double-barreled shotgun") // NOT IMPLEMENTED YET!
