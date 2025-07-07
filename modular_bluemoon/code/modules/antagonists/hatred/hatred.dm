@@ -279,6 +279,7 @@
 /obj/item/gun/ballistic/shotgun/riot/hatred
 	name = "\improper Riot Shotgun of Hatred"
 	desc = "The scratches on this shotgun say: \"The Bringer of Doom\"."
+	mag_type = /obj/item/ammo_box/magazine/internal/shot/com // has same stats as an original riot, but this has lethal ammo from the start
 	resistance_flags = FIRE_PROOF | ACID_PROOF
 	var/mob/living/carbon/human/original_wielder = null
 
