@@ -75,10 +75,11 @@
 										'modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_3.ogg')))
 	var/greet_text
 	greet_text += "Ты - [span_red(span_bold("Безымянный Убийца"))]. Твое прошлое совершенно неважно, и даже если оно было, оно было незавидным.<br>"
+	greet_text += "Ты испытываешь непреодолимую ненависть, отвращение и презрение ко всем окружающим.<br>"
 	greet_text += "У тебя лишь две цели: <u>убивать</u> и <u>умереть славной смертью</u>.<br>"
 	greet_text += "Твое проклятое снаряжение неразлучно с тобою и подстегивает тебя продолжать соврешать геноцид беззащитных гражданских.<br>"
 	greet_text += "Твой [span_red("Автомат Ненависти")] и неутолимая жажда убивать вознаграждают тебя, ибо завершающий выстрел в упор в голову (рот) исцеляет твои раны. Обычная медицина бессильна.<br>"
-	greet_text += "[span_red("Cумка для патронов")] сама пополняет пустые магазины или всегда имеет в наличии аммуницию.<br>"
+	greet_text += "[span_red("Cумка для патронов")] сама пополняет пустые магазины/картриджи или всегда имеет в наличии аммуницию.<br>"
 	if(chosen_high_gear == "Belt of Hatred")
 		greet_text += "[span_red("Пояс с гранатами")] пожирает сердца твоих жертв и вознаграждает тебя новой взрывоопасной аммуницией.<br>"
 	greet_text += "[span_red(span_bold("Убивай и будь убит!"))] Ибо никто сегодня не защищен от твоей Ненависти.<br>"
@@ -131,7 +132,7 @@
 	var/mob/living/carbon/human/H = owner.current
 	H.real_name = "The Man without a name"
 	H.set_species(/datum/species/human)
-	H.gender = MALE
+	H.set_gender(MALE, TRUE, forced = TRUE)
 	H.dna.remove_all_mutations()
 	H.skin_tone = "albino"
 	//H.hair_style = Curtains diagonal_bangs sunny vivi #000000 "Bonnie"
@@ -139,6 +140,10 @@
 	H.hair_color = sanitize_hexcolor("#000000")
 	H.facial_hair_style = "Beard (3 o\'Clock)" //"Shaved"
 	H.facial_hair_color = sanitize_hexcolor("#000000")
+	H.set_bark("growl2")
+	H.vocal_speed = 8
+	H.vocal_pitch = 0.6
+	H.vocal_pitch_range = 0.3
 	H.dna.update_ui_block(DNA_GENDER_BLOCK)
 	H.dna.update_ui_block(DNA_SKIN_TONE_BLOCK)
 	H.dna.update_ui_block(DNA_HAIR_STYLE_BLOCK)
@@ -314,7 +319,7 @@
 	if(!QDELETED(src))
 		var/obj/item/I = new /obj/item/gun/ballistic/shotgun/riot(get_turf(src))
 		I.name = "\improper Riot Shotgun of Faded Hatred"
-		I.desc = "It looks less menacing than before. The blood stained scratches on this rifle say: \"The Bringer of Doom\"."
+		I.desc = "It looks less menacing than before. The blood stained scratches on this shotgun say: \"The Bringer of Doom\"."
 		qdel(src)
 
 /obj/item/gun/ballistic/shotgun/riot/hatred/dropped(mob/user, silent)
@@ -334,7 +339,7 @@
 	. = ..()
 	// switch(gun_type)
 	// 	if("AK47")
-	. += span_notice("If you place an empty magazine into this phenomenal pouch next time you check it will be filled with bullets.")
+	. += "If you place an empty magazine/clip into this phenomenal pouch next time you check it will be filled with bullets."
 	. += span_notice("[span_bold("Alt-Click")] to open.")
 	. += span_notice("Once you lose this item it will turn into dust.")
 
@@ -478,7 +483,7 @@
 	// 		available_sets = Ha.low_guns
 	// 	if(1 to 2)
 	// 		available_sets = Ha.classic_guns
-	Ha.chosen_gun = tgui_input_list(H, "Выбери стартовое оружие и делай это БЫСТРО!", "Выбери оружие геноцида", available_sets, available_sets[1], 10 SECONDS)
+	Ha.chosen_gun = tgui_input_list(H, "Выбери стартовое оружие и сделай это БЫСТРО!", "Выбери оружие геноцида", available_sets, available_sets[1], 10 SECONDS)
 	switch(Ha.chosen_gun)
 		if(null)
 			Ha.chosen_gun = "AK47"
@@ -488,7 +493,7 @@
 		if("Riot Shotgun")
 			r_hand = /obj/item/gun/ballistic/shotgun/riot/hatred
 	if(Ha.gear_level == 2)
-		Ha.chosen_high_gear = tgui_input_list(H, "Выбери дополнительную экипировку и делай это БЫСТРО!", "Выбери оружие геноцида", Ha.high_gear, Ha.high_gear[1], 10 SECONDS)
+		Ha.chosen_high_gear = tgui_input_list(H, "Выбери дополнительную экипировку и сделай это БЫСТРО!", "Выбери оружие геноцида", Ha.high_gear, Ha.high_gear[1], 10 SECONDS)
 		switch(Ha.chosen_high_gear)
 			if(null)
 				Ha.chosen_high_gear = "Belt of Hatred"
