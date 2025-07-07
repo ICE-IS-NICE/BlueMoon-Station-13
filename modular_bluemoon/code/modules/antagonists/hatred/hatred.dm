@@ -217,13 +217,13 @@
 	completed = TRUE // i have no idea how to count your personal kills.
 	// completable = FALSE
 
-/obj/item/gun/handle_suicide(mob/living/carbon/human/user, mob/living/carbon/human/target, params, bypass_timer)
+/obj/item/gun/handle_suicide(mob/living/carbon/human/user, mob/living/carbon/human/target, params, bypass_timer, time_to_kill = 12 SECONDS)
 	if(!user.mind.has_antag_datum(/datum/antagonist/hatred))
 		return ..()
 	var/is_glory = TRUE
 	if(target?.stat == DEAD || !target.client) // already dead bodies or npcs don't count
 		is_glory = FALSE
-	. = ..()
+	. = ..(user, target, params, bypass_timer, time_to_kill = 8 SECONDS)
 	if(!. || user == target || !is_glory)
 		return
 	addtimer(CALLBACK(src, PROC_REF(check_glory_kill), user, target), 1 SECONDS, TIMER_DELETE_ME) // wait for boolet to do its job
@@ -483,6 +483,7 @@
 	// 		available_sets = Ha.low_guns
 	// 	if(1 to 2)
 	// 		available_sets = Ha.classic_guns
+	SEND_SOUND(H, 'sound/misc/notice2.ogg')
 	Ha.chosen_gun = tgui_input_list(H, "Выбери стартовое оружие и сделай это БЫСТРО!", "Выбери оружие геноцида", available_sets, available_sets[1], 10 SECONDS)
 	switch(Ha.chosen_gun)
 		if(null)
