@@ -426,11 +426,13 @@
 
 /obj/item/clothing/suit/jacket/leather/overcoat/hatred/equipped(mob/user, slot)
 	. = ..()
-	ADD_TRAIT(src, TRAIT_NODROP, "hatred")
+	if(slot == ITEM_SLOT_OCLOTHING)
+		ADD_TRAIT(src, TRAIT_NODROP, "hatred")
 
-// /obj/item/clothing/suit/jacket/leather/overcoat/hatred/dropped(mob/user)
-// 	. = ..()
-// 	qdel(src)
+/obj/item/clothing/suit/jacket/leather/overcoat/hatred/dropped(mob/user)
+	. = ..()
+	if(!QDELETED(src))
+		REMOVE_TRAIT(src, TRAIT_NODROP, "hatred")
 
 /obj/item/clothing/head/invisihat/hatred
 	name = "Veil of Hatred"
