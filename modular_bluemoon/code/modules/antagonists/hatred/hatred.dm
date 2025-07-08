@@ -564,7 +564,7 @@
 	required_candidates = 1
 	weight = 9 // будет 7 или 8, так как этот антаг имеет высокие требования к количеству живых офицеров и в нагруженные динамики это требование будет невыполено. на время бета теста выставлено 9.
 	cost = 10
-	minimum_players = 40 // security alive check is more than enough, but there must be a bare minimum of players
+	minimum_players = 50 // security alive check is more than enough, but there must be a bare minimum of players
 	requirements = list(101,101,101,101,101,101,60,40,30,10) // I'm not sure how this works and I don't trust it. So I took it from nukers.
 	repeatable = FALSE // one man is enough to shake this station.
 	// makeBody = FALSE
