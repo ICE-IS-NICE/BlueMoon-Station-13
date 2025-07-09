@@ -9,7 +9,7 @@
  * взрывать нюку и завершать раунд. Минимум манча и времени на разогрев. Только при существенном онлайне и с достаточным количеством живых офицеров СБ.
  * 		Хил от убийства других игроков: как и в оригинальной игре персонаж восстанавливает здоровье от кинематографичных убийств (glory kills) и это является
  * единственным способом востановить здоровье. Я полагаю и в сске оно будет выглядеть уместно и вполне сбалансированно. Игроку для восстановления
- * здоровья необходимо заставить живую цель не двигаться более 10 секунд и убить её выстрелом вплотную для восстановления здоровья. Тем самым мы снижаем
+ * здоровья необходимо заставить живую цель не двигаться около 10 секунд и убить её выстрелом вплотную для восстановления здоровья. Тем самым мы снижаем
  * градус ахуевания антага и заставляем его делать передышики и играть аккуратнее, ведь он один, всегда уязвим и не может прятаться в космосе или вне станции,
  * как делает абсолютное большинство антагов.
  * 		Калаш с бесконечными патронами: в оригинальной игре это раундстарт каноничное оружие. По локации разбросана куча других оружий,
@@ -96,6 +96,7 @@
 	evaluate_security()
 	forge_objectives()
 	H.equipOutfit(/datum/outfit/hatred)
+	. = ..()
 	// ADD_TRAIT(H, TRAIT_STUNIMMUNE, "hatred") // Doesn't work against stunbatons anyway :(
 	ADD_TRAIT(H, TRAIT_SLEEPIMMUNE, "hatred") // I challenge you to a glorious fight!
 	ADD_TRAIT(H, TRAIT_VIRUSIMMUNE, "hatred")
@@ -111,7 +112,6 @@
 	allowed_z_levels += SSmapping.levels_by_trait(ZTRAIT_STATION)
 	RegisterSignal(H, COMSIG_LIVING_LIFE, PROC_REF(check_hatred_off_station)) // almost like anchor implant, but doesn't hurt
 	addtimer(CALLBACK(src, PROC_REF(alarm_station)), 30 SECONDS, TIMER_DELETE_ME) // Give a player a moment to understand what's going on.
-	return ..()
 
 /datum/antagonist/hatred/proc/evaluate_security()
 	var/security_alive = length(SSjob.get_living_sec())
@@ -229,7 +229,7 @@
 	addtimer(CALLBACK(src, PROC_REF(check_glory_kill), user, target), 1 SECONDS, TIMER_DELETE_ME) // wait for boolet to do its job
 
 /obj/item/gun/proc/check_glory_kill(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	if(!target || target?.stat == DEAD) // "!target" is for situations when target is gibbed, dusted or something else irreversible happened with body
+	if(QDELETED(target) || target?.stat == DEAD)
 		user.fully_heal(TRUE) // the only way of healing
 		// user.do_adrenaline(150, TRUE, 0, 0, TRUE, list(/datum/reagent/medicine/inaprovaline = 10, /datum/reagent/medicine/synaptizine = 15, /datum/reagent/medicine/regen_jelly = 20, /datum/reagent/medicine/stimulants = 20), "<span class='boldnotice'>You feel a sudden surge of energy!</span>")
 		user.visible_message("As blood splashes onto [src], it starts glowing menacingly and its wielder seemingly regaining their strength and vitality.")
@@ -387,7 +387,7 @@
 
 /obj/item/storage/belt/military/assault/hatred/examine(mob/user)
 	. = ..()
-	. += span_notice("If you place a heart into this phenomenal belt next time you check there will be no heart but a deadly explosive.")
+	. += "If you place a heart into this phenomenal belt next time you check there will be no heart but a deadly explosive."
 	. += span_notice("[src] is ready to accept [span_bold("[glory_points]")] hearts. Get more Glory Kills to make it accept more.")
 	. += span_notice("Once you lose this item it will turn into dust.")
 
