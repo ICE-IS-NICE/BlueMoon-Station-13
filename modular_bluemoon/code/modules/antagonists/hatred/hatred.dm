@@ -59,7 +59,7 @@
 	 * Level of available gear is determined by a number of alive security officers and blueshields.
 	 * 0 = low guns: a pistol or double barrel shotgun. NOT IMPLEMENTED YET!
 	 * 1 = default classic and serious guns: AK-47 or riot shotgun
-	 * 2 = ROBUST gear: +15 armor or +cursed belt
+	 * 2 = ROBUST gear: +armor or +cursed belt |||| +fast executions + +1 life on low gear
 	 */
 	var/gear_level = 1
 	var/static/list/low_guns = list("Pistol", "Double-barreled shotgun") // NOT IMPLEMENTED YET!
@@ -422,7 +422,7 @@
 	name = "leather overcoat of Hatred"
 	desc = "The shabby leather overcoat with decent armor paddings. Once it has been splashed with blood you can't take it off anymore."
 	// clueless armor stats. A bit worse than red ert hardsuit and other types of hardsuits. decent versatile armor.
-	armor = list(MELEE = 50, BULLET = 50, LASER = 50, ENERGY = 50, BOMB = 50, BIO = 30, RAD = 10, FIRE = 75, ACID = 75, WOUND = 50)
+	armor = list(MELEE = 40, BULLET = 40, LASER = 40, ENERGY = 40, BOMB = 40, BIO = 40, RAD = 10, FIRE = 70, ACID = 70, WOUND = 40)
 
 /obj/item/clothing/suit/jacket/leather/overcoat/hatred/equipped(mob/user, slot)
 	. = ..()
@@ -438,7 +438,7 @@
 	name = "Veil of Hatred"
 	desc = "Once you felt <b><i>that</i></b> urge to commit relentless genocide of civilians, you clearly understood you were cursed... blessed... and... protected by invisible spirit of Hatred."
 	// clueless armor stats. A bit worse than red ert hardsuit and other types of hardsuits. decent versatile armor.
-	armor = list(MELEE = 50, BULLET = 50, LASER = 50, ENERGY = 50, BOMB = 50, BIO = 30, RAD = 10, FIRE = 75, ACID = 75, WOUND = 50)
+	armor = list(MELEE = 40, BULLET = 40, LASER = 40, ENERGY = 40, BOMB = 40, BIO = 40, RAD = 10, FIRE = 70, ACID = 70, WOUND = 40)
 
 /obj/item/clothing/head/invisihat/hatred/equipped(mob/user, slot)
 	. = ..()
@@ -545,11 +545,11 @@
 	switch(Ha.chosen_high_gear)
 		if("More armor")
 			var/obj/item/clothing/C = H.get_item_by_slot(ITEM_SLOT_OCLOTHING)
-			// initial = 	list(MELEE = 50, BULLET = 50, LASER = 50, ENERGY = 50, BOMB = 50, BIO = 30, RAD = 10, FIRE = 75, ACID = 75, WOUND = 50)
-			// 				list(MELEE = 65, BULLET = 65, LASER = 65, ENERGY = 65, BOMB = 65, BIO = 45, RAD = 25, FIRE = 90, ACID = 90, WOUND = 65)
-			C.armor = C.armor.setRating(MELEE = 65, BULLET = 65, LASER = 65, ENERGY = 65, BOMB = 65, BIO = 45, RAD = 25, FIRE = 90, ACID = 90, WOUND = 65)
+			// initial = 	list(MELEE = 40, BULLET = 40, LASER = 40, ENERGY = 40, BOMB = 40, BIO = 40, RAD = 10, FIRE = 70, ACID = 70, WOUND = 40)
+			// 				list(MELEE = 60, BULLET = 60, LASER = 60, ENERGY = 60, BOMB = 60, BIO = 40, RAD = 30, FIRE = 90, ACID = 90, WOUND = 60)
+			C.armor = C.armor.setRating(MELEE = 60, BULLET = 60, LASER = 60, ENERGY = 60, BOMB = 60, BIO = 40, RAD = 30, FIRE = 90, ACID = 90, WOUND = 60)
 			C = H.get_item_by_slot(ITEM_SLOT_HEAD)
-			C.armor = C.armor.setRating(MELEE = 65, BULLET = 65, LASER = 65, ENERGY = 65, BOMB = 65, BIO = 45, RAD = 25, FIRE = 90, ACID = 90, WOUND = 65)
+			C.armor = C.armor.setRating(MELEE = 60, BULLET = 60, LASER = 60, ENERGY = 60, BOMB = 60, BIO = 40, RAD = 30, FIRE = 90, ACID = 90, WOUND = 60)
 
 /// DYNAMIC THINGS ///
 
