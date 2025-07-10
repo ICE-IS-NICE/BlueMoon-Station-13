@@ -111,7 +111,7 @@
 	allowed_z_levels += SSmapping.levels_by_trait(ZTRAIT_RESERVED)
 	allowed_z_levels += SSmapping.levels_by_trait(ZTRAIT_STATION)
 	RegisterSignal(H, COMSIG_LIVING_LIFE, PROC_REF(check_hatred_off_station)) // almost like anchor implant, but doesn't hurt
-	addtimer(CALLBACK(src, PROC_REF(alarm_station)), 30 SECONDS, TIMER_DELETE_ME) // Give a player a moment to understand what's going on.
+	addtimer(CALLBACK(src, PROC_REF(alarm_station)), 10 SECONDS, TIMER_DELETE_ME) // Give a player a moment to understand what's going on.
 
 /datum/antagonist/hatred/proc/evaluate_security()
 	var/security_alive = length(SSjob.get_living_sec())
@@ -197,7 +197,7 @@
 	if(istype(src) && owner?.current)
 		var/chosen_sound = pick('modular_bluemoon/code/modules/antagonists/hatred/hatred_spawned_1.ogg','modular_bluemoon/code/modules/antagonists/hatred/hatred_spawned_2.ogg')
 		priority_announce("На ваш объект ворвался особо опасный вооруженный преступник с целью массового убийства гражданских лиц. \
-							Нейтрализуйте угрозу любыми доступными способами. \
+							Нейтрализуйте угрозу любыми доступными средствами. \
 							ЦК санкционирует всему персоналу станции против данной цели: использование летального вооружения, открытие огня без предупреждения и казнь на месте. \
 							Особые приметы: мужчина в длинном черном кожаном пальто с длинными черными волосами и [chosen_gun].", \
 							"ALERT: MASS SHOOTER!", chosen_sound, has_important_message = TRUE)
