@@ -70,9 +70,9 @@
 	var/chosen_high_gear = null
 
 /datum/antagonist/hatred/greet()
-	SEND_SOUND(owner.current, sound(pick('modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_1.ogg', \
-										'modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_2.ogg', \
-										'modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_3.ogg')))
+	playsound(owner.current, pick('modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_1.ogg', \
+									'modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_2.ogg', \
+									'modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_3.ogg'), vol = 50, vary = FALSE, ignore_walls = FALSE)
 	var/greet_text
 	greet_text += "Ты - [span_red(span_bold("Безымянный Убийца"))]. Твое прошлое совершенно неважно, и даже если оно было, оно было незавидным.<br>"
 	greet_text += "Ты испытываешь непреодолимую ненависть, отвращение и презрение ко всем окружающим.<br>"
@@ -123,7 +123,7 @@
 	switch(security_alive)
 		// if(-INFINITY to 4)
 		// 	gear_level = 0
-		if(-INFINITY to 5) 	// 3(GC)-5
+		if(-INFINITY to 5) 	// 4(GC)-5
 			gear_level = 1
 		if(6 to INFINITY) 	// 6+
 			gear_level = 2
@@ -153,11 +153,6 @@
 	H.dna.features["legs"] = "Plantigrade"
 	H.dna.species.mutant_bodyparts["legs"] = "Plantigrade"
 	H.Digitigrade_Leg_Swap(TRUE)
-	// if((get_size(H) < 0.8  || 1.2 < get_size(H))) // better safe than sorry. players generally don't like invincible superheavy 200x sprite enemies. microsprite enemies too.
-	// 	H.update_size(1)
-	// if(H.mob_weight != MOB_WEIGHT_NORMAL)
-	// 	H.mob_weight = MOB_WEIGHT_NORMAL
-	// 	H.update_weight(H.mob_weight)
 	H.update_body()
 	H.update_hair()
 
@@ -301,10 +296,9 @@
 
 /obj/item/gun/ballistic/shotgun/riot/hatred/CtrlShiftClick(mob/living/carbon/human/user)
 	pump(user, TRUE)
-	stoplag(5)
 	while(chambered)
+		stoplag(3)
 		pump(user, TRUE)
-		stoplag(5)
 
 /obj/item/gun/ballistic/shotgun/riot/hatred/equipped(mob/living/user, slot)
 	. = ..()
@@ -423,6 +417,7 @@
 	desc = "The shabby leather overcoat with decent armor paddings. Once it has been splashed with blood you can't take it off anymore."
 	// clueless armor stats. A bit worse than red ert hardsuit and other types of hardsuits. decent versatile armor.
 	armor = list(MELEE = 40, BULLET = 40, LASER = 40, ENERGY = 40, BOMB = 40, BIO = 40, RAD = 10, FIRE = 70, ACID = 70, WOUND = 40)
+	resistance_flags = FIRE_PROOF
 
 /obj/item/clothing/suit/jacket/leather/overcoat/hatred/equipped(mob/user, slot)
 	. = ..()
@@ -439,6 +434,7 @@
 	desc = "Once you felt <b><i>that</i></b> urge to commit relentless genocide of civilians, you clearly understood you were cursed... blessed... and... protected by invisible spirit of Hatred."
 	// clueless armor stats. A bit worse than red ert hardsuit and other types of hardsuits. decent versatile armor.
 	armor = list(MELEE = 40, BULLET = 40, LASER = 40, ENERGY = 40, BOMB = 40, BIO = 40, RAD = 10, FIRE = 70, ACID = 70, WOUND = 40)
+	resistance_flags = FIRE_PROOF
 
 /obj/item/clothing/head/invisihat/hatred/equipped(mob/user, slot)
 	. = ..()
@@ -463,10 +459,10 @@
 	shoes = /obj/item/clothing/shoes/jackboots/tall_default
 	id = /obj/item/card/id/stowaway_stolen
 	l_pocket = /obj/item/storage/bag/ammo/hatred
+	r_pocket = /obj/item/flashlight/seclite
 	belt = /obj/item/storage/belt/military/assault
 	back = /obj/item/storage/backpack/rucksack
 	backpack_contents = list(/obj/item/storage/box/survival/engineer = 1,
-		/obj/item/flashlight/seclite = 1,
 		/obj/item/kitchen/knife/combat = 1,
 		/obj/item/sensor_device = 1,
 		/obj/item/crowbar = 1
@@ -507,9 +503,21 @@
 /datum/outfit/hatred/post_equip(mob/living/carbon/human/H, visualsOnly, client/preference_source)
 	var/obj/item/implant/explosive/E = new
 	E.implant(H)
-	var/obj/item/clothing/under/rank/civilian/util/greyshirt/I = H.get_item_by_slot(ITEM_SLOT_ICLOTHING)
-	I.has_sensor = NO_SENSORS
-	ADD_TRAIT(I, TRAIT_NODROP, "hatred")
+	var/obj/item/clothing/under/U = H.get_item_by_slot(ITEM_SLOT_ICLOTHING)
+	U.has_sensor = NO_SENSORS
+	ADD_TRAIT(U, TRAIT_NODROP, "hatred")
+
+	var/obj/item/clothing/I = H.get_item_by_slot(ITEM_SLOT_FEET)
+	I.resistance_flags = FIRE_PROOF
+
+	var/obj/item/clothing/I = H.get_item_by_slot(ITEM_SLOT_EYES)
+	I.resistance_flags = FIRE_PROOF
+
+	var/obj/item/clothing/I = H.get_item_by_slot(ITEM_SLOT_GLOVES)
+	I.resistance_flags = FIRE_PROOF
+
+	var/obj/item/clothing/I = H.get_item_by_slot(ITEM_SLOT_BACK)
+	I.resistance_flags = FIRE_PROOF
 
 	var/obj/item/storage/belt/B = H.get_item_by_slot(ITEM_SLOT_BELT)
 	new /obj/item/grenade/syndieminibomb/concussion(B)
@@ -537,9 +545,6 @@
 			new /obj/item/ammo_box/shotgun/loaded/buckshot(P)
 			new /obj/item/ammo_box/shotgun/loaded(P)
 			new /obj/item/ammo_box/shotgun/loaded/incendiary(P)
-			// new /obj/item/ammo_casing/shotgun/buckshot(P)
-			// new /obj/item/ammo_casing/shotgun(P)
-			// new /obj/item/ammo_casing/shotgun/incendiary(P)
 			// new /obj/item/ammo_casing/shotgun/dragonsbreath(P)
 
 	switch(Ha.chosen_high_gear)
@@ -573,10 +578,10 @@
 /datum/dynamic_ruleset/midround/from_ghosts/hatred/ready(forced = FALSE)
 	. = ..()
 	if(. && !forced)
-		if(GLOB.security_level == SEC_LEVEL_GREEN) // разбавляем эксту внутривенно
-			if(length(SSjob.get_living_sec()) < 3)
+		if(GLOB.security_level in list(SEC_LEVEL_GREEN, SEC_LEVEL_BLUE)) // разбавляем эксту внутривенно
+			if(length(SSjob.get_living_sec()) < 4)
 				return FALSE
-		else if(length(SSjob.get_living_sec()) < 4) // я желаю достойного сопротивления.
+		else if(length(SSjob.get_living_sec()) < 5) // я желаю достойного сопротивления.
 			return FALSE
 
 /datum/dynamic_ruleset/midround/from_ghosts/hatred/generate_ruleset_body(mob/applicant)
