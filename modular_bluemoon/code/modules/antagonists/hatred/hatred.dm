@@ -507,16 +507,16 @@
 	U.has_sensor = NO_SENSORS
 	ADD_TRAIT(U, TRAIT_NODROP, "hatred")
 
-	var/obj/item/clothing/I = H.get_item_by_slot(ITEM_SLOT_FEET)
+	var/obj/item/I = H.get_item_by_slot(ITEM_SLOT_FEET)
 	I.resistance_flags = FIRE_PROOF
 
-	var/obj/item/clothing/I = H.get_item_by_slot(ITEM_SLOT_EYES)
+	I = H.get_item_by_slot(ITEM_SLOT_EYES)
 	I.resistance_flags = FIRE_PROOF
 
-	var/obj/item/clothing/I = H.get_item_by_slot(ITEM_SLOT_GLOVES)
+	I = H.get_item_by_slot(ITEM_SLOT_GLOVES)
 	I.resistance_flags = FIRE_PROOF
 
-	var/obj/item/clothing/I = H.get_item_by_slot(ITEM_SLOT_BACK)
+	I = H.get_item_by_slot(ITEM_SLOT_BACK)
 	I.resistance_flags = FIRE_PROOF
 
 	var/obj/item/storage/belt/B = H.get_item_by_slot(ITEM_SLOT_BELT)
