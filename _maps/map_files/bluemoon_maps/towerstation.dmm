@@ -10,9 +10,6 @@
 /area/service/barbershop)
 "aab" = (
 /obj/machinery/camera/autoname,
-/obj/machinery/computer/podtracker{
-	dir = 4
-	},
 /turf/open/floor/plasteel{
 	icon_state = "dark"
 	},
@@ -290,7 +287,7 @@
 /obj/machinery/atmospherics/pipe/simple/supply/hidden/layer3,
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers,
 /obj/structure/disposalpipe/segment,
-/obj/structure/sign/examroom{
+/obj/structure/sign/departments/examroom{
 	pixel_x = -32
 	},
 /turf/open/floor/plasteel{
@@ -919,7 +916,7 @@
 	dir = 4;
 	id = "cargodisposals"
 	},
-/obj/structure/sign/deathsposal{
+/obj/structure/sign/warning/deathsposal{
 	pixel_y = -32
 	},
 /turf/open/floor/plasteel,
@@ -957,7 +954,7 @@
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
 	dir = 8
 	},
-/obj/structure/sign/custodian{
+/obj/structure/sign/departments/custodian{
 	pixel_y = 32
 	},
 /turf/open/floor/plasteel,
@@ -1646,7 +1643,7 @@
 "aYu" = (
 /obj/structure/closet/crate,
 /obj/effect/turf_decal/bot,
-/obj/effect/spawner/lootdrop/maintenance/double,
+/obj/effect/spawner/lootdrop/maintenance,
 /turf/open/floor/plasteel{
 	dir = 8;
 	icon_state = "brown"
@@ -1680,9 +1677,7 @@
 /area/engineering/main)
 "bap" = (
 /obj/structure/table/reinforced,
-/obj/item/pod_parts/core,
 /obj/item/gps,
-/obj/item/circuitboard/mecha/pod,
 /obj/item/clothing/glasses/welding{
 	pixel_y = 12
 	},
@@ -2755,7 +2750,7 @@
 /area/hallway/secondary/entry)
 "bOs" = (
 /obj/effect/decal/warning_stripes/southeastcorner,
-/obj/structure/sign/vacuum{
+/obj/structure/sign/warning/vacuum/external{
 	pixel_y = -32
 	},
 /turf/open/floor/plasteel/dark,
@@ -3486,9 +3481,6 @@
 "ckN" = (
 /obj/machinery/light{
 	dir = 4
-	},
-/obj/structure/sign/barber{
-	pixel_x = 22
 	},
 /turf/open/floor/plasteel,
 /area/commons/dorms)
@@ -4352,7 +4344,7 @@
 	},
 /area/security/processing)
 "cTY" = (
-/obj/structure/sign/biohazard,
+/obj/structure/sign/warning/biohazard,
 /turf/closed/wall/r_wall,
 /area/medical/medbay/central)
 "cUj" = (
@@ -4620,7 +4612,7 @@
 /obj/structure/railing{
 	dir = 4
 	},
-/obj/structure/sign/holy{
+/obj/structure/sign/departments/holy{
 	pixel_x = -32
 	},
 /turf/open/floor/plasteel,
@@ -5553,7 +5545,7 @@
 /turf/simulated/openspace,
 /area/hallway/secondary/exit)
 "dLo" = (
-/obj/structure/sign/evac{
+/obj/structure/sign/departments/evac{
 	pixel_x = 32
 	},
 /turf/open/floor/plasteel{
@@ -5937,7 +5929,7 @@
 	},
 /area/service/bar)
 "eao" = (
-/obj/structure/sign/chemistry,
+/obj/structure/sign/departments/chemistry,
 /turf/closed/wall/r_wall,
 /area/medical/chemistry)
 "eap" = (
@@ -6732,7 +6724,7 @@
 /area/security/execution/education)
 "eCq" = (
 /obj/structure/rack,
-/obj/effect/spawner/lootdrop/maintenance/tripple,
+/obj/effect/spawner/lootdrop/maintenance,
 /turf/open/floor/plasteel{
 	icon_state = "dark"
 	},
@@ -8105,8 +8097,6 @@
 /turf/simulated/floor/engine,
 /area/engineering/main)
 "fsa" = (
-/obj/effect/landmark/event/lightsout,
-/obj/effect/landmark/event/lightsout,
 /turf/open/floor/plasteel,
 /area/science/research)
 "fsh" = (
@@ -8346,7 +8336,7 @@
 /turf/open/floor/plasteel,
 /area/security/brig)
 "fyh" = (
-/obj/structure/sign/securearea{
+/obj/structure/sign/warning/vacuum/external{
 	desc = "A warning sign which reads 'EXTERNAL AIRLOCK'";
 	icon_state = "space";
 	layer = 4;
@@ -8357,7 +8347,7 @@
 	dir = 8
 	},
 /obj/structure/rack,
-/obj/effect/spawner/lootdrop/maintenance/tripple,
+/obj/effect/spawner/lootdrop/maintenance,
 /turf/open/floor/plasteel{
 	icon_state = "dark"
 	},
@@ -8772,7 +8762,7 @@
 /turf/open/floor/plasteel/grimy,
 /area/hallway/primary/central)
 "fIK" = (
-/obj/structure/sign/greencross{
+/obj/structure/sign/poster/official/medical_green_cross{
 	pixel_x = -32;
 	pixel_y = -32
 	},
@@ -10007,7 +9997,6 @@
 /obj/machinery/light{
 	dir = 1
 	},
-/obj/machinery/mecha_part_fabricator/spacepod,
 /turf/open/floor/plasteel{
 	dir = 1;
 	icon_state = "yellow"
@@ -11067,9 +11056,6 @@
 /obj/effect/turf_decal/stripes/line{
 	dir = 1
 	},
-/obj/structure/sign/double/no_idiots/right{
-	pixel_y = 32
-	},
 /turf/simulated/floor/engine,
 /area/engineering/main)
 "hgQ" = (
@@ -11297,9 +11283,7 @@
 /turf/open/floor/plasteel/dark,
 /area/service/bar)
 "hmY" = (
-/obj/structure/spacepoddoor{
-	luminosity = 3
-	},
+/obj/structure/fans/tiny
 /obj/machinery/door/poddoor/multi_tile/two_tile_ver{
 	id_tag = "podbay"
 	},
@@ -11760,7 +11744,7 @@
 /area/hallway/primary/central)
 "hCW" = (
 /obj/structure/rack,
-/obj/effect/spawner/lootdrop/maintenance/double,
+/obj/effect/spawner/lootdrop/maintenance,
 /turf/open/floor/plasteel{
 	icon_state = "dark"
 	},
@@ -11848,7 +11832,7 @@
 /turf/open/floor/plasteel/dark,
 /area/hallway/primary/aft)
 "hFQ" = (
-/obj/structure/sign/cargo,
+/obj/structure/sign/departments/cargo,
 /turf/closed/wall/r_wall,
 /area/medical/medbay/central)
 "hFR" = (
@@ -12024,7 +12008,6 @@
 /obj/effect/turf_decal/stripes/red/line{
 	dir = 1
 	},
-/obj/effect/landmark/event/lightsout,
 /turf/open/floor/plasteel,
 /area/hallway/secondary/entry)
 "hLO" = (
@@ -13573,7 +13556,7 @@
 /turf/open/floor/plasteel/dark,
 /area/hallway/secondary/entry)
 "iJX" = (
-/obj/structure/sign/radiation/rad_area,
+/obj/structure/sign/warning/radiation/rad_area,
 /turf/closed/wall/r_wall,
 /area/engineering/supermatter)
 "iKd" = (
@@ -14089,7 +14072,7 @@
 /turf/open/floor/plasteel/dark,
 /area/science/research)
 "iZq" = (
-/obj/structure/sign/nosmoking_2{
+/obj/structure/sign/warning/nosmoking{
 	pixel_x = -32
 	},
 /turf/open/floor/plasteel{
@@ -14351,7 +14334,7 @@
 /obj/structure/closet/crate,
 /obj/effect/decal/cleanable/dirt,
 /obj/effect/turf_decal/bot,
-/obj/effect/spawner/lootdrop/maintenance/tripple,
+/obj/effect/spawner/lootdrop/maintenance,
 /turf/open/floor/plating,
 /area/cargo/storage)
 "jjB" = (
@@ -14914,7 +14897,6 @@
 /obj/structure/window/reinforced{
 	dir = 1
 	},
-/obj/effect/landmark/event/lightsout,
 /turf/open/floor/plasteel,
 /area/medical/medbay/central)
 "jBd" = (
@@ -16299,7 +16281,7 @@
 	},
 /area/medical/medbay/central)
 "kzQ" = (
-/obj/structure/sign/vacuum,
+/obj/structure/sign/warning/vacuum/external,
 /turf/closed/wall/r_wall,
 /area/cargo/storage)
 "kzZ" = (
@@ -16935,7 +16917,7 @@
 /turf/open/floor/plasteel,
 /area/commons/dorms)
 "kWw" = (
-/obj/structure/sign/science{
+/obj/structure/sign/departments/science{
 	icon_state = "doors";
 	pixel_x = -32
 	},
@@ -17401,7 +17383,7 @@
 /turf/open/floor/plasteel,
 /area/security/brig)
 "lml" = (
-/obj/structure/sign/restroom{
+/obj/structure/sign/departments/restroom{
 	pixel_x = -32
 	},
 /turf/open/floor/plasteel{
@@ -17765,7 +17747,7 @@
 	dir = 1
 	},
 /obj/effect/decal/cleanable/dirt,
-/obj/structure/sign/nosmoking_1{
+/obj/structure/sign/warning/nosmoking{
 	pixel_y = -32
 	},
 /turf/open/floor/plasteel,
@@ -18848,7 +18830,7 @@
 	},
 /area/security/brig)
 "mdS" = (
-/obj/structure/sign/radiation,
+/obj/structure/sign/warning/radiation,
 /turf/closed/wall/r_wall,
 /area/engineering/main)
 "mdZ" = (
@@ -19460,8 +19442,6 @@
 	},
 /area/security/processing)
 "myD" = (
-/obj/effect/landmark/event/lightsout,
-/obj/effect/landmark/event/lightsout,
 /turf/open/floor/plasteel,
 /area/hallway/primary/starboard)
 "myP" = (
@@ -20249,9 +20229,7 @@
 /turf/open/floor/plasteel/white,
 /area/medical/virology)
 "mWh" = (
-/obj/structure/spacepoddoor{
-	luminosity = 3
-	},
+/obj/structure/fans/tiny
 /turf/open/floor/plasteel{
 	icon_state = "dark"
 	},
@@ -20399,7 +20377,7 @@
 /turf/open/floor/carpet,
 /area/service/library)
 "ndy" = (
-/obj/structure/sign/xenobio{
+/obj/structure/sign/departments/xenobio{
 	pixel_y = -32
 	},
 /turf/open/floor/plasteel{
@@ -21510,9 +21488,7 @@
 /obj/machinery/door/poddoor/multi_tile/two_tile_ver{
 	id_tag = "secpodbay"
 	},
-/obj/structure/spacepoddoor{
-	luminosity = 3
-	},
+/obj/structure/fans/tiny
 /turf/open/floor/plasteel{
 	icon_state = "dark"
 	},
@@ -21734,7 +21710,6 @@
 /area/commons/dorms)
 "nZH" = (
 /obj/structure/window/reinforced,
-/obj/effect/landmark/event/lightsout,
 /turf/open/floor/plasteel,
 /area/commons/dorms)
 "nZJ" = (
@@ -22056,7 +22031,7 @@
 /obj/effect/turf_decal/bot,
 /obj/effect/decal/cleanable/dirt,
 /obj/structure/closet/crate,
-/obj/effect/spawner/lootdrop/maintenance/double,
+/obj/effect/spawner/lootdrop/maintenance,
 /turf/open/floor/plasteel,
 /area/cargo/storage)
 "oia" = (
@@ -22280,7 +22255,7 @@
 /turf/open/floor/carpet/black,
 /area/service/bar)
 "ooR" = (
-/obj/structure/sign/botany,
+/obj/structure/sign/departments/botany,
 /turf/closed/wall/r_wall,
 /area/service/hydroponics)
 "oqa" = (
@@ -22380,13 +22355,7 @@
 	},
 /area/hallway/secondary/exit)
 "otc" = (
-/obj/structure/sign/redcross{
-	desc = "The Star of Life, a symbol of Medical Aid.";
-	icon_state = "lifestar";
-	name = "Medbay";
-	pixel_x = -32;
-	pixel_y = 32
-	},
+/obj/structure/sign/poster/official/medical_green_cross
 /turf/open/floor/plasteel,
 /area/medical/medbay/central)
 "otM" = (
@@ -23130,7 +23099,7 @@
 /obj/effect/turf_decal/stripes/line{
 	dir = 6
 	},
-/obj/structure/sign/nosmoking_1{
+/obj/structure/sign/warning/nosmoking{
 	pixel_y = -32
 	},
 /turf/open/floor/plasteel{
@@ -23673,9 +23642,6 @@
 /area/engineering/break_room)
 "png" = (
 /obj/effect/decal/warning_stripes/southwest,
-/obj/spacepod/sec{
-	dir = 8
-	},
 /turf/open/floor/plasteel{
 	icon_state = "dark"
 	},
@@ -25560,7 +25526,7 @@
 	},
 /area/service/bar)
 "qvz" = (
-/obj/structure/sign/science{
+/obj/structure/sign/departments/science{
 	pixel_x = -32
 	},
 /turf/open/floor/plasteel/dark,
@@ -26174,7 +26140,7 @@
 /area/service/hydroponics)
 "qPe" = (
 /obj/effect/spawner/structure/window/reinforced,
-/obj/structure/sign/vacuum,
+/obj/structure/sign/warning/vacuum/external,
 /turf/open/floor/plating,
 /area/hallway/secondary/exit)
 "qPi" = (
@@ -26365,8 +26331,6 @@
 /turf/open/floor/plasteel,
 /area/science/robotics/mechbay)
 "qWE" = (
-/obj/effect/landmark/event/lightsout,
-/obj/effect/landmark/event/lightsout,
 /obj/structure/disposalpipe/segment{
 	dir = 9
 	},
@@ -26670,7 +26634,7 @@
 "rgI" = (
 /obj/structure/closet/crate,
 /obj/effect/turf_decal/bot,
-/obj/effect/spawner/lootdrop/maintenance/tripple,
+/obj/effect/spawner/lootdrop/maintenance,
 /turf/open/floor/plasteel,
 /area/cargo/storage)
 "rgS" = (
@@ -27543,13 +27507,7 @@
 	pixel_x = 28
 	},
 /obj/structure/closet/secure_closet/security,
-/obj/item/spacepod_equipment/weaponry/burst_taser,
-/obj/item/spacepod_equipment/key{
-	id = 100000
-	},
 /obj/item/clothing/head/beret/sec,
-/obj/item/clothing/suit/jacket/pilot,
-/obj/item/spacepod_equipment/weaponry/laser,
 /turf/open/floor/plasteel{
 	dir = 6;
 	icon_state = "darkred"
@@ -27594,7 +27552,7 @@
 /obj/effect/turf_decal/stripes/line{
 	dir = 9
 	},
-/obj/structure/sign/nosmoking_2{
+/obj/structure/sign/warning/nosmoking{
 	pixel_x = 32
 	},
 /turf/open/floor/plasteel,
@@ -28186,7 +28144,6 @@
 	},
 /area/command/heads_quarters/rd)
 "sgO" = (
-/obj/machinery/suit_storage_unit/security/pod_pilot,
 /obj/structure/window/reinforced{
 	dir = 4
 	},
@@ -29181,7 +29138,6 @@
 /turf/simulated/floor/greengrid,
 /area/engineering/main)
 "sPE" = (
-/obj/machinery/computer/podtracker,
 /turf/open/floor/plasteel{
 	icon_state = "darkred"
 	},
@@ -29693,7 +29649,6 @@
 /obj/structure/window/reinforced{
 	dir = 1
 	},
-/obj/effect/landmark/event/lightsout,
 /turf/open/floor/plasteel,
 /area/engineering/break_room)
 "thy" = (
@@ -30520,7 +30475,7 @@
 /turf/simulated/floor/engine/co2,
 /area/engineering/atmos)
 "tIX" = (
-/obj/structure/sign/securearea{
+/obj/structure/sign/warning/vacuum/external{
 	desc = "A warning sign which reads 'BOMB RANGE";
 	name = "BOMB RANGE"
 	},
@@ -31910,8 +31865,6 @@
 /obj/structure/window/reinforced{
 	dir = 1
 	},
-/obj/effect/landmark/event/lightsout,
-/obj/effect/landmark/event/lightsout,
 /turf/open/floor/plasteel,
 /area/service/bar)
 "uAW" = (
@@ -32335,7 +32288,7 @@
 /area/service/bar)
 "uOj" = (
 /obj/effect/decal/warning_stripes/northwestcorner,
-/obj/structure/sign/vacuum{
+/obj/structure/sign/warning/vacuum/external{
 	pixel_y = 32
 	},
 /turf/open/floor/plasteel/dark,
@@ -33213,7 +33166,6 @@
 /turf/open/floor/glass/reinforced,
 /area/medical/medbay/central)
 "vrp" = (
-/obj/effect/landmark/event/lightsout,
 /obj/item/radio/intercom{
 	pixel_y = 32
 	},
@@ -33558,9 +33510,6 @@
 	},
 /obj/machinery/light{
 	dir = 1
-	},
-/obj/structure/sign/double/no_idiots/left{
-	pixel_y = 32
 	},
 /turf/simulated/floor/engine,
 /area/engineering/main)
@@ -34106,7 +34055,6 @@
 /turf/open/floor/plasteel/dark,
 /area/engineering/break_room)
 "vRu" = (
-/obj/effect/landmark/start/security_pod_pilot,
 /obj/structure/chair/office/dark,
 /turf/open/floor/plasteel{
 	icon_state = "dark"
@@ -34198,7 +34146,7 @@
 /turf/open/floor/plasteel,
 /area/hallway/primary/aft)
 "vWi" = (
-/obj/structure/sign/nosmoking_2{
+/obj/structure/sign/warning/nosmoking{
 	pixel_y = 32
 	},
 /obj/item/clothing/head/helmet/skull/Yorick,
@@ -35765,9 +35713,7 @@
 /turf/open/floor/plasteel,
 /area/engineering/main)
 "wQB" = (
-/obj/structure/spacepoddoor{
-	luminosity = 3
-	},
+/obj/structure/fans/tiny
 /turf/open/floor/plasteel{
 	icon_state = "dark"
 	},
@@ -37293,8 +37239,6 @@
 /obj/structure/window/reinforced{
 	dir = 1
 	},
-/obj/effect/landmark/event/lightsout,
-/obj/effect/landmark/event/lightsout,
 /turf/open/floor/plasteel,
 /area/hallway/primary/central)
 "xKO" = (
@@ -37441,7 +37385,7 @@
 	},
 /area/engineering/break_room)
 "xQQ" = (
-/obj/structure/sign/science{
+/obj/structure/sign/departments/science{
 	icon_state = "xenobio2";
 	pixel_y = -32
 	},
@@ -37450,7 +37394,7 @@
 	},
 /area/science/research)
 "xRe" = (
-/obj/structure/sign/evac{
+/obj/structure/sign/departments/evac{
 	pixel_x = 32
 	},
 /turf/open/floor/plasteel{
@@ -37495,7 +37439,7 @@
 "xSU" = (
 /obj/structure/closet/crate,
 /obj/effect/turf_decal/bot,
-/obj/effect/spawner/lootdrop/maintenance/double,
+/obj/effect/spawner/lootdrop/maintenance,
 /turf/open/floor/plasteel{
 	dir = 4;
 	icon_state = "brown"
@@ -37847,7 +37791,7 @@
 /turf/open/floor/plasteel/dark,
 /area/science/research)
 "yet" = (
-/obj/structure/sign/biohazard,
+/obj/structure/sign/warning/biohazard,
 /turf/closed/wall/r_wall,
 /area/medical/virology)
 "yeY" = (
@@ -37997,7 +37941,7 @@
 /turf/open/floor/plasteel,
 /area/science/research)
 "yjl" = (
-/obj/structure/sign/security,
+/obj/structure/sign/departments/security,
 /turf/closed/wall/r_wall,
 /area/security/office)
 "yjp" = (
