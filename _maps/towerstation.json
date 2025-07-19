@@ -1,0 +1,11 @@
+{
+    "map_name": "Tower Station",
+    "map_path": "map_files/bluemoon_maps",
+	"map_file": "towerstation.dmm",
+    "shuttles": {
+	    "cargo": "cargo_delta",
+	    "ferry": "ferry_fancy",
+	    "whiteship": "whiteship_meta",
+	    "emergency": "emergency_box"
+    }
+}
