@@ -2432,6 +2432,12 @@
 /obj/machinery/atmospherics/pipe/simple/supply/hidden/layer1{
 	dir = 4
 	},
+/obj/machinery/door/airlock/external{
+	req_access_txt = "13"
+	},
+/obj/effect/mapping_helpers/airlock/cyclelink_helper{
+	dir = 4
+	},
 /turf/open/floor/plating,
 /area/hallway/secondary/entry)
 "bLQ" = (
@@ -2520,8 +2526,7 @@
 	icon_state = "4-8"
 	},
 /obj/machinery/door/airlock/external{
-	name = "External Airlock";
-	req_access = list(13)
+	req_access_txt = "13"
 	},
 /turf/open/floor/plasteel,
 /area/hallway/secondary/entry)
@@ -6993,6 +6998,24 @@
 /obj/machinery/door/firedoor,
 /turf/open/floor/plasteel,
 /area/hallway/secondary/entry)
+"fkQ" = (
+/obj/machinery/atmospherics/pipe/simple/scrubbers/hidden/layer3{
+	dir = 4
+	},
+/obj/machinery/atmospherics/pipe/simple/supply/hidden/layer1{
+	dir = 4
+	},
+/obj/structure/cable{
+	icon_state = "4-8"
+	},
+/obj/machinery/door/airlock/external{
+	req_access_txt = "13"
+	},
+/obj/effect/mapping_helpers/airlock/cyclelink_helper{
+	dir = 4
+	},
+/turf/open/floor/plating,
+/area/maintenance/solars/starboard/fore)
 "flp" = (
 /obj/machinery/computer/crew{
 	dir = 8
@@ -7227,9 +7250,7 @@
 /turf/open/floor/plasteel,
 /area/commons/dorms)
 "frA" = (
-/obj/machinery/computer/teleporter{
-	dir = 8
-	},
+/obj/machinery/computer/teleporter,
 /turf/open/floor/plasteel{
 	icon_state = "dark"
 	},
@@ -11661,6 +11682,24 @@
 	},
 /turf/open/floor/plasteel/dark,
 /area/science/explab)
+"iuZ" = (
+/obj/machinery/atmospherics/pipe/simple/scrubbers/hidden/layer3{
+	dir = 4
+	},
+/obj/machinery/atmospherics/pipe/simple/supply/hidden/layer1{
+	dir = 4
+	},
+/obj/structure/cable{
+	icon_state = "4-8"
+	},
+/obj/machinery/door/airlock/external{
+	req_access_txt = "13"
+	},
+/obj/effect/mapping_helpers/airlock/cyclelink_helper{
+	dir = 8
+	},
+/turf/open/floor/plating,
+/area/maintenance/solars/starboard/fore)
 "ivK" = (
 /obj/effect/turf_decal/delivery,
 /obj/structure/closet/toolcloset,
@@ -13268,6 +13307,16 @@
 	},
 /turf/open/floor/circuit/green,
 /area/ai_monitored/turret_protected/ai)
+"jAZ" = (
+/obj/structure/chair/comfy/black{
+	dir = 4
+	},
+/obj/machinery/atmospherics/components/unary/vent_scrubber/on/layer3{
+	dir = 4
+	},
+/obj/effect/landmark/start/assistant,
+/turf/open/floor/plasteel/dark,
+/area/hallway/secondary/entry)
 "jBd" = (
 /obj/machinery/door/airlock{
 	id_tag = "Dorm2";
@@ -18293,6 +18342,16 @@
 /obj/structure/reagent_dispensers/beerkeg,
 /turf/open/floor/plasteel,
 /area/science/research)
+"nka" = (
+/obj/structure/chair/comfy/black{
+	dir = 1
+	},
+/obj/machinery/atmospherics/components/unary/vent_pump/on/layer1{
+	dir = 1
+	},
+/obj/effect/landmark/start/assistant,
+/turf/open/floor/plasteel/dark,
+/area/hallway/secondary/entry)
 "nkb" = (
 /obj/machinery/camera/autoname{
 	dir = 9
@@ -24670,6 +24729,13 @@
 /obj/effect/turf_decal/delivery/red,
 /turf/open/floor/plasteel,
 /area/maintenance/solars/starboard/fore)
+"rOk" = (
+/obj/machinery/door/airlock/external{
+	req_access_txt = "13"
+	},
+/obj/effect/mapping_helpers/airlock/cyclelink_helper,
+/turf/open/floor/plating,
+/area/maintenance/solars/starboard/fore)
 "rOs" = (
 /obj/machinery/firealarm{
 	pixel_y = -28
@@ -25037,6 +25103,7 @@
 /area/hallway/primary/starboard)
 "sdx" = (
 /obj/structure/table,
+/obj/item/storage/dice,
 /turf/open/floor/plasteel/dark,
 /area/hallway/secondary/entry)
 "sdy" = (
@@ -29446,6 +29513,15 @@
 /obj/machinery/light,
 /turf/open/floor/circuit,
 /area/ai_monitored/turret_protected/ai_upload)
+"voC" = (
+/obj/machinery/door/airlock/external{
+	req_access_txt = "13"
+	},
+/obj/effect/mapping_helpers/airlock/cyclelink_helper{
+	dir = 1
+	},
+/turf/open/floor/plating,
+/area/maintenance/solars/starboard/fore)
 "voZ" = (
 /obj/structure/cable{
 	icon_state = "4-8"
@@ -33361,6 +33437,25 @@
 	icon_state = "brown"
 	},
 /area/command/heads_quarters/ce)
+"xTT" = (
+/obj/machinery/atmospherics/pipe/simple/scrubbers/hidden/layer3{
+	dir = 4
+	},
+/obj/machinery/atmospherics/pipe/simple/supply/hidden/layer1{
+	dir = 4
+	},
+/obj/structure/cable{
+	icon_state = "4-8"
+	},
+/obj/machinery/door/airlock/external{
+	req_access_txt = "13"
+	},
+/obj/structure/fans/tiny,
+/obj/effect/mapping_helpers/airlock/cyclelink_helper{
+	dir = 8
+	},
+/turf/open/floor/plating,
+/area/hallway/secondary/entry)
 "xUh" = (
 /turf/closed/wall/r_wall,
 /area/medical/chemistry)
@@ -130111,7 +130206,7 @@ qWU
 xOC
 xOC
 wqf
-dud
+jAZ
 qNc
 dnk
 dnk
@@ -133465,7 +133560,7 @@ mbz
 mbz
 wxr
 sAF
-kdT
+nka
 oNy
 qWU
 qWU
@@ -135257,7 +135352,7 @@ qWU
 qWU
 xOC
 xOC
-tJB
+xTT
 xOC
 xOC
 qWU
@@ -141425,7 +141520,7 @@ qWU
 qWU
 uoY
 uoY
-phu
+fkQ
 uoY
 uoY
 qWU
@@ -141939,7 +142034,7 @@ ssD
 oSM
 uoY
 uoY
-phu
+iuZ
 uoY
 uoY
 oSM
@@ -142447,9 +142542,9 @@ qWU
 qWU
 qWU
 qWU
+rOk
 ciQ
-ciQ
-ciQ
+voC
 sVY
 ubI
 xxr
@@ -142457,9 +142552,9 @@ eKm
 xxr
 onO
 sVY
+rOk
 ciQ
-ciQ
-ciQ
+voC
 qWU
 qWU
 qWU
