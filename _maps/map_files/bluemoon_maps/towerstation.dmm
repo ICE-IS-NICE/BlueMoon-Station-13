@@ -736,7 +736,7 @@
 /obj/effect/spawner/structure/window/reinforced,
 /obj/machinery/door/poddoor/shutters/preopen{
 	dir = 2;
-	id_tag = "chemshuts";
+	id = "chemshuts";
 	name = "Chemistry Shutters"
 	},
 /turf/open/floor/plating,
@@ -1093,7 +1093,7 @@
 "aRe" = (
 /obj/effect/spawner/structure/window/reinforced,
 /obj/machinery/door/poddoor/preopen{
-	id_tag = "PermaLockdown";
+	id = "PermaLockdown";
 	name = "Perma Lockdown"
 	},
 /obj/structure/cable,
@@ -1661,7 +1661,7 @@
 "bsd" = (
 /obj/machinery/door/poddoor/shutters{
 	dir = 2;
-	id_tag = "stationawaygate";
+	id = "stationawaygate";
 	name = "Gateway Access Shutters"
 	},
 /turf/open/floor/plasteel,
@@ -2356,7 +2356,7 @@
 "bXq" = (
 /obj/effect/spawner/structure/window/reinforced,
 /obj/machinery/door/poddoor/preopen{
-	id_tag = "PermaLockdown";
+	id = "PermaLockdown";
 	name = "Perma Lockdown"
 	},
 /obj/structure/cable{
@@ -2673,7 +2673,7 @@
 	},
 /obj/machinery/door/poddoor/shutters/preopen{
 	dir = 2;
-	id_tag = "kitchen";
+	id = "kitchen";
 	name = "Kitchen Shutters"
 	},
 /turf/open/floor/plasteel,
@@ -2955,7 +2955,7 @@
 /obj/effect/spawner/structure/window/reinforced,
 /obj/machinery/door/poddoor/shutters/preopen{
 	dir = 1;
-	id_tag = "brigshuts";
+	id = "brigshuts";
 	name = "Brig Shutters"
 	},
 /turf/open/floor/plating,
@@ -3483,7 +3483,7 @@
 /area/security/brig)
 "cWZ" = (
 /obj/machinery/door/poddoor/shutters{
-	id_tag = "roboticsshutters";
+	id = "roboticsshutters";
 	name = "Mech Bay Shutters"
 	},
 /turf/open/floor/plasteel/dark,
@@ -4307,7 +4307,7 @@
 "dKT" = (
 /obj/effect/spawner/structure/window/reinforced,
 /obj/machinery/door/poddoor/preopen{
-	id_tag = "PermaLockdown";
+	id = "PermaLockdown";
 	name = "Perma Lockdown"
 	},
 /obj/structure/cable{
@@ -4437,7 +4437,7 @@
 /obj/machinery/atmospherics/pipe/simple/supply/hidden/layer1,
 /obj/machinery/door/poddoor/shutters{
 	dir = 2;
-	id_tag = "stationawaygate";
+	id = "stationawaygate";
 	name = "Gateway Access Shutters"
 	},
 /turf/open/floor/plasteel,
@@ -4447,7 +4447,7 @@
 /obj/item/storage/fancy/donut_box,
 /obj/machinery/door/poddoor/shutters/preopen{
 	dir = 2;
-	id_tag = "kitchen";
+	id = "kitchen";
 	name = "Kitchen Shutters"
 	},
 /turf/open/floor/plasteel/white,
@@ -5033,7 +5033,7 @@
 "ewk" = (
 /obj/machinery/door/poddoor/shutters{
 	dir = 2;
-	id_tag = "stationawaygate";
+	id = "stationawaygate";
 	name = "Gateway Access Shutters"
 	},
 /obj/machinery/button/door{
@@ -5090,7 +5090,7 @@
 /obj/machinery/door/poddoor{
 	density = 0;
 	icon_state = "open";
-	id_tag = "briglock";
+	id = "briglock";
 	name = "Brig Lockdown";
 	opacity = 0
 	},
@@ -5351,7 +5351,7 @@
 /obj/effect/spawner/structure/window/reinforced,
 /obj/machinery/door/poddoor/shutters/preopen{
 	dir = 8;
-	id_tag = "brigshuts";
+	id = "brigshuts";
 	name = "Brig Shutters"
 	},
 /turf/open/floor/plating,
@@ -5847,13 +5847,13 @@
 	dir = 4
 	},
 /obj/machinery/door/poddoor/shutters/preopen{
-	id_tag = "brigshuts";
+	id = "brigshuts";
 	name = "Brig Shutters"
 	},
 /obj/machinery/door/poddoor{
 	density = 0;
 	icon_state = "open";
-	id_tag = "briglock";
+	id = "briglock";
 	name = "Brig Lockdown";
 	opacity = 0
 	},
@@ -6524,7 +6524,7 @@
 /obj/machinery/door/poddoor{
 	density = 0;
 	icon_state = "open";
-	id_tag = "briglock";
+	id = "briglock";
 	name = "Brig Lockdown";
 	opacity = 0
 	},
@@ -6691,7 +6691,7 @@
 /obj/machinery/door/poddoor{
 	density = 0;
 	icon_state = "open";
-	id_tag = "briglock";
+	id = "briglock";
 	name = "Brig Lockdown";
 	opacity = 0
 	},
@@ -6717,7 +6717,7 @@
 /area/security/brig/brig_medical)
 "fFB" = (
 /obj/machinery/door/poddoor{
-	id_tag = "execblast";
+	id = "execblast";
 	name = "Vacuum Execution door"
 	},
 /turf/open/floor/plating,
@@ -10190,7 +10190,7 @@
 	},
 /obj/machinery/door/poddoor/shutters/preopen{
 	dir = 2;
-	id_tag = "hopprivacy";
+	id = "hopprivacy";
 	name = "Head of Personal Privacy Shutters"
 	},
 /obj/machinery/door/firedoor,
@@ -10337,7 +10337,7 @@
 	},
 /obj/machinery/door/poddoor/shutters/preopen{
 	dir = 2;
-	id_tag = "kitchen";
+	id = "kitchen";
 	name = "Kitchen Shutters"
 	},
 /obj/item/reagent_containers/food/snacks/pie/cream,
@@ -10540,7 +10540,7 @@
 "iQo" = (
 /obj/effect/spawner/structure/window/reinforced,
 /obj/machinery/door/poddoor/preopen{
-	id_tag = "PermaLockdown";
+	id = "PermaLockdown";
 	name = "Perma Lockdown"
 	},
 /obj/structure/cable{
@@ -10763,7 +10763,7 @@
 /obj/effect/spawner/structure/window/reinforced,
 /obj/machinery/door/poddoor/shutters/preopen{
 	dir = 2;
-	id_tag = "hopprivacy";
+	id = "hopprivacy";
 	name = "Head of Personal Privacy Shutters"
 	},
 /turf/open/floor/plating,
@@ -11822,7 +11822,7 @@
 /obj/structure/table/reinforced,
 /obj/machinery/door/poddoor/shutters/preopen{
 	dir = 2;
-	id_tag = "kitchen";
+	id = "kitchen";
 	name = "Kitchen Shutters"
 	},
 /turf/open/floor/plasteel,
@@ -12634,7 +12634,7 @@
 "kES" = (
 /obj/effect/spawner/structure/window/reinforced,
 /obj/machinery/door/poddoor/preopen{
-	id_tag = "PermaLockdown";
+	id = "PermaLockdown";
 	name = "Perma Lockdown"
 	},
 /obj/structure/cable{
@@ -13697,7 +13697,7 @@
 	icon_state = "4-8"
 	},
 /obj/machinery/door/poddoor/shutters{
-	id_tag = "roboticsshutters";
+	id = "roboticsshutters";
 	name = "Mech Bay Shutters"
 	},
 /turf/open/floor/plasteel/dark,
@@ -13760,7 +13760,7 @@
 /obj/structure/table/reinforced,
 /obj/machinery/door/poddoor/shutters/preopen{
 	dir = 2;
-	id_tag = "kitchen";
+	id = "kitchen";
 	name = "Kitchen Shutters"
 	},
 /turf/open/floor/plasteel/white,
@@ -15131,7 +15131,7 @@
 "mJY" = (
 /obj/machinery/door/poddoor/shutters{
 	dir = 2;
-	id_tag = "ArmorySecAccess";
+	id = "ArmorySecAccess";
 	name = "Armory Security Shutters"
 	},
 /turf/open/floor/plasteel,
@@ -15345,7 +15345,7 @@
 "mRF" = (
 /obj/effect/spawner/structure/window/reinforced,
 /obj/machinery/door/poddoor/preopen{
-	id_tag = "PermaLockdown";
+	id = "PermaLockdown";
 	name = "Perma Lockdown"
 	},
 /obj/structure/cable{
@@ -16739,7 +16739,7 @@
 /area/command/bridge)
 "oea" = (
 /obj/machinery/door/poddoor{
-	id_tag = "engstorage";
+	id = "engstorage";
 	name = "Secure Storage Blast Doors"
 	},
 /turf/open/floor/plasteel/dark,
@@ -18208,7 +18208,7 @@
 /obj/machinery/door/poddoor{
 	density = 0;
 	icon_state = "open";
-	id_tag = "briglock";
+	id = "briglock";
 	name = "Brig Lockdown";
 	opacity = 0
 	},
@@ -18533,7 +18533,7 @@
 /obj/effect/spawner/structure/window/reinforced,
 /obj/machinery/door/poddoor/shutters/preopen{
 	dir = 1;
-	id_tag = "chemshuts";
+	id = "chemshuts";
 	name = "Chemistry Shutters"
 	},
 /turf/open/floor/plating,
@@ -18570,7 +18570,7 @@
 "pGx" = (
 /obj/structure/table/reinforced,
 /obj/machinery/door/poddoor/shutters/preopen{
-	id_tag = "researchshuts";
+	id = "researchshuts";
 	name = "Research Shutters"
 	},
 /obj/machinery/door/firedoor,
@@ -20024,7 +20024,7 @@
 /obj/machinery/door/poddoor{
 	density = 0;
 	icon_state = "open";
-	id_tag = "briglock";
+	id = "briglock";
 	name = "Brig Lockdown";
 	opacity = 0
 	},
@@ -20615,7 +20615,7 @@
 /obj/machinery/door/poddoor{
 	density = 0;
 	icon_state = "open";
-	id_tag = "briglock";
+	id = "briglock";
 	name = "Brig Lockdown";
 	opacity = 0
 	},
@@ -21032,7 +21032,7 @@
 	id = "cargoload"
 	},
 /obj/machinery/door/poddoor{
-	id_tag = "QMLoaddoor";
+	id = "QMLoaddoor";
 	name = "supply dock loading door"
 	},
 /turf/open/floor/plating,
@@ -21121,7 +21121,7 @@
 "rRf" = (
 /obj/effect/spawner/structure/window/reinforced,
 /obj/machinery/door/poddoor/shutters/preopen{
-	id_tag = "researchshuts";
+	id = "researchshuts";
 	name = "Research Shutters"
 	},
 /turf/open/floor/plating,
@@ -21542,7 +21542,7 @@
 /obj/machinery/door/poddoor{
 	density = 0;
 	icon_state = "open";
-	id_tag = "experimentor";
+	id = "experimentor";
 	name = "Experimentor Blast Door";
 	opacity = 0
 	},
@@ -21940,13 +21940,13 @@
 "sJU" = (
 /obj/effect/spawner/structure/window/reinforced,
 /obj/machinery/door/poddoor/shutters/preopen{
-	id_tag = "brigshuts";
+	id = "brigshuts";
 	name = "Brig Shutters"
 	},
 /obj/machinery/door/poddoor{
 	density = 0;
 	icon_state = "open";
-	id_tag = "briglock";
+	id = "briglock";
 	name = "Brig Lockdown";
 	opacity = 0
 	},
@@ -22199,7 +22199,7 @@
 	req_access = list(29)
 	},
 /obj/machinery/door/poddoor/shutters{
-	id_tag = "roboticsshutters";
+	id = "roboticsshutters";
 	name = "Mech Bay Shutters"
 	},
 /turf/open/floor/plasteel/dark,
@@ -24226,7 +24226,7 @@
 "uDq" = (
 /obj/effect/spawner/structure/window/reinforced,
 /obj/machinery/door/poddoor/shutters/preopen{
-	id_tag = "chemshuts";
+	id = "chemshuts";
 	name = "Chemistry Shutters"
 	},
 /turf/open/floor/plating,
@@ -24410,7 +24410,7 @@
 "uMC" = (
 /obj/effect/spawner/structure/window/reinforced,
 /obj/machinery/door/poddoor/preopen{
-	id_tag = "PermaLockdown";
+	id = "PermaLockdown";
 	name = "Perma Lockdown"
 	},
 /obj/structure/cable,
@@ -24748,7 +24748,7 @@
 /obj/machinery/door/poddoor{
 	density = 0;
 	icon_state = "open";
-	id_tag = "briglock";
+	id = "briglock";
 	name = "Brig Lockdown";
 	opacity = 0
 	},
@@ -25402,13 +25402,13 @@
 /obj/effect/spawner/structure/window/reinforced,
 /obj/machinery/door/poddoor/shutters/preopen{
 	dir = 1;
-	id_tag = "brigshuts";
+	id = "brigshuts";
 	name = "Brig Shutters"
 	},
 /obj/machinery/door/poddoor{
 	density = 0;
 	icon_state = "open";
-	id_tag = "briglock";
+	id = "briglock";
 	name = "Brig Lockdown";
 	opacity = 0
 	},
@@ -25673,7 +25673,7 @@
 /obj/effect/spawner/structure/window/reinforced,
 /obj/machinery/door/poddoor/shutters/preopen{
 	dir = 8;
-	id_tag = "chemshuts";
+	id = "chemshuts";
 	name = "Chemistry Shutters"
 	},
 /turf/open/floor/plating,
@@ -25857,13 +25857,13 @@
 /obj/effect/spawner/structure/window/reinforced,
 /obj/machinery/door/poddoor/shutters/preopen{
 	dir = 2;
-	id_tag = "brigshuts";
+	id = "brigshuts";
 	name = "Brig Shutters"
 	},
 /obj/machinery/door/poddoor{
 	density = 0;
 	icon_state = "open";
-	id_tag = "briglock";
+	id = "briglock";
 	name = "Brig Lockdown";
 	opacity = 0
 	},
@@ -26578,7 +26578,7 @@
 /obj/machinery/door/poddoor{
 	density = 0;
 	icon_state = "open";
-	id_tag = "briglock";
+	id = "briglock";
 	name = "Brig Lockdown";
 	opacity = 0
 	},
@@ -28541,7 +28541,7 @@
 /obj/machinery/door/poddoor{
 	density = 0;
 	icon_state = "open";
-	id_tag = "briglock";
+	id = "briglock";
 	name = "Brig Lockdown";
 	opacity = 0
 	},
@@ -28565,7 +28565,7 @@
 /area/engineering/main)
 "ydL" = (
 /obj/machinery/door/poddoor/shutters/preopen{
-	id_tag = "researchshuts";
+	id = "researchshuts";
 	name = "Research Shutters"
 	},
 /obj/machinery/door/window/southleft{
