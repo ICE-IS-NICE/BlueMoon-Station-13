@@ -129,3 +129,7 @@ endmap
 map icemoonstation
 minplayers 30
 endmap
+
+map towerstation
+maxplayers 70
+endmap
