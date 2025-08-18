@@ -365,7 +365,7 @@
 	icon_state = "small"
 	material = /datum/material/glass
 	replace_floors = list(/turf/open/floor/glass = 1)
-	sound = 'sound/effects/hit_on_shattered_glass.ogg'
+	sound = "shatter"
 
 /datum/dimension_theme/fancy
 	name = "Fancy"
