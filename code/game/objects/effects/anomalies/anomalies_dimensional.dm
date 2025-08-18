@@ -1,6 +1,7 @@
 /obj/effect/anomaly/dimensional
 	name = "dimensional anomaly"
 	icon_state = "dimensional"
+	aSignal = /obj/item/assembly/signaler/anomaly/dimensional
 	lifespan = (120 SECONDS) * 20 /*ANOMALY_COUNTDOWN_TIMER*/ // will generally be killed off by reaching max teleports first
 	immobile = TRUE
 	/// Range of effect, if left alone anomaly will convert a 2(range)+1 squared area.
