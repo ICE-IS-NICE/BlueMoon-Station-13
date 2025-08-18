@@ -316,7 +316,7 @@
 	icon_state = "snowman_h"
 	window_colour = "#00f7ff"
 	material = /datum/material/snow
-	replace_floors = list(/turf/open/floor/plating/asteroid/snow = 10, /turf/open/floor/fakeice/slippery = 1)
+	replace_floors = list(/turf/open/floor/grass/snow/fake = 10, /turf/open/floor/fakeice/slippery = 1)
 	replace_walls = /turf/closed/wall/mineral/snow
 	random_spawns = list(
 		/obj/structure/flora/grass/both,
@@ -418,15 +418,15 @@
 	icon = 'icons/obj/lighting.dmi'
 	icon_state = "lbulb"
 	material = /datum/material/glass
-	replace_floors = list(/turf/open/floor/light = 1)
+	replace_floors = list(/turf/open/floor/light/colour_cycle/dancefloor_a = 1)
 
-/datum/dimension_theme/disco/transform_floor(turf/open/floor/affected_floor)
-	. = ..()
-	if (!.)
-		return
-	var/turf/open/floor/light/disco_floor = affected_floor
-	disco_floor.currentcolor = rand(1, length(disco_floor.coloredlights))
-	disco_floor.update_icon()
+// /datum/dimension_theme/disco/transform_floor(turf/open/floor/affected_floor)
+// 	. = ..()
+// 	if (!.)
+// 		return
+// 	var/turf/open/floor/light/disco_floor = affected_floor
+// 	disco_floor.currentcolor = rand(1, length(disco_floor.coloredlights))
+// 	disco_floor.update_icon()
 
 /datum/dimension_theme/jungle
 	name = "Jungle"
