@@ -15,9 +15,9 @@
 	/// How many times we can still teleport. Delete self if it hits 0 and we try to teleport. If immortal, will simply stay where it is
 	var/teleports_left
 	/// Minimum teleports it will do before going away permanently
-	var/minimum_teleports = 1
+	var/minimum_teleports = 2
 	/// Maximum teleports it will do before going away permanently
-	var/maximum_teleports = 4
+	var/maximum_teleports = 6
 
 /obj/effect/anomaly/dimensional/Initialize(mapload, new_lifespan, drops_core)
 	. = ..()
