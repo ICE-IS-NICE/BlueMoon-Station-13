@@ -23,7 +23,6 @@
 /turf/closed/wall,
 /area/engineering/main)
 "em" = (
-/obj/machinery/firealarm/directional/east,
 /obj/structure/weightmachine/weightlifter,
 /turf/open/floor/plasteel/dark/textured/large,
 /area/engineering/main)
@@ -160,6 +159,7 @@
 	dir = 1
 	},
 /obj/structure/closet/secure_closet/personal,
+/obj/machinery/firealarm/directional/north,
 /turf/open/floor/plasteel/dark/textured/large,
 /area/engineering/main)
 "to" = (
@@ -239,8 +239,10 @@
 /turf/open/floor/plasteel/dark/textured/large,
 /area/engineering/main)
 "Ck" = (
-/obj/machinery/light,
-/obj/effect/mapping_helpers/network_builder/power_cable/red/auto,
+/obj/machinery/atmospherics/pipe/simple/supply/hidden{
+	dir = 4
+	},
+/obj/structure/chair/stool,
 /turf/open/floor/plasteel/dark/textured/large,
 /area/engineering/main)
 "CB" = (
@@ -914,7 +916,7 @@ eq
 MD
 aa
 aa
-Ck
+aa
 hd
 zS
 zS
@@ -966,7 +968,7 @@ zS
 "}
 (20,1,1) = {"
 Ie
-rK
+Ck
 jI
 Jv
 Jv
