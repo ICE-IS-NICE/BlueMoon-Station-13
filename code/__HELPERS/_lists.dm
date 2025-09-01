@@ -359,7 +359,7 @@
 			if(L[item] == 0) // the weight is set to 0 intentionally
 				L[item] = base_weight
 			else // the weight is not defined. almost every time it's just an oversight.
-				L[item] = max(1, base_weight)
+				L[item] = max(1, (base_weight+1))
 		total += L[item]
 
 	total = rand(1, total)
