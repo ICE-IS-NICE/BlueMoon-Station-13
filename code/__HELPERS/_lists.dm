@@ -356,7 +356,10 @@
 	var/total = 0
 	for(var/item in L)
 		if(!L[item])
-			L[item] = base_weight
+			if(L[item] == 0) // the weight is set to 0 intentionally
+				L[item] = base_weight
+			else // the weight is not defined. almost every time it's just an oversight.
+				L[item] = max(1, base_weight)
 		total += L[item]
 
 	total = rand(1, total)
