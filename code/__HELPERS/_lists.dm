@@ -349,17 +349,14 @@
 //3. For each element in the list, subtracts its weighting from that number
 //4. If that makes the number 0 or less, return that element.
 //Will output null sometimes if you use decimals (e.g. 0.1 instead of 10) as rand() uses integers, not floats
-/proc/pickweight(list/L, base_weight = 0)
+/proc/pickweight(list/L)
 	if(length(L) == 0)
 		return null
 
 	var/total = 0
 	for(var/item in L)
-		if(!L[item])
-			if(L[item] == 0) // the weight is set to 0 intentionally
-				L[item] = base_weight
-			else // the weight is not defined. almost every time it's just an oversight.
-				L[item] = max(1, (base_weight+1))
+		if(!L[item] && (L[item] != 0)) // The weight is set to 0 intentionally. Otherwise the weight is not defined. Almost every time it's just an oversight.
+			L[item] = 1
 		total += L[item]
 
 	total = rand(1, total)
@@ -377,13 +374,13 @@
 //Picks a number of elements from a list based on weight.
 //This is highly optimised and good for things like grabbing 200 items from a list of 40,000
 //Much more efficient than many pickweight calls
-/proc/pickweight_mult(list/L, quantity, base_weight = 0)
+/proc/pickweight_mult(list/L, quantity)
 	//First we total the list as normal
 	var/total = 0
 	var/item
 	for (item in L)
-		if (!L[item])
-			L[item] = base_weight
+		if (!L[item] && L[item] != 0) // The weight is set to 0 intentionally. Otherwise the weight is not defined. Almost every time it's just an oversight.
+			L[item] = 1
 		total += L[item]
 
 	//Next we will make a list of randomly generated numbers, called Requests
@@ -439,9 +436,9 @@
 
 //Pick a random element from the list by weight and remove it from the list.
 //Result is returned as a list in the format list(key, value)
-/proc/pickweight_n_take(list/L, base_weight = 0)
+/proc/pickweight_n_take(list/L)
 	if (L.len)
-		. = pickweight(L, base_weight)
+		. = pickweight(L)
 		L.Remove(.)
 
 //Returns the top(last) element from the list and removes it from the list (typical stack function)
