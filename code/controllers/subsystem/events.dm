@@ -59,9 +59,9 @@ SUBSYSTEM_DEF(events)
 	if(!CONFIG_GET(flag/allow_random_events))
 		return
 
+	var/gamemode = SSticker.mode.config_tag
 	var/players_amt = get_active_player_count(alive_check = TRUE, afk_check = TRUE, human_check = TRUE)
 	// Only alive, non-AFK human players count towards this.
-	var/gamemode = SSticker.mode.config_tag
 
 	var/list/event_roster = list()
 
