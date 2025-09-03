@@ -207,8 +207,8 @@
 	if(I.force >= 10 && istype(M))
 		if(M.IsUnconscious())
 			M.SetUnconscious(0)
-		pedal(M)
 		M.emote("scream")
+		pedal(M)
 		M.set_lust(0) // some whips appy lust damage. no comments.
 
 /obj/structure/chair/pedalgen/post_unbuckle_mob(mob/living/M)
