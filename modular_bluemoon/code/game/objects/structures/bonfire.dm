@@ -93,6 +93,12 @@
 				break
 	. = ..()
 
+/obj/structure/bonfire/prelit/ash/StartBurning()
+	. = ..()
+	if(!burning)
+		visible_message(span_danger("[src] не смог разгореться."))
+		addtimer(CALLBACK(src, PROC_REF(extinguish)), 1 SECONDS, TIMER_DELETE_ME)
+
 /obj/structure/bonfire/prelit/ash/extinguish()
 	. = ..()
 	qdel(src)
