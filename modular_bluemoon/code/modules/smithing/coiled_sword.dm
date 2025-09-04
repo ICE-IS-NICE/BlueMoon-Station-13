@@ -1,6 +1,6 @@
 /obj/item/smithing/coiled_sword
 	name = "raw coiled sword"
-	icon = 'modular_splurt/icons/obj/smith.dmi'
+	icon = 'modular_bluemoon/icons/obj/smith/coiled_sword.dmi'
 	icon_state = "coiled_raw"
 	finishingitem = /obj/item/stack/ore/glass/basalt
 	finalitem = /obj/item/melee/smith/coiled_sword
@@ -10,6 +10,8 @@
 	. = ..()
 	if(!heated_in_lava)
 		. += "Этот клинок выглядит практически завершенным, однако лишь кипящая лава позволит раскрыть его истинный потенциал."
+	else
+		. += "Этот клинок готов к финальному штриху - покрыванию пеплом."
 
 /obj/item/smithing/coiled_sword/attackby(obj/item/I, mob/user)
 	if(istype(I, finishingitem) && !heated_in_lava)
@@ -21,10 +23,11 @@
 /obj/item/smithing/coiled_sword/afterattack(atom/target, mob/user, proximity_flag, click_parameters)
 	. = ..()
 	if(islava(target) && proximity_flag)
-		visible_message("[user] погружает конец витого меча в кипящую лаву...")
-		if(do_after(user, 10 SECONDS, target))
-			visible_message("... и вынимает - конец клинка излучает томную пылающую ауру.")
+		visible_message("[user] погружает лезвие витого меча в кипящую лаву...")
+		if(do_after(user, 10 SECONDS, target, IGNORE_HELD_ITEM))
+			visible_message("... и вынимает - лезвие излучает томную пылающую ауру.")
 			heated_in_lava = TRUE
+			add_overlay(mutable_appearance('modular_bluemoon/icons/obj/smith/coiled_sword.dmi', "coiled_flame"))
 		else
 			visible_message("... но вынимает его слишком рано и клинок заметно тускнеет.")
 			quality -= 2
@@ -32,22 +35,22 @@
 /obj/item/smithing/coiled_sword/startfinish()
 	var/obj/item/melee/smith/coiled_sword/finalforreal = new /obj/item/melee/smith/coiled_sword(src)
 	finalforreal.quality = quality
-	finalforreal.force += quality
-	finalforreal.flame_power = max(1, (finalforreal.flame_power + quality)) // 1 to 10+
+	finalforreal.force += quality/2
+	finalforreal.flame_power = max(1, (finalforreal.flame_power + quality/2)) // 1 to 6+
 	finalitem = finalforreal
 	..()
 
 /obj/item/melee/smith/coiled_sword
 	name = "coiled sword"
-	icon = ''
+	icon = 'modular_bluemoon/icons/obj/smith/coiled_sword.dmi'
 	icon_state = "coiled"
-	overlay_state = "flame_end"
-	force = 4
+	overlay_state = "coiled_flame"
+	force = 3
 	item_flags = NEEDS_PERMIT
 	sharpness = SHARP_EDGED
 	light_power = 0.5
 	light_color = LIGHT_COLOR_FIRE
-	var/flame_power = 1 // 1 to 10+
+	var/flame_power = 1
 
 /obj/item/melee/smith/coiled_sword/Initialize(mapload)
 	. = ..()
@@ -55,24 +58,26 @@
 
 /obj/item/melee/smith/coiled_sword/examine(mob/user)
 	. = ..()
-	. += "Вонзи этот томно тлеющий витой меч в горстку вулканического пепла, чтобы пробудить его [span_engradio("<i>предназначение</i>")]."
+	. += "Вонзи этот томно тлеющий витой меч в горстку вулканического пепла, чтобы пробудить его [span_engradio("<i>особенность</i>")]."
 
 /obj/item/melee/smith/coiled_sword/afterattack(atom/target, mob/user, proximity_flag, click_parameters)
 	. = ..()
-	if(istype(target, /obj/item/stack/ore/glass/basalt) && proximity_flag)
-		var/obj/item/stack/ore/glass/basalt/B = target
-		if(B.use(10))
-			if(user.temporarilyRemoveItemFromInventory(src))
-				visible_message("<i>[user] вонзает витой меч в вулканический пепел.</i>")
-				var/obj/structure/bonfire/prelit/ash/A = new /obj/structure/bonfire/prelit/ash(get_turf(target))
-				forceMove(A)
-				A.sword = src
-				A.set_restoration(TRUE) // we do it here beacuse no sword = no healing
+	if(proximity_flag)
+		if(istype(target, /obj/item/stack/ore/glass/basalt))
+			var/obj/item/stack/ore/glass/basalt/B = target
+			var/bonfire_place = get_turf(target)
+			if(B.use(10))
+				if(user.temporarilyRemoveItemFromInventory(src))
+					visible_message("<i>[user] вонзает витой меч в вулканический пепел.</i>")
+					var/obj/structure/bonfire/prelit/ash/A = new /obj/structure/bonfire/prelit/ash(bonfire_place)
+					forceMove(A)
+					A.sword = src
+					A.set_restoration(TRUE) // we do it here beacuse no sword = no healing
+				else
+					to_chat(user, span_danger("По какой-то причине ты не смог воткнуть меч."))
 			else
-				to_chat(user, span_danger("По какой-то причине ты не смог воткнуть меч."))
-		else
-			to_chat(user, span_danger("Слишком мало пепла."))
-	else if(isliving(target))
-		var/mob/living/L = target
-		L.adjust_fire_stacks(flame_power)
-		L.IgniteMob()
+				to_chat(user, span_danger("Слишком мало пепла."))
+		else if(iscarbon(target)) // sadly, simple animals don't burn
+			var/mob/living/carbon/C = target
+			C.adjust_fire_stacks(flame_power)
+			C.IgniteMob()

@@ -1,32 +1,39 @@
-#define BONFIRE_HEALING_POWER_SMALL 0.1
-#define BONFIRE_HEALING_POWER_MEDIUM 0.33
-#define BONFIRE_HEALING_POWER_HIGH 0.5
+// check PROCESSING_SUBSYSTEM_DEF(aura)
+#define BONFIRE_HEALING_POWER_SMALL 0.17	// ~ 0.5 hp per second
+#define BONFIRE_HEALING_POWER_MEDIUM 0.33  	// ~ 1 hp per second
+#define BONFIRE_HEALING_POWER_HIGH 0.5 		// ~ 1.5 hp per second
 
 /obj/structure/bonfire/prelit/ash
-	name = ""
-	desc = ""
-	icon = ''
-	icon_state = ""
+	name = "ashen bonfire"
+	desc = "Томно тлеющий меч, вонзенный в умиротворенно горящую кучу вулканического пепла. Сам по себе удивителен тот факт, что она так хорошо горит. \
+			Вблизи пламени этого необычного костровища ощущается безопасность и покой."
+	icon = 'modular_bluemoon/icons/obj/structures/ashen_bonfire.dmi'
+	icon_state = "ashen_bonfire"
+	burn_icon = "ashen_bonfire"
+	max_integrity = 100
 	var/obj/item/melee/smith/coiled_sword/sword
 	var/legendary_sword = FALSE
-	var/healing_power = BONFIRE_HEALING_POWER_MEDIUM // ~ 1hp per second, check PROCESSING_SUBSYSTEM_DEF(aura)
+	var/healing_power = BONFIRE_HEALING_POWER_MEDIUM
 
 // /obj/structure/bonfire/prelit/ash/Initialize(mapload)
 // 	. = ..()
 
 /obj/structure/bonfire/prelit/ash/Destroy()
-	visible_message("<i>Пепел затухает навсегда, теряя свои необычные свойства...</i>")
+	visible_message("<i>Пепел затухает навсегда, теряя свои необычные свойства, а меч покрывается еле-заметными трещинами.</i>")
 	set_restoration(FALSE)
 	for(var/i = 1 to 5)
 		new /obj/effect/decal/cleanable/ash(get_turf(src))
 	if(istype(sword) && !QDELETED(sword))
 		sword.forceMove(drop_location())
+		sword.take_damage(sword.max_integrity/3, sound_effect = 0)
+		if(QDELETED(sword))
+			visible_message(span_warning("Хрупкий витой меч на глазах рассыпается в прах."))
 	. = ..()
 
 /obj/structure/bonfire/prelit/ash/examine(mob/user)
 	. = ..()
 	if(legendary_sword)
-		. += span_engradio("Раскаленный до красна клинок ярко сияет в густых языках пламени!")
+		. += span_engradio("Раскаленный до красна клинок ярко переливается в густых языках пламени!")
 	else
 		switch(healing_power)
 			if(BONFIRE_HEALING_POWER_SMALL)
@@ -58,10 +65,10 @@
 	if(state)
 		for(var/mob/living/L in view(src, 1))
 			to_chat(L, span_engradio("<span class='italics'>Ты ощущаешь необычное спокойствие и умиротворение от теплого костра..."))
-		healing_power = initial(healing_power)
+		// healing_power = initial(healing_power)
 		// var/obj/item/melee/smith/S = locate(/obj/item/melee/smith/twohand/zweihander) in contents
 		// I don't use switch() because quality ranges in /dofinish() intercept and its really awful.
-		if(isnull(sword.quality)) // simply spawned
+		if(isnull(sword.quality))
 			healing_power = BONFIRE_HEALING_POWER_MEDIUM
 		else if(sword.quality <= -1) // awful - poor
 			healing_power = BONFIRE_HEALING_POWER_SMALL
@@ -103,6 +110,7 @@
 			var/datum/wound/W = pick(H.all_wounds)
 			if(W)
 				W.remove_wound()
+				to_chat(H, span_engradio("Твои раны затягиваются..."))
 				break
 	. = ..()
 
