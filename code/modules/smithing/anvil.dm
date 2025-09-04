@@ -30,6 +30,9 @@
 #define RECIPE_GLAIVE "usfp" //upset shrink fold punch
 #define RECIPE_PIKE "ddbf" //draw draw bend fold
 
+
+#define RECIPE_COILEDSWORD "bbbbb" //bend bend bend bend bend
+
 /obj/structure/anvil
 	name = "anvil"
 	desc = "Base class of anvil. This shouldn't exist, but is useable."
@@ -68,7 +71,8 @@
 	RECIPE_HALBERD = /obj/item/smithing/halberdhead,
 	RECIPE_GLAIVE = /obj/item/smithing/glaivehead,
 	RECIPE_PIKE = /obj/item/smithing/pikehead,
-	RECIPE_STUNDIL = /obj/item/smithing/stundild)
+	RECIPE_STUNDIL = /obj/item/smithing/stundild,
+	RECIPE_COILEDSWORD = /obj/item/smithing/coiled_sword)
 
 /obj/structure/anvil/Initialize(mapload)
 	. = ..()

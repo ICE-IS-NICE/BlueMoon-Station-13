@@ -165,7 +165,7 @@
 	StartBurning()
 
 /obj/structure/bonfire/attackby(obj/item/W, mob/user, params)
-	if(istype(W, /obj/item/stack/rods) && !can_buckle && !grill && !sword)
+	if(istype(W, /obj/item/stack/rods) && !can_buckle && !grill)
 		var/obj/item/stack/rods/R = W
 		var/choice = input(user, "What would you like to construct?", "Bonfire") as null|anything in list("Stake","Grill")
 		switch(choice)
