@@ -204,6 +204,7 @@
 		START_PROCESSING(SSobj, src)
 
 /obj/structure/chair/pedalgen/proc/apply_motivation(mob/living/carbon/monkey/M, obj/item/I, mob/living/L, params)
+	SIGNAL_HANDLER
 	if(I.force >= 10 && istype(M))
 		if(M.IsUnconscious())
 			M.SetUnconscious(0)
