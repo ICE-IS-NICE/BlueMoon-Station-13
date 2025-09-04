@@ -52,14 +52,14 @@
 	if(state)
 		for(var/mob/living/L in view(src, 1))
 			to_chat(L, span_engradio("<span class='italics'>Ты ощущаешь необычное спокойствие и умиротворение от теплого костра..."))
-		// I don't use switch() because quality ranges in /dofinish() intercept and its really awful.
-		if(isnull(sword.quality))
+		// quality ranges in /dofinish() intercept and its really awful.
+		if(isnull(sword.quality)) // simply spawned
 			healing_power = BONFIRE_HEALING_POWER_MEDIUM
-		else if(sword.quality <= -1) // awful - poor
+		else if(sword.quality <= 1) // awful - normal
 			healing_power = BONFIRE_HEALING_POWER_SMALL
-		else if(-1 < sword.quality && sword.quality < 5.5) // normal - good
+		else if(1 < sword.quality && sword.quality < 7.5) // above-average - excellent
 			healing_power = BONFIRE_HEALING_POWER_MEDIUM
-		else if(5.5 <= sword.quality && sword.quality < 10) // excellent - masterwork
+		else if(7.5 <= sword.quality && sword.quality < 10) // masterwork
 			healing_power = BONFIRE_HEALING_POWER_HIGH
 		else if(10 <= sword.quality) //legendary
 			healing_power = BONFIRE_HEALING_POWER_HIGH

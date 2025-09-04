@@ -31,7 +31,7 @@
 #define RECIPE_PIKE "ddbf" //draw draw bend fold
 
 
-#define RECIPE_COILEDSWORD "bbbbb" //bend bend bend bend bend
+#define RECIPE_COILEDSWORD "ppbbb" //punch punch bend bend bend
 
 /obj/structure/anvil
 	name = "anvil"

@@ -14,9 +14,15 @@
 		. += "Этот клинок готов к финальному штриху - покрыванию пеплом."
 
 /obj/item/smithing/coiled_sword/attackby(obj/item/I, mob/user)
-	if(istype(I, finishingitem) && !heated_in_lava)
-		to_chat(user, "Прежде чем покрывать витой меч пеплом, его требуется окунуть в кипящую лаву. Только она поможет ракрыть его потенциал.")
-		return
+	if(istype(I, finishingitem))
+		if(!heated_in_lava)
+			to_chat(user, "Прежде чем покрывать витой меч пеплом, его требуется окунуть в кипящую лаву. Только она поможет ракрыть его потенциал.")
+			return
+		else
+			var/obj/item/stack/ore/glass/basalt/B = I
+			if(B.get_amount() > 1)
+				B.split_stack(user, (B.get_amount() - 1)) // will use 1
+			. = ..()
 	else
 		. = ..()
 
@@ -45,7 +51,6 @@
 	icon = 'modular_bluemoon/icons/obj/smith/coiled_sword.dmi'
 	icon_state = "coiled"
 	overlay_state = "coiled_flame"
-	force = 3
 	item_flags = NEEDS_PERMIT
 	sharpness = SHARP_EDGED
 	light_power = 0.5
@@ -64,11 +69,15 @@
 	. = ..()
 	if(proximity_flag)
 		if(istype(target, /obj/item/stack/ore/glass/basalt))
+			if(!isturf(target.loc))
+				to_chat(user, span_danger("Пепел должен быть на полу."))
+				return
 			var/obj/item/stack/ore/glass/basalt/B = target
 			var/bonfire_place = get_turf(target)
 			if(B.use(10))
 				if(user.temporarilyRemoveItemFromInventory(src))
 					visible_message("<i>[user] вонзает витой меч в вулканический пепел.</i>")
+					step_to(B, user) // to prevent melting extra ash
 					var/obj/structure/bonfire/prelit/ash/A = new /obj/structure/bonfire/prelit/ash(bonfire_place)
 					forceMove(A)
 					A.sword = src
