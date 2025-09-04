@@ -15,9 +15,6 @@
 	var/legendary_sword = FALSE
 	var/healing_power = BONFIRE_HEALING_POWER_MEDIUM
 
-// /obj/structure/bonfire/prelit/ash/Initialize(mapload)
-// 	. = ..()
-
 /obj/structure/bonfire/prelit/ash/Destroy()
 	visible_message("<i>Пепел затухает навсегда, теряя свои необычные свойства, а меч покрывается еле-заметными трещинами.</i>")
 	set_restoration(FALSE)
@@ -27,7 +24,7 @@
 		sword.forceMove(drop_location())
 		sword.take_damage(sword.max_integrity/3, sound_effect = 0)
 		if(QDELETED(sword))
-			visible_message(span_warning("Хрупкий витой меч на глазах рассыпается в прах."))
+			visible_message(span_warning("Хрупкий витой меч рассыпается в прах."))
 	. = ..()
 
 /obj/structure/bonfire/prelit/ash/examine(mob/user)
@@ -46,16 +43,6 @@
 /obj/structure/bonfire/prelit/ash/attackby(obj/item/W, mob/user, params) ///obj/item/melee/zweihander из сундуков
 	if(istype(W, /obj/item/stack/rods))
 		return
-	// if(istype(W, /obj/item/melee/smith/twohand/zweihander) && !can_buckle && !grill && !sword)
-	// 	if(!user.transferItemToLoc(W, src))
-	// 		return
-	// 	sword = TRUE
-	// 	to_chat(user, "<span class='italics'>Ты вонзаешь клинок в костер.")
-	// 	if(burning)
-	// 		set_restoration(TRUE)
-	// 	var/mutable_appearance/rod_underlay = mutable_appearance('icons/obj/hydroponics/equipment.dmi', "bonfire_rod")
-	// 	rod_underlay.pixel_y = 16
-	// 	underlays += rod_underlay
 	else
 		. = ..()
 
@@ -65,8 +52,6 @@
 	if(state)
 		for(var/mob/living/L in view(src, 1))
 			to_chat(L, span_engradio("<span class='italics'>Ты ощущаешь необычное спокойствие и умиротворение от теплого костра..."))
-		// healing_power = initial(healing_power)
-		// var/obj/item/melee/smith/S = locate(/obj/item/melee/smith/twohand/zweihander) in contents
 		// I don't use switch() because quality ranges in /dofinish() intercept and its really awful.
 		if(isnull(sword.quality))
 			healing_power = BONFIRE_HEALING_POWER_MEDIUM
@@ -80,8 +65,6 @@
 			healing_power = BONFIRE_HEALING_POWER_HIGH
 			legendary_sword = TRUE
 			add_overlay(mutable_appearance('icons/obj/hydroponics/equipment.dmi', "bonfire_on_fire_intense", ABOVE_OBJ_LAYER))
-		// if(!is_mining_level(get_turf(src)) && !is_away_level(get_turf(src))) // only for those who really need it
-		// 	healing_power /= 2
 		AddComponent( \
 						/datum/component/aura_healing, \
 						range = 1, \
@@ -100,31 +83,17 @@
 		if(A)
 			A.RemoveComponent()
 
-// for(var/thing in human.all_wounds)
-		// var/datum/wound/W = thing
-		// W.remove_wound()
-
 /obj/structure/bonfire/prelit/ash/process()
 	if(legendary_sword && prob(10))
 		for(var/mob/living/carbon/human/H in view(src, 1))
 			var/datum/wound/W = pick(H.all_wounds)
 			if(W)
 				W.remove_wound()
-				to_chat(H, span_engradio("Твои раны затягиваются..."))
+				to_chat(H, span_engradio("Тепло пламени костра трепетно затягивает твои раны."))
 				break
 	. = ..()
 
-// /obj/structure/bonfire/prelit/ash/StartBurning()
-// 	if(!burning && CheckOxygen())
-// 		if(legendary_sword)
-
-// 	. = ..()
-
 /obj/structure/bonfire/prelit/ash/extinguish()
-	// if(sword)
-	// 	set_restoration(FALSE)
-	// 	if(legendary_sword)
-	// 		cut_overlay(mutable_appearance('icons/obj/hydroponics/equipment.dmi', "bonfire_on_fire_intense", ABOVE_OBJ_LAYER))
 	. = ..()
 	qdel(src)
 
