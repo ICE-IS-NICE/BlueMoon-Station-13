@@ -78,6 +78,38 @@
 	. = ..()
 	currentquality = anvilquality
 
+/obj/structure/anvil/examine(mob/user)
+	. = ..()
+	. += span_boldnotice("<a href='?src=[REF(src)];recipes=1'>\[Recipes\]</a>")
+
+/obj/structure/anvil/Topic(href, list/href_list)
+	. = ..()
+	if(.)
+		return
+	if(href_list["recipes"])
+		var/list/output_text = list("<span class='notice'><u><b>KNOWN RECIPES</u></b>")
+		for(var/recipe in smithrecipes)
+			var/list/formula = list()
+			for(var/l in text2charlist(recipe))
+				switch(l)
+					if("f")
+						formula += "fold"
+					if("d")
+						formula += "draw"
+					if("s")
+						formula += "shrink"
+					if("b")
+						formula += "bend"
+					if("p")
+						formula += "punch"
+					if("u")
+						formula += "upset"
+			var/text_formula = formula.Join(" ")
+			var/obj/item/smithing/weapon = smithrecipes[recipe]
+			output_text += "\n[capitalize("[weapon.finalitem.name]")] - [text_formula]"
+		output_text += "</span>"
+		to_chat(usr, "[output_text.Join()]")
+
 /obj/structure/anvil/attackby(obj/item/I, mob/user)
 	if(istype(I, /obj/item/ingot))
 		var/obj/item/ingot/notsword = I
