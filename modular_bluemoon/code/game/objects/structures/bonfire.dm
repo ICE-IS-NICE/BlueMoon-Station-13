@@ -40,7 +40,7 @@
 			if(BONFIRE_HEALING_POWER_HIGH)
 				. += span_engradio("Пышные языки пламени бурно возносятся вверх!")
 
-/obj/structure/bonfire/prelit/ash/attackby(obj/item/W, mob/user, params) ///obj/item/melee/zweihander из сундуков
+/obj/structure/bonfire/prelit/ash/attackby(obj/item/W, mob/user, params)
 	if(istype(W, /obj/item/stack/rods))
 		return
 	else
@@ -52,7 +52,7 @@
 	if(state)
 		for(var/mob/living/L in view(src, 1))
 			to_chat(L, span_engradio("<span class='italics'>Ты ощущаешь необычное спокойствие и умиротворение от теплого костра..."))
-		// quality ranges in /dofinish() intercept and its really awful.
+		// quality ranges in /dofinish() intercept and are really awfully organized.
 		if(isnull(sword.quality)) // simply spawned
 			healing_power = BONFIRE_HEALING_POWER_MEDIUM
 		else if(sword.quality <= 1) // awful - normal
@@ -77,6 +77,7 @@
 						organ_healing = list(ORGAN_SLOT_BRAIN = healing_power), \
 						simple_heal = healing_power, \
 						healing_color = COLOR_ORANGE, \
+						stackable = FALSE, \
 					)
 	else
 		var/datum/component/aura_healing/A = GetComponent(/datum/component/aura_healing)
