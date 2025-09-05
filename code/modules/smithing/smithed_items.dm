@@ -88,7 +88,7 @@
 
 /obj/item/smithing/examine(mob/user)
 	. = ..()
-	. += "Вам нужен [finishingitem.name] для завершения создания предмета."
+	. += "Вам нужен <b>[finishingitem.name]</b> для завершения создания предмета."
 
 /obj/item/smithing/attackby(obj/item/I, mob/user)
 	if(istype(I, finishingitem))
