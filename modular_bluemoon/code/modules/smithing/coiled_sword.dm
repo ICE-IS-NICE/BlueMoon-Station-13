@@ -79,6 +79,7 @@
 					visible_message("<i>[user] вонзает витой меч в вулканический пепел.</i>")
 					step_to(B, user) // to prevent melting extra ash
 					new /obj/structure/bonfire/prelit/ash(bonfire_place, src)
+					playsound(bonfire_place, 'modular_bluemoon/sound/effects/bonfire_lit.ogg', 100, FALSE)
 				else
 					to_chat(user, span_danger("По какой-то причине ты не смог воткнуть меч."))
 			else
