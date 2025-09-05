@@ -78,10 +78,7 @@
 				if(user.temporarilyRemoveItemFromInventory(src))
 					visible_message("<i>[user] вонзает витой меч в вулканический пепел.</i>")
 					step_to(B, user) // to prevent melting extra ash
-					var/obj/structure/bonfire/prelit/ash/A = new /obj/structure/bonfire/prelit/ash(bonfire_place)
-					forceMove(A)
-					A.sword = src
-					A.set_restoration(TRUE) // we do it here beacuse no sword = no healing
+					new /obj/structure/bonfire/prelit/ash(bonfire_place, src)
 				else
 					to_chat(user, span_danger("По какой-то причине ты не смог воткнуть меч."))
 			else

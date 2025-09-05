@@ -15,9 +15,17 @@
 	var/legendary_sword = FALSE
 	var/healing_power = BONFIRE_HEALING_POWER_MEDIUM
 
+/obj/structure/bonfire/prelit/ash/Initialize(mapload, obj/item/melee/smith/coiled_sword/S)
+	. = ..()
+	if(istype(S))
+		S.forceMove(src)
+		sword = S
+	else
+		sword = new(src)
+	begin_restoration()
+
 /obj/structure/bonfire/prelit/ash/Destroy()
 	visible_message("<i>Пепел затухает навсегда, теряя свои необычные свойства, а меч покрывается еле-заметными трещинами.</i>")
-	set_restoration(FALSE)
 	for(var/i = 1 to 5)
 		new /obj/effect/decal/cleanable/ash(get_turf(src))
 	if(istype(sword) && !QDELETED(sword))
@@ -46,43 +54,43 @@
 	else
 		. = ..()
 
-/obj/structure/bonfire/prelit/ash/proc/set_restoration(state)
-	if(isnull(sword) || QDELETED(sword))
+/obj/structure/bonfire/prelit/ash/proc/begin_restoration()
+	if(QDELETED(sword))
 		return
-	if(state)
-		for(var/mob/living/L in view(src, 1))
-			to_chat(L, span_engradio("<span class='italics'>Ты ощущаешь необычное спокойствие и умиротворение от теплого костра..."))
-		// quality ranges in /dofinish() intercept and are really awfully organized.
-		if(isnull(sword.quality)) // simply spawned
-			healing_power = BONFIRE_HEALING_POWER_MEDIUM
-		else if(sword.quality <= 1) // awful - normal
-			healing_power = BONFIRE_HEALING_POWER_SMALL
-		else if(1 < sword.quality && sword.quality < 7.5) // above-average - excellent
-			healing_power = BONFIRE_HEALING_POWER_MEDIUM
-		else if(7.5 <= sword.quality && sword.quality < 10) // masterwork
-			healing_power = BONFIRE_HEALING_POWER_HIGH
-		else if(10 <= sword.quality) //legendary
-			healing_power = BONFIRE_HEALING_POWER_HIGH
-			legendary_sword = TRUE
-			add_overlay(mutable_appearance('icons/obj/hydroponics/equipment.dmi', "bonfire_on_fire_intense", ABOVE_OBJ_LAYER))
-		AddComponent( \
-						/datum/component/aura_healing, \
-						range = 1, \
-						brute_heal = healing_power, \
-						burn_heal = healing_power, \
-						toxin_heal = healing_power, \
-						suffocation_heal = healing_power, \
-						stamina_heal = healing_power, \
-						blood_heal = healing_power, \
-						organ_healing = list(ORGAN_SLOT_BRAIN = healing_power), \
-						simple_heal = healing_power, \
-						healing_color = COLOR_ORANGE, \
-						stackable = FALSE, \
-					)
-	else
-		var/datum/component/aura_healing/A = GetComponent(/datum/component/aura_healing)
-		if(A)
-			A.RemoveComponent()
+	var/mutable_appearance/sword_underlay = mutable_appearance('modular_bluemoon/icons/obj/structures/ashen_bonfire.dmi', "sword_inserted")
+	sword_underlay.pixel_y = 16
+	underlays += sword_underlay
+	for(var/mob/living/L in view(src, 1))
+		to_chat(L, span_engradio("<span class='italics'>Ты ощущаешь необычное спокойствие и умиротворение от теплого костра..."))
+	// quality ranges in /dofinish() intercept and are really awfully organized.
+	if(isnull(sword.quality)) // simply spawned
+		healing_power = BONFIRE_HEALING_POWER_MEDIUM
+	else if(sword.quality <= 1) // awful - normal
+		healing_power = BONFIRE_HEALING_POWER_SMALL
+	else if(1 < sword.quality && sword.quality < 7.5) // above-average - excellent
+		healing_power = BONFIRE_HEALING_POWER_MEDIUM
+	else if(7.5 <= sword.quality && sword.quality < 10) // masterwork
+		healing_power = BONFIRE_HEALING_POWER_HIGH
+	else if(10 <= sword.quality) //legendary
+		healing_power = BONFIRE_HEALING_POWER_HIGH
+		legendary_sword = TRUE
+		var/mutable_appearance/big_fire_overlay = mutable_appearance('icons/obj/hydroponics/equipment.dmi', "bonfire_on_fire_intense", ABOVE_OBJ_LAYER)
+		big_fire_overlay.pixel_y = 8
+		add_overlay(big_fire_overlay)
+	AddComponent( \
+					/datum/component/aura_healing, \
+					range = 1, \
+					brute_heal = healing_power, \
+					burn_heal = healing_power, \
+					toxin_heal = healing_power, \
+					suffocation_heal = healing_power, \
+					stamina_heal = healing_power, \
+					blood_heal = healing_power, \
+					organ_healing = list(ORGAN_SLOT_BRAIN = healing_power), \
+					simple_heal = healing_power, \
+					healing_color = COLOR_ORANGE, \
+					stackable = FALSE, \
+				)
 
 /obj/structure/bonfire/prelit/ash/process()
 	if(legendary_sword && prob(10))
