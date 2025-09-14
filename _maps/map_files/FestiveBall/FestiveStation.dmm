@@ -12516,11 +12516,9 @@
 /turf/open/floor/wood,
 /area/service/bar/atrium)
 "aFj" = (
-/obj/effect/decal/festive/christmas_ivy_string,
-/obj/structure/table/wood,
-/obj/machinery/cell_charger,
-/turf/open/floor/wood,
-/area/engineering/main)
+/obj/structure/closet/secure_closet/atmospherics,
+/turf/open/floor/plasteel,
+/area/engineering/atmos)
 "aFk" = (
 /obj/structure/cable/white{
 	icon_state = "0-4"
@@ -48747,9 +48745,6 @@
 /obj/structure/rack,
 /obj/item/airlock_painter,
 /obj/item/toner,
-/obj/machinery/camera/autoname{
-	dir = 4
-	},
 /turf/open/floor/plasteel,
 /area/commons/storage/tools)
 "clE" = (
@@ -48766,6 +48761,9 @@
 /obj/machinery/light{
 	dir = 8;
 	light_color = "#e8eaff"
+	},
+/obj/machinery/camera/autoname{
+	dir = 4
 	},
 /turf/open/floor/plasteel,
 /area/commons/storage/tools)
@@ -57420,6 +57418,12 @@
 	},
 /turf/open/floor/plasteel/cafeteria,
 /area/maintenance/bar/cafe)
+"iQh" = (
+/obj/structure/sign/departments/science,
+/turf/closed/festive/whitebrick{
+	color = "#555555"
+	},
+/area/science/robotics/mechbay)
 "iRv" = (
 /obj/machinery/meter,
 /obj/machinery/atmospherics/pipe/simple/green/visible,
@@ -57945,10 +57949,6 @@
 /obj/structure/chair/pew,
 /turf/open/floor/carpet/green,
 /area/medical/surgery)
-"kbA" = (
-/obj/structure/closet/secure_closet/atmospherics,
-/turf/open/floor/plasteel,
-/area/engineering/atmos)
 "kda" = (
 /obj/structure/window/reinforced{
 	dir = 8
@@ -58685,6 +58685,12 @@
 /obj/item/flashlight/glowstick/cyan,
 /turf/open/floor/wood,
 /area/commons/dorms)
+"lKp" = (
+/obj/effect/decal/festive/christmas_ivy_string,
+/obj/structure/table/wood,
+/obj/machinery/cell_charger,
+/turf/open/floor/wood,
+/area/engineering/main)
 "lKZ" = (
 /obj/machinery/light/floor,
 /obj/effect/mapping_helpers/network_builder/atmos_pipe/supply/hidden/layer1,
@@ -62940,12 +62946,6 @@
 	},
 /turf/open/floor/plating/dirt/space,
 /area/edina)
-"ucL" = (
-/obj/structure/sign/departments/science,
-/turf/closed/festive/whitebrick{
-	color = "#555555"
-	},
-/area/science/robotics/mechbay)
 "ucU" = (
 /obj/structure/cable/yellow{
 	icon_state = "1-4"
@@ -77050,9 +77050,9 @@ ajK
 rxZ
 rxZ
 aJA
-kbA
+aFj
 mKa
-kbA
+aFj
 aBM
 aCM
 rxZ
@@ -78583,7 +78583,7 @@ axx
 qLa
 lyF
 ajK
-aFj
+lKp
 iIg
 cce
 bpX
@@ -99701,7 +99701,7 @@ bAF
 bXj
 bFg
 ccD
-ucL
+iQh
 aHR
 aHR
 aHR
@@ -99709,7 +99709,7 @@ xgS
 aHR
 aHR
 aHR
-ucL
+iQh
 bJj
 bQN
 bxR
