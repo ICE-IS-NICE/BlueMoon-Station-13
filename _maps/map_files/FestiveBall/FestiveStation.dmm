@@ -6718,23 +6718,6 @@
 /obj/effect/landmark/start/prisoner,
 /turf/open/floor/wood,
 /area/security/prison)
-"aqn" = (
-/obj/structure/disposalpipe/segment{
-	dir = 4
-	},
-/obj/structure/cable/yellow{
-	icon_state = "4-8"
-	},
-/obj/structure/cable/yellow{
-	icon_state = "0-8"
-	},
-/obj/structure/cable/yellow{
-	icon_state = "0-4"
-	},
-/obj/effect/spawner/structure/window/reinforced,
-/obj/structure/flora/tree/pine/xmas,
-/turf/open/floor/plasteel/white,
-/area/medical/medbay/lobby)
 "aqo" = (
 /obj/machinery/button/door{
 	id = "permacell2";
@@ -12532,6 +12515,12 @@
 	},
 /turf/open/floor/wood,
 /area/service/bar/atrium)
+"aFj" = (
+/obj/effect/decal/festive/christmas_ivy_string,
+/obj/structure/table/wood,
+/obj/machinery/cell_charger,
+/turf/open/floor/wood,
+/area/engineering/main)
 "aFk" = (
 /obj/structure/cable/white{
 	icon_state = "0-4"
@@ -22475,7 +22464,6 @@
 /obj/effect/turf_decal/bot/yellow,
 /obj/item/storage/toolbox/mechanical,
 /obj/item/flashlight,
-/obj/item/flashlight,
 /turf/open/floor/plasteel,
 /area/commons/storage/tools)
 "bdy" = (
@@ -28673,6 +28661,7 @@
 	dir = 1
 	},
 /obj/effect/mapping_helpers/network_builder/atmos_pipe/scrubbers/hidden/layer3,
+/obj/structure/flora/tree/pine/xmas,
 /turf/open/floor/plasteel/white,
 /area/medical/medbay/lobby)
 "bsY" = (
@@ -57431,12 +57420,6 @@
 	},
 /turf/open/floor/plasteel/cafeteria,
 /area/maintenance/bar/cafe)
-"iQh" = (
-/obj/structure/table/reinforced,
-/obj/effect/turf_decal/bot/yellow,
-/obj/item/storage/toolbox/mechanical,
-/turf/open/floor/plasteel,
-/area/commons/storage/tools)
 "iRv" = (
 /obj/machinery/meter,
 /obj/machinery/atmospherics/pipe/simple/green/visible,
@@ -57962,6 +57945,10 @@
 /obj/structure/chair/pew,
 /turf/open/floor/carpet/green,
 /area/medical/surgery)
+"kbA" = (
+/obj/structure/closet/secure_closet/atmospherics,
+/turf/open/floor/plasteel,
+/area/engineering/atmos)
 "kda" = (
 /obj/structure/window/reinforced{
 	dir = 8
@@ -58474,10 +58461,6 @@
 /obj/effect/mapping_helpers/network_builder/atmos_pipe/scrubbers/hidden/layer3,
 /turf/open/floor/plasteel/dark,
 /area/security/office)
-"lgt" = (
-/obj/structure/closet/secure_closet/atmospherics,
-/turf/open/floor/plasteel,
-/area/engineering/atmos)
 "lgK" = (
 /obj/effect/landmark/navigate_destination/aiupload,
 /turf/open/floor/plasteel/dark,
@@ -58702,12 +58685,6 @@
 /obj/item/flashlight/glowstick/cyan,
 /turf/open/floor/wood,
 /area/commons/dorms)
-"lKp" = (
-/obj/effect/decal/festive/christmas_ivy_string,
-/obj/structure/table/wood,
-/obj/machinery/cell_charger,
-/turf/open/floor/wood,
-/area/engineering/main)
 "lKZ" = (
 /obj/machinery/light/floor,
 /obj/effect/mapping_helpers/network_builder/atmos_pipe/supply/hidden/layer1,
@@ -62963,6 +62940,12 @@
 	},
 /turf/open/floor/plating/dirt/space,
 /area/edina)
+"ucL" = (
+/obj/structure/sign/departments/science,
+/turf/closed/festive/whitebrick{
+	color = "#555555"
+	},
+/area/science/robotics/mechbay)
 "ucU" = (
 /obj/structure/cable/yellow{
 	icon_state = "1-4"
@@ -77067,9 +77050,9 @@ ajK
 rxZ
 rxZ
 aJA
-lgt
+kbA
 mKa
-lgt
+kbA
 aBM
 aCM
 rxZ
@@ -78600,7 +78583,7 @@ axx
 qLa
 lyF
 ajK
-lKp
+aFj
 iIg
 cce
 bpX
@@ -94594,7 +94577,7 @@ bmb
 bjZ
 aTt
 bpQ
-aqn
+brl
 bsV
 buu
 bvH
@@ -99718,7 +99701,7 @@ bAF
 bXj
 bFg
 ccD
-aHR
+ucL
 aHR
 aHR
 aHR
@@ -99726,7 +99709,7 @@ xgS
 aHR
 aHR
 aHR
-aHR
+ucL
 bJj
 bQN
 bxR
@@ -103832,7 +103815,7 @@ bFg
 ccI
 aXv
 byE
-iQh
+bdx
 beY
 clJ
 cma
