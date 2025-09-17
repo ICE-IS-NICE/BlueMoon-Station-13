@@ -796,7 +796,7 @@
 		. += span_notice("Alt-Click: Можно попробовать включить оборудование для анестезии, если положить кого-то на стол.")
 
 	if(tank || mask)
-		. += span_notice("Ctrl-Click: Отсоединить от стола кислородный баллон и маску.")
+		. += span_notice("Ctrl-Click: Отсоединить от стола баллон и маску.")
 
 
 /obj/structure/table/optable/AltClick(mob/living/user)
