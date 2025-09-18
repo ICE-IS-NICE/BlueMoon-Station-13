@@ -56,7 +56,7 @@
 	if(!.)
 		return
 	if(!(user.get_bodypart(BODY_ZONE_L_ARM) && user.get_bodypart(BODY_ZONE_R_ARM)) || user.get_active_held_item() || user.get_inactive_held_item())
-		to_chat(user, span_warning("Одной руки недостаточно для такого действия."))
+		to_chat(user, span_warning("Одной свободной руки недостаточно для такого действия."))
 		return FALSE
 
 /datum/interaction/carry/princess/do_action(mob/living/user, mob/living/target, apply_cooldown)
