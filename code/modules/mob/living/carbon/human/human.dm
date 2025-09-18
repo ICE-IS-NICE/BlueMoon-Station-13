@@ -1000,11 +1000,11 @@ Mark this mob, then navigate to the preferences of the client you desire and cal
 	else
 		to_chat(target, "<span class='warning'>Ты не можешь прокатиться на спине [src] прямо сейчас!</span>")
 
-/mob/living/carbon/human/buckle_mob(mob/living/target, force = FALSE, check_loc = TRUE, lying_buckle = 0, hands_needed = 0, target_hands_needed = 0, fireman = FALSE)
+/mob/living/carbon/human/buckle_mob(mob/living/target, force = FALSE, check_loc = TRUE, lying_buckle = 0, hands_needed = 0, target_hands_needed = 0, fireman = FALSE, carry_type = null)
 	if(!force)//humans are only meant to be ridden through piggybacking and special cases
 		return
 	if(!is_type_in_typecache(target, can_ride_typecache))
-		target.visible_message("<span class='warning'>[target] действительно не может поднять [src]...</span>")
+		target.visible_message("<span class='warning'>[target] действительно не может забраться на [src]...</span>")
 		return
 	buckle_lying = lying_buckle
 	var/datum/component/riding/human/riding_datum = LoadComponent(/datum/component/riding/human)
@@ -1033,6 +1033,11 @@ Mark this mob, then navigate to the preferences of the client you desire and cal
 			return
 
 	stop_pulling()
+	switch(carry_type)
+		if("face_to_face")
+			riding_datum.face_to_face_carrying = TRUE
+		if("princess")
+			riding_datum.princess_carrying = TRUE
 	riding_datum.handle_vehicle_layer(dir)
 	riding_datum.fireman_carrying = fireman
 	. = ..(target, force, check_loc)
