@@ -254,12 +254,32 @@
 						L.update_transform(FALSE)
 						L.lying_prev = L.lying
 						L.setDir(WEST)
+						L.update_pixel_shifting(TRUE)
+						while(L.is_tilted > -20)
+							if(L.tilt_left() == FALSE)
+								break
+						L.pixel_x += 4
+						// L.pixel_y = 0
+						// while(L.pixel_x < 4)
+						// 	L.pixel_shift(EAST)
+						// 	if(!L.is_shifted)
+						// 		break
 					if(WEST, SOUTH)
 						H.buckle_lying = 270
 						L.lying = 270
 						L.update_transform(FALSE)
 						L.lying_prev = L.lying
 						L.setDir(EAST)
+						L.update_pixel_shifting(TRUE)
+						while(L.is_tilted < 20)
+							if(L.tilt_right() == FALSE)
+								break
+						L.pixel_x -= 4
+						// L.pixel_y = 0
+						// while(L.pixel_x > -4)
+						// 	L.pixel_shift(WEST)
+						// 	if(!L.is_shifted)
+						// 		break
 
 /datum/component/riding/human/proc/on_host_unarmed_melee(atom/target)
 	var/mob/living/carbon/human/H = parent
@@ -274,16 +294,16 @@
 			M.layer = MOB_LAYER
 		// NORTH | SOUTH | EAST | WEST
 		// ABOVE_MOB_LAYER = A, OBJ_LAYER = O
-		if(face_to_face_carrying) // A|O|O|O
+		if(face_to_face_carrying || princess_carrying) // A|O|O|O
 			if(AM.dir == NORTH)
 				AM.layer = ABOVE_MOB_LAYER
 			else
 				AM.layer = OBJ_LAYER
-		else if(princess_carrying) // A|O|A|A
-			if(AM.dir == SOUTH)
-				AM.layer = OBJ_LAYER
-			else
-				AM.layer = ABOVE_MOB_LAYER
+		// else if(princess_carrying) // A|O|A|A
+		// 	if(AM.dir == SOUTH)
+		// 		AM.layer = OBJ_LAYER
+		// 	else
+		// 		AM.layer = ABOVE_MOB_LAYER
 		else if(!AM.buckle_lying) // O|A|O|O - piggyback_carrying
 			if(AM.dir == SOUTH)
 				AM.layer = ABOVE_MOB_LAYER
@@ -303,7 +323,7 @@
 	if(face_to_face_carrying)
 		. = list(TEXT_NORTH = list(0, 5), TEXT_SOUTH = list(0, 5), TEXT_EAST = list(8, 5), TEXT_WEST = list(-8, 5))
 	else if(princess_carrying)
-		. = list(TEXT_NORTH = list(0, 1), TEXT_SOUTH = list(0, 1), TEXT_EAST = list(0, 1), TEXT_WEST = list(0, 1))
+		. = list(TEXT_NORTH = list(0, 0), TEXT_SOUTH = list(0, 0), TEXT_EAST = list(0, 0), TEXT_WEST = list(0, 0))
 	else if(H.buckle_lying)
 		. = list(TEXT_NORTH = list(0, 6), TEXT_SOUTH = list(0, 6), TEXT_EAST = list(0, 6), TEXT_WEST = list(0, 6))
 	else

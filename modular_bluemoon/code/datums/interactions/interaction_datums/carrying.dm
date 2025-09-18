@@ -25,7 +25,7 @@
 		if(!is_type_in_typecache(target, H.can_ride_typecache))
 			to_chat(H, span_warning("Тебе не получиться поднять это существо таким способом."))
 			return FALSE
-	if((target.mob_weight > MOB_WEIGHT_NORMAL) && !(user.mob_weight in list(MOB_WEIGHT_HEAVY, MOB_WEIGHT_HEAVY_SUPER)))
+	if((target.mob_weight > MOB_WEIGHT_NORMAL) && !(user.mob_weight > MOB_WEIGHT_NORMAL))
 		to_chat(user, span_warning("[target] слишком много весит."))
 		return FALSE
 
