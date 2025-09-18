@@ -300,13 +300,12 @@
 /datum/component/riding/human/get_offsets(pass_index)
 	var/mob/living/carbon/human/H = parent
 	var/size_modifier = get_size(H)
-	if(H.buckle_lying)
-		if(princess_carrying)
-			. = list(TEXT_NORTH = list(0, 1), TEXT_SOUTH = list(0, 1), TEXT_EAST = list(0, 1), TEXT_WEST = list(0, 1))
-		else
-			. = list(TEXT_NORTH = list(0, 6), TEXT_SOUTH = list(0, 6), TEXT_EAST = list(0, 6), TEXT_WEST = list(0, 6))
-	else if(face_to_face_carrying)
+	if(face_to_face_carrying)
 		. = list(TEXT_NORTH = list(0, 5), TEXT_SOUTH = list(0, 5), TEXT_EAST = list(8, 5), TEXT_WEST = list(-8, 5))
+	else if(princess_carrying)
+		. = list(TEXT_NORTH = list(0, 1), TEXT_SOUTH = list(0, 1), TEXT_EAST = list(0, 1), TEXT_WEST = list(0, 1))
+	else if(H.buckle_lying)
+		. = list(TEXT_NORTH = list(0, 6), TEXT_SOUTH = list(0, 6), TEXT_EAST = list(0, 6), TEXT_WEST = list(0, 6))
 	else
 		. = list(TEXT_NORTH = list(0, 6), TEXT_SOUTH = list(0, 6), TEXT_EAST = list(-6, 6), TEXT_WEST = list( 6, 6))
 	for(var/d in .)
