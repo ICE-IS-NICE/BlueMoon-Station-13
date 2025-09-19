@@ -34,7 +34,12 @@
 	if(!.)
 		return
 	user.visible_message("[user] пытается поднять [target] к себе на руки...")
-	if(!do_after(user, 3 SECONDS, target))
+	var/do_time = 5 SECONDS
+	if(HAS_TRAIT(user, TRAIT_QUICK_CARRY))
+		do_time = 4 SECONDS
+	if(HAS_TRAIT(user, TRAIT_QUICKER_CARRY))
+		do_time = 3 SECONDS
+	if(!do_after(user, do_time, target))
 		return FALSE
 
 /datum/interaction/carry/face_to_face

@@ -1006,6 +1006,8 @@ Mark this mob, then navigate to the preferences of the client you desire and cal
 	if(!is_type_in_typecache(target, can_ride_typecache))
 		target.visible_message("<span class='warning'>[target] действительно не может забраться на [src]...</span>")
 		return
+	if(target.has_buckled_mobs())
+		return FALSE
 	buckle_lying = lying_buckle
 	var/datum/component/riding/human/riding_datum = LoadComponent(/datum/component/riding/human)
 	if(target_hands_needed)

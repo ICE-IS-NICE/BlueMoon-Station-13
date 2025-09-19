@@ -313,7 +313,7 @@
 	var/mob/living/carbon/human/H = parent
 	var/size_modifier = get_size(H)
 	if(face_to_face_carrying)
-		. = list(TEXT_NORTH = list(0, 5), TEXT_SOUTH = list(0, 5), TEXT_EAST = list(8, 5), TEXT_WEST = list(-8, 5))
+		. = list(TEXT_NORTH = list(0, 4), TEXT_SOUTH = list(0, 4), TEXT_EAST = list(8, 4), TEXT_WEST = list(-8, 4))
 	else if(princess_carrying)
 		. = list(TEXT_NORTH = list(0, 0), TEXT_SOUTH = list(0, 0), TEXT_EAST = list(0, 0), TEXT_WEST = list(0, 0))
 	else if(H.buckle_lying)
