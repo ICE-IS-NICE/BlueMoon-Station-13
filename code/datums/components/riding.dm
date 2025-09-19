@@ -221,6 +221,8 @@
 		H.remove_movespeed_modifier(/datum/movespeed_modifier/human_carry)
 	if(!fireman_carrying)
 		M.Daze(25)
+	if(princess_carrying)
+		M.update_pixel_shifting(TRUE)
 	REMOVE_TRAIT(M, TRAIT_MOBILITY_NOUSE, src)
 	REMOVE_TRAIT(M, TRAIT_BEING_CARRIED, src)
 	return ..()
@@ -259,11 +261,6 @@
 							if(L.tilt_left() == FALSE)
 								break
 						L.pixel_x += 4
-						// L.pixel_y = 0
-						// while(L.pixel_x < 4)
-						// 	L.pixel_shift(EAST)
-						// 	if(!L.is_shifted)
-						// 		break
 					if(WEST, SOUTH)
 						H.buckle_lying = 270
 						L.lying = 270
@@ -275,11 +272,6 @@
 							if(L.tilt_right() == FALSE)
 								break
 						L.pixel_x -= 4
-						// L.pixel_y = 0
-						// while(L.pixel_x > -4)
-						// 	L.pixel_shift(WEST)
-						// 	if(!L.is_shifted)
-						// 		break
 
 /datum/component/riding/human/proc/on_host_unarmed_melee(atom/target)
 	var/mob/living/carbon/human/H = parent

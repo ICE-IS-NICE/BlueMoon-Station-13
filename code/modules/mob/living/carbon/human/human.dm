@@ -1041,6 +1041,10 @@ Mark this mob, then navigate to the preferences of the client you desire and cal
 	riding_datum.handle_vehicle_layer(dir)
 	riding_datum.fireman_carrying = fireman
 	. = ..(target, force, check_loc)
+	if(!.)
+		visible_message(span_warning("[src] не смог(ла) поднять [target]."))
+		riding_datum.unequip_buckle_inhands(src)
+		riding_datum.unequip_buckle_inhands(target)
 
 /mob/living/carbon/human/proc/is_shove_knockdown_blocked() //If you want to add more things that block shove knockdown, extend this
 	for(var/obj/item/clothing/C in get_equipped_items()) //doesn't include pockets
