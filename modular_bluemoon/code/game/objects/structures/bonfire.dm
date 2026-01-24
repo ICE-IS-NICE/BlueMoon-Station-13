@@ -174,7 +174,8 @@
 
 /obj/structure/bonfire/prelit/ash/proc/bonfire_travel(mob/living/carbon/human/user, obj/structure/bonfire/prelit/ash/travel_to, list/tiles_around)
 	playsound(user, 'modular_bluemoon/sound/effects/bonfire_lit.ogg', 100, FALSE)
-	// almost like warp whistle
+	// just like warp whistle
+	user.status_flags |= GODMODE
 	ADD_TRAIT(user, TRAIT_MOBILITY_NOMOVE, "bonfire")
 	ADD_TRAIT(user, TRAIT_MOBILITY_NOUSE, "bonfire")
 	ADD_TRAIT(user, TRAIT_MOBILITY_NOPICKUP, "bonfire")
@@ -210,6 +211,7 @@
 	user.update_mobility()
 	REMOVE_TRAIT(user, TRAIT_LIVING_NO_DENSITY, "bonfire")
 	user.update_density()
+	user.status_flags &= ~GODMODE
 
 #undef BONFIRE_HEALING_POWER_SMALL
 #undef BONFIRE_HEALING_POWER_MEDIUM
