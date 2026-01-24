@@ -121,10 +121,9 @@
 	if(healing_power < BONFIRE_HEALING_POWER_MEDIUM)
 		return
 	if(!travel_bonfires[src])
-		if(tgui_alert(user, "Мистические пепельные костры позволяют перемещать существ, \
-							но только меж тех, где эта возможность была принята.", \
+		if(tgui_alert(user, "Позволить ли костру перемещать существ? Достаточно лишь прикоснуться к клинку...", \
 							"Костры перемещения", \
-							list("Принять костер перемещения", "Отклонить")) == "Принять костер перемещения")
+							list("Позволить", "Оставить как есть")) == "Позволить")
 			var/bonfire_name = tgui_input_text(user, null, "Название костра", max_length = MAX_NAME_LEN, encode = TRUE)
 			if(!bonfire_name)
 				return
