@@ -120,22 +120,34 @@
 		return
 	if(healing_power < BONFIRE_HEALING_POWER_MEDIUM)
 		return
-	if(!travel_bonfires.Find(src))
+	if(!travel_bonfires[src])
 		if(tgui_alert(user, "Мистические пепельные костры позволяют перемещать существ, \
 							но только меж тех, где эта возможность была принята.", \
 							"Костры перемещения", \
 							list("Принять костер перемещения", "Отклонить")) == "Принять костер перемещения")
-			travel_bonfires += src
+			var/bonfire_name = tgui_input_text(user, null, "Название костра", max_length = MAX_NAME_LEN, encode = TRUE)
+			if(!bonfire_name)
+				return
+			for(var/b in travel_bonfires)
+				if(travel_bonfires[b] == bonfire_name)
+					to_chat(user, span_warning("Костер с таким именем уже существует."))
+					return
+			travel_bonfires[src] = bonfire_name
 			playsound(user, 'modular_bluemoon/sound/effects/bonfire_lit.ogg', 100, FALSE)
 			to_chat(user, span_engradio("Отныне костер является точкой перемещения."))
 		return
+	/**
+	 * travel_bonfires[объект] = название
+	 * Игроку должен выводиться список названий костров.
+	 * Так как я не нашел процедуры поиска ключа по значению (объекта по названию), приходится импровизировать.
+	 * Создаем новый список, меняя местами названия и объекты. Названия уникальны, поэтому проблем быть не должно.
+	 * available_travel_bonfires[название] = объект
+	 */
 	var/list/available_travel_bonfires = list()
-	var/list/areaindex = list() // for possible area duplicates
-	for(var/obj/structure/bonfire/prelit/ash/A in (travel_bonfires - src))
-		if(is_centcom_level(A.z))
+	for(var/obj/structure/bonfire/prelit/ash/b in (travel_bonfires - src))
+		if(is_centcom_level(b.z))
 			continue
-		var/area/Ar = get_area(A)
-		available_travel_bonfires[avoid_assoc_duplicate_keys(Ar.name, areaindex)] = A
+		available_travel_bonfires[travel_bonfires[b]] += b
 	if(isemptylist(available_travel_bonfires))
 		to_chat(user, span_warning("Нет доступных костров для перемещения."))
 		return
@@ -179,16 +191,17 @@
 	sleep(6 SECONDS)
 	if(QDELETED(user))
 		return
-	if(!QDELETED(travel_to) || user.mob_transforming)
-		do_teleport(user, pick(tiles_around), channel = TELEPORT_CHANNEL_MAGIC)
+	if(QDELETED(travel_to) || user.mob_transforming)
+		to_chat(user, span_warning("Что-то случилось... перемещение не удалось."))
+	else if(do_teleport(user, pick(tiles_around), channel = TELEPORT_CHANNEL_MAGIC))
 		COOLDOWN_START(travel_to, travel_cd, 65 SECONDS)
+		playsound(user, 'modular_bluemoon/sound/effects/bonfire_lit.ogg', 100, FALSE)
+		fog_animation = image('icons/effects/chemsmoke.dmi', travel_to, "", layer = GASFIRE_LAYER, pixel_x = -32, pixel_y = -32)
+		fog_animation.color = COLOR_LIGHT_ORANGE
+		fog_animation.alpha = 150
+		flick_overlay(fog_animation, GLOB.clients, 6 SECONDS)
 	else
 		to_chat(user, span_warning("Что-то случилось... перемещение не удалось."))
-	playsound(user, 'modular_bluemoon/sound/effects/bonfire_lit.ogg', 100, FALSE)
-	fog_animation = image('icons/effects/chemsmoke.dmi', travel_to, "", layer = GASFIRE_LAYER, pixel_x = -32, pixel_y = -32)
-	fog_animation.color = COLOR_LIGHT_ORANGE
-	fog_animation.alpha = 150
-	flick_overlay(fog_animation, GLOB.clients, 6 SECONDS)
 	if(user.alpha == 10) // если за 6 секунд прозрачность перонажа изменилась по неизвестным причинам, то лучше не трогать
 		animate(user, alpha = user_alpha, 5 SECONDS)
 	sleep(5 SECONDS)
