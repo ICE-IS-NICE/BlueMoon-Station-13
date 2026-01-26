@@ -98,6 +98,11 @@
 	path = /obj/item/bdsm_whip/ridingcrop
 	subcategory = LOADOUT_SUBCATEGORY_BACKPACK_TOYS
 
+/datum/gear/backpack/belt_belly_riding
+	name = "belly riding harness"
+	path = /obj/item/storage/belt/belly_riding
+	subcategory = LOADOUT_SUBCATEGORY_BACKPACK_TOYS
+
 /datum/gear/backpack/strapon_strap
 	name = "Strapon strap"
 	path = /obj/item/strapon_strap
@@ -142,3 +147,8 @@
 	name = "Army Multitool"
 	path = /obj/item/armyknife
 	cost = 3
+
+/datum/gear/backpack/clipboard
+	name = "Clipboard"
+	subcategory = LOADOUT_SUBCATEGORY_BACKPACK_GENERAL
+	path = /obj/item/clipboard

@@ -187,8 +187,9 @@
 		return
 
 	//get the user's location
-	if(!isturf(user.loc))
-		return	//can't do this stuff whilst inside objects and such
+	if(!istype(user.loc, /obj/item/integrated_circuit/manipulation))
+		if(!isturf(user.loc))
+			return	//can't do this stuff whilst inside objects and such
 
 	user.DelayNextAction()
 	add_fingerprint(user)
@@ -197,7 +198,7 @@
 
 	//the istype cascade has been spread among various procs for easy overriding
 	var/srctype = type
-	if(try_clean(W, user, T) || try_wallmount(W, user, T) || try_decon(W, user, T) || (type == srctype && try_destroy(W, user, T)))
+	if(try_clean(W, user, T) || try_wallmount(W, user, T, params) || try_decon(W, user, T) || (type == srctype && try_destroy(W, user, T)))
 		return
 
 	return ..()
@@ -220,12 +221,12 @@
 
 	return FALSE
 
-/turf/closed/wall/proc/try_wallmount(obj/item/W, mob/user, turf/T)
+/turf/closed/wall/proc/try_wallmount(obj/item/W, mob/user, turf/T, params)
 	//check for wall mounted frames
 	if(istype(W, /obj/item/wallframe))
 		var/obj/item/wallframe/F = W
 		if(F.try_build(src, user))
-			F.attach(src, user)
+			F.attach(src, user, params)
 		return TRUE
 	//Poster stuff
 	else if(istype(W, /obj/item/poster))
@@ -263,7 +264,33 @@
 			dismantle_wall()
 			visible_message("<span class='warning'>[user] smashes through [src] with [I]!</span>", "<span class='italics'>You hear the grinding of metal.</span>")
 			return TRUE
+
+	else if(istype(I, /obj/item/demolition_hammer))
+		var/obj/item/demolition_hammer/hammer = I // Checks if the hammer is dual-wielded
+		if (!hammer.wielded || INTERACTING_WITH(user, src))
+			return FALSE
+
+		var/initial_wall_type = src.type
+		to_chat(user, span_notice("You begin to crush though [src]..."))
+		playsound(src, 'sound/alien/Effects/bang1.ogg', 50, 1)
+
+		if(src.type != initial_wall_type || user.loc != T)
+			return FALSE
+
+		var/midsound_timer = addtimer(CALLBACK(src, PROC_REF(play_mid_sound), user, T), 2.5 SECONDS, TIMER_STOPPABLE)
+		if(!do_after(user, 5 SECONDS, target = src))
+			deltimer(midsound_timer)
+			return FALSE
+		I.play_tool_sound(src)
+		visible_message(span_warning("[user] crushes through [src] with [I]!"), "<i>You hear the grinding of metal.</i>")
+		dismantle_wall()
+		return TRUE
+
 	return FALSE
+
+/turf/closed/wall/proc/play_mid_sound(mob/user, turf/T)
+	if(user.loc == T)
+		playsound(src, 'sound/alien/Effects/bang7.ogg', 100, 1)
 
 /turf/closed/wall/singularity_pull(S, current_size)
 	..()

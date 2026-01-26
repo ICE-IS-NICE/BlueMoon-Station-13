@@ -19,11 +19,11 @@
 	max_velocity = 90
 	boost_power = 25
 	max_integrity = 80
+	max_occupants = 4
 
 /obj/vehicle/sealed/vectorcraft/truck
 	name = "Hovertruck"
 	desc = "An all-terrain vehicle built for traversing rough terrain with ease."
-	gear = "auto"
 	icon_state = "truck"
 	max_acceleration = 4.25
 	accel_step = 0.4
@@ -32,6 +32,7 @@
 	max_velocity = 90
 	boost_power = 10
 	max_integrity = 200
+	max_occupants = 4
 
 /obj/vehicle/sealed/vectorcraft/ambulance
 	name = "Ambulance"
@@ -43,6 +44,7 @@
 	max_velocity = 90
 	boost_power = 40
 	max_integrity = 200
+	max_occupants = 4
 
 /obj/vehicle/sealed/vectorcraft/auto
 	name = "Automatic hovercraft"

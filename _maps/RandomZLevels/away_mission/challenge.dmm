@@ -83,9 +83,6 @@
 	},
 /area/awaymission/challenge/main)
 "aC" = (
-/obj/machinery/power/emitter/ctf{
-	dir = 1
-	},
 /turf/open/floor/plating,
 /area/awaymission/challenge/main)
 "aD" = (
@@ -136,14 +133,8 @@
 /turf/open/floor/plating/airless,
 /area/awaymission/challenge/main)
 "aR" = (
-/obj/effect/turf_decal/stripes/line,
+/obj/effect/turf_decal/stripes/yellow/line,
 /turf/open/floor/plasteel,
-/area/awaymission/challenge/main)
-"aS" = (
-/obj/machinery/power/emitter/energycannon{
-	dir = 4
-	},
-/turf/open/floor/plating/airless,
 /area/awaymission/challenge/main)
 "aU" = (
 /obj/machinery/light{
@@ -164,7 +155,7 @@
 /turf/open/floor/plating/airless,
 /area/awaymission/challenge/main)
 "ba" = (
-/obj/effect/turf_decal/stripes/line{
+/obj/effect/turf_decal/stripes/yellow/line{
 	dir = 1
 	},
 /turf/open/floor/plasteel,
@@ -179,7 +170,7 @@
 /area/awaymission/challenge/main)
 "bd" = (
 /obj/structure/window/reinforced/fulltile/indestructable,
-/obj/effect/turf_decal/stripes/line{
+/obj/effect/turf_decal/stripes/yellow/line{
 	dir = 9
 	},
 /obj/structure/grille/indestructable,
@@ -187,7 +178,7 @@
 /area/awaymission/challenge/main)
 "bf" = (
 /obj/structure/window/reinforced/fulltile/indestructable,
-/obj/effect/turf_decal/stripes/line{
+/obj/effect/turf_decal/stripes/yellow/line{
 	dir = 1
 	},
 /obj/structure/grille/indestructable,
@@ -195,7 +186,7 @@
 /area/awaymission/challenge/main)
 "bg" = (
 /obj/structure/window/reinforced/fulltile/indestructable,
-/obj/effect/turf_decal/stripes/line{
+/obj/effect/turf_decal/stripes/yellow/line{
 	dir = 5
 	},
 /obj/structure/grille/indestructable,
@@ -206,7 +197,7 @@
 /area/awaymission/challenge/main)
 "bi" = (
 /obj/structure/window/reinforced/fulltile/indestructable,
-/obj/effect/turf_decal/stripes/line{
+/obj/effect/turf_decal/stripes/yellow/line{
 	dir = 8
 	},
 /obj/structure/grille/indestructable,
@@ -214,14 +205,16 @@
 /area/awaymission/challenge/main)
 "bk" = (
 /obj/machinery/light,
-/obj/machinery/power/emitter/ctf{
-	dir = 1
+/obj/machinery/porta_turret{
+	dir = 8;
+	installation = /obj/item/gun/energy/lasercannon;
+	set_obj_flags = "EMAGGED"
 	},
 /turf/open/floor/plating,
 /area/awaymission/challenge/main)
 "bl" = (
 /obj/structure/window/reinforced/fulltile/indestructable,
-/obj/effect/turf_decal/stripes/line{
+/obj/effect/turf_decal/stripes/yellow/line{
 	dir = 4
 	},
 /obj/structure/grille/indestructable,
@@ -235,7 +228,7 @@
 /turf/closed/wall/mineral/plastitanium,
 /area/awaymission/challenge/main)
 "bo" = (
-/obj/effect/turf_decal/stripes/line{
+/obj/effect/turf_decal/stripes/yellow/line{
 	dir = 8
 	},
 /obj/structure/window/reinforced/fulltile/indestructable,
@@ -253,12 +246,8 @@
 	},
 /turf/open/floor/plating,
 /area/awaymission/challenge/main)
-"bq" = (
-/obj/machinery/power/emitter/energycannon,
-/turf/open/floor/plating,
-/area/awaymission/challenge/main)
 "br" = (
-/obj/effect/turf_decal/stripes/line{
+/obj/effect/turf_decal/stripes/yellow/line{
 	dir = 4
 	},
 /obj/structure/window/reinforced/fulltile/indestructable,
@@ -271,7 +260,7 @@
 /area/awaymission/challenge/main)
 "bu" = (
 /obj/structure/window/reinforced/fulltile/indestructable,
-/obj/effect/turf_decal/stripes/line{
+/obj/effect/turf_decal/stripes/yellow/line{
 	dir = 10
 	},
 /obj/structure/grille/indestructable,
@@ -279,13 +268,13 @@
 /area/awaymission/challenge/main)
 "bv" = (
 /obj/structure/window/reinforced/fulltile/indestructable,
-/obj/effect/turf_decal/stripes/line,
+/obj/effect/turf_decal/stripes/yellow/line,
 /obj/structure/grille/indestructable,
 /turf/open/floor/plating,
 /area/awaymission/challenge/main)
 "bw" = (
 /obj/structure/window/reinforced/fulltile/indestructable,
-/obj/effect/turf_decal/stripes/line{
+/obj/effect/turf_decal/stripes/yellow/line{
 	dir = 6
 	},
 /obj/structure/grille/indestructable,
@@ -295,14 +284,14 @@
 /obj/machinery/light{
 	dir = 8
 	},
-/obj/effect/turf_decal/stripes/line,
+/obj/effect/turf_decal/stripes/yellow/line,
 /turf/open/floor/plasteel,
 /area/awaymission/challenge/main)
 "bz" = (
 /obj/machinery/light{
 	dir = 4
 	},
-/obj/effect/turf_decal/stripes/line,
+/obj/effect/turf_decal/stripes/yellow/line,
 /turf/open/floor/plasteel,
 /area/awaymission/challenge/main)
 "bA" = (
@@ -311,7 +300,7 @@
 /area/awaymission/challenge/main)
 "bB" = (
 /obj/item/clothing/gloves/color/yellow,
-/obj/effect/turf_decal/stripes/line{
+/obj/effect/turf_decal/stripes/yellow/line{
 	dir = 1
 	},
 /turf/open/floor/plasteel,
@@ -366,7 +355,7 @@
 /turf/open/floor/plasteel/dark,
 /area/awaymission/challenge/end)
 "bU" = (
-/obj/effect/turf_decal/stripes/line,
+/obj/effect/turf_decal/stripes/yellow/line,
 /turf/open/floor/plasteel/white,
 /area/awaymission/challenge/main)
 "bV" = (
@@ -709,12 +698,6 @@
 /obj/item/ammo_box/magazine/mm712x82,
 /turf/open/floor/plasteel/dark,
 /area/awaymission/challenge/end)
-"gF" = (
-/obj/machinery/power/emitter/energycannon{
-	dir = 8
-	},
-/turf/open/floor/plating/airless,
-/area/awaymission/challenge/main)
 "hB" = (
 /obj/effect/spawner/structure/window/hollow/reinforced/end{
 	dir = 8
@@ -749,7 +732,11 @@
 /turf/open/floor/plating/airless,
 /area/awaymission/challenge/main)
 "Mx" = (
-/obj/machinery/power/emitter/energycannon,
+/obj/machinery/porta_turret{
+	dir = 8;
+	installation = /obj/item/gun/energy/lasercannon;
+	set_obj_flags = "EMAGGED"
+	},
 /turf/open/floor/plating/airless,
 /area/awaymission/challenge/main)
 "OT" = (
@@ -780,12 +767,6 @@
 /mob/living/simple_animal/hostile/syndicate/ranged/anthro,
 /turf/open/floor/carpet,
 /area/awaymission/challenge/start)
-"UL" = (
-/obj/machinery/power/emitter/energycannon{
-	dir = 1
-	},
-/turf/open/floor/plating/airless,
-/area/awaymission/challenge/main)
 "Zw" = (
 /mob/living/simple_animal/hostile/syndicate/melee/space/anthro/lizard,
 /turf/open/floor/plasteel/dark,
@@ -26354,34 +26335,34 @@ aa
 aa
 aa
 aA
-aS
-aF
-aS
 aF
 aF
-aS
+Mx
 aF
-aS
+Mx
 aF
+Mx
 aF
 aF
 aF
 aF
-aS
-aF
-aS
 aF
 aF
 aF
-aS
+Mx
 aF
-aS
+Mx
 aF
-aS
+Mx
 aF
 aF
 aF
-aS
+aF
+Mx
+aF
+Mx
+aF
+Mx
 aA
 aa
 aa
@@ -27155,7 +27136,7 @@ aH
 aH
 bC
 aF
-aF
+Mx
 bP
 PS
 cd
@@ -27411,7 +27392,7 @@ aH
 bE
 aH
 bC
-UL
+aF
 aF
 bP
 bS
@@ -27636,7 +27617,7 @@ ab
 ab
 ab
 aA
-Mx
+aF
 aF
 aQ
 aH
@@ -27893,7 +27874,7 @@ au
 au
 ar
 aA
-aF
+Mx
 aF
 bC
 aH
@@ -27925,7 +27906,7 @@ aY
 ba
 aH
 bC
-UL
+aF
 aF
 bP
 bP
@@ -28678,7 +28659,7 @@ aH
 bf
 aC
 bn
-bq
+aC
 bv
 aH
 aH
@@ -28935,7 +28916,7 @@ aH
 bf
 aC
 bn
-bq
+aC
 bv
 aH
 aH
@@ -29692,7 +29673,7 @@ av
 au
 dc
 aA
-aF
+Mx
 aN
 bC
 aH
@@ -29724,7 +29705,7 @@ aZ
 ba
 aH
 bC
-UL
+aF
 aF
 bP
 bP
@@ -29949,7 +29930,7 @@ ab
 ab
 ab
 aA
-Mx
+aF
 aF
 bC
 aH
@@ -30238,7 +30219,7 @@ aH
 aH
 aH
 bC
-UL
+aF
 aF
 bP
 bX
@@ -30496,7 +30477,7 @@ aH
 aH
 bC
 aF
-aF
+Mx
 bP
 bY
 ci
@@ -31238,33 +31219,33 @@ aa
 aa
 aA
 aF
-gF
 aF
-gF
+Mx
 aF
+Mx
 aF
-gF
-aF
-gF
+Mx
 aF
 aF
 aF
-gF
-aF
-gF
-aF
-gF
-aF
-gF
 aF
 aF
 aF
-gF
 aF
-gF
+Mx
 aF
-gF
+Mx
 aF
+Mx
+aF
+aF
+aF
+aF
+Mx
+aF
+Mx
+aF
+Mx
 aA
 aa
 aa

@@ -184,6 +184,19 @@
 
 		L.DefaultCombatKnockdown(shockStrength)
 
+		//BLUEMOON ADD START
+		if(ishuman(L))
+			var/mob/living/carbon/human/H = L
+			if(HAS_TRAIT(H, TRAIT_MASO))
+				H.adjust_arousal(40, "masochism", maso = TRUE)
+				H.handle_post_sex(HIGH_LUST, null, null) // Big cooldown = high_lust
+				if(prob(30))
+					H.emote(pick("moan", "shiver", "blushh"))
+			else
+				if(prob(30))
+					H.emote(pick("groan", "shiver", "twitch_s"))
+				H.add_lust(-1*HIGH_LUST)
+		//BLUEMOON ADD END
 	if(master)
 		master.receive_signal()
 	return

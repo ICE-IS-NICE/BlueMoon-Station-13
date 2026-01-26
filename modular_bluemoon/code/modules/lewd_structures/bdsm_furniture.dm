@@ -7,6 +7,7 @@
 	icon = 'modular_bluemoon/icons/obj/structures/bdsm_furniture.dmi'
 	icon_state = "bdsm_bed"
 	max_integrity = 50
+	buildstackamount = 4
 
 /obj/item/bdsm_bed_kit
 	name = "bdsm bed construction kizt"
@@ -40,12 +41,10 @@
 	return NONE
 
 /obj/structure/bed/bdsm_bed/post_buckle_mob(mob/living/affected_mob)
-	density = TRUE
 	//Push them up from the normal lying position
 	affected_mob.pixel_y = affected_mob.base_pixel_y
 
 /obj/structure/bed/bdsm_bed/post_unbuckle_mob(mob/living/affected_mob)
-	density = FALSE
 	//Set them back down to the normal lying position
 	affected_mob.pixel_y = affected_mob.base_pixel_y + affected_mob.body_position_pixel_y_offset
 

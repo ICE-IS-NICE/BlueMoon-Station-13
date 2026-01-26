@@ -37,7 +37,7 @@
 	set_vars(_jump_duration, _jump_cooldown, _stamina_cost, _jump_height, _jump_sound, _jump_flags, _jumper_allow_pass_flags)
 
 ///Actually sets the jump vars
-/datum/component/jump/proc/set_vars(_jump_duration = 0.5 SECONDS, _jump_cooldown = 0.75 SECONDS, _stamina_cost = 96, _jump_height = 16, _jump_sound = null, _jump_flags = JUMP_SHADOW, _jumper_allow_pass_flags = PASSTABLE)
+/datum/component/jump/proc/set_vars(_jump_duration = 0.5 SECONDS, _jump_cooldown = 0.75 SECONDS, _stamina_cost = 64, _jump_height = 16, _jump_sound = null, _jump_flags = JUMP_SHADOW, _jumper_allow_pass_flags = PASSTABLE)
 	jump_duration = _jump_duration
 	jump_cooldown = _jump_cooldown
 	stamina_cost = _stamina_cost
@@ -56,7 +56,11 @@
 	if(jumper.incapacitated())
 		return
 
-	if(stamina_cost && (jumper.getStaminaLoss() < -stamina_cost))
+	var/adjusted_stamina_cost = stamina_cost
+	if(!jumper.has_gravity())
+		adjusted_stamina_cost = round(adjusted_stamina_cost*0.4)
+
+	if(adjusted_stamina_cost && (jumper.getStaminaLoss() < -adjusted_stamina_cost))
 		to_chat(jumper, span_warning("Catch your breath!"))
 		return
 
@@ -66,7 +70,7 @@
 	jumper.layer = ABOVE_MOB_LAYER
 
 	SEND_SIGNAL(jumper, COMSIG_ELEMENT_JUMP_STARTED)
-	jumper.adjustStaminaLoss(stamina_cost)
+	jumper.adjustStaminaLoss(adjusted_stamina_cost)
 	jumper.pass_flags |= jumper_allow_pass_flags
 	ADD_TRAIT(jumper, TRAIT_SILENT_FOOTSTEPS, JUMP_COMPONENT)
 	RegisterSignal(parent, COMSIG_MOB_THROW, PROC_REF(jump_throw))

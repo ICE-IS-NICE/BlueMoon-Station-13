@@ -74,3 +74,129 @@
 	build_path = /obj/item/organ/cyberimp/arm/lenses
 	category = list("Medical Designs")
 	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL | DEPARTMENTAL_FLAG_SCIENCE | DEPARTMENTAL_FLAG_SECURITY //Mmm, i don't see the reason not to give it to basically everyone.
+
+//DATA CHIP. Expensive stuff for good chips.
+/datum/design/medicalbrainchip
+	name = "Advanced Medical Data Chip"
+	desc = "Special implant that was designed to help field operators with medical care for their fallen brethren. Allows advanced surgical procedures outside of the sterile conditions."
+	id = "chip-medical"
+	build_type = PROTOLATHE
+	construction_time = 100
+	materials = list(/datum/material/iron = 30000, /datum/material/glass = 30000, /datum/material/silver = 6000, /datum/material/gold = 6000, /datum/material/diamond = 6000, /datum/material/bluespace = 6000)
+	build_path = /obj/item/organ/cyberimp/brainchip/medical
+	category = list("Medical Designs")
+	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL
+
+/datum/design/engibrainchip
+	name = "Advanced Electrical Data Chip"
+	desc = "Special implant that was designed to provide a quick learning for field engineers and inadept electricians."
+	id = "chip-engi"
+	build_type = PROTOLATHE
+	construction_time = 100
+	materials = list(/datum/material/iron = 30000, /datum/material/glass = 30000, /datum/material/silver = 6000, /datum/material/gold = 6000, /datum/material/diamond = 6000, /datum/material/bluespace = 6000)
+	build_path = /obj/item/organ/cyberimp/brainchip/engi
+	category = list("Medical Designs")
+	departmental_flags = DEPARTMENTAL_FLAG_ENGINEERING
+
+/datum/design/roboticalbrainchip
+	name = "Advanced Robotical Data Chip"
+	desc = "Special implant that was designed to provide a quick learning for inadept roboticians and on-field crew."
+	id = "chip-robotic"
+	build_type = PROTOLATHE
+	construction_time = 100
+	materials = list(/datum/material/iron = 30000, /datum/material/glass = 30000, /datum/material/silver = 6000, /datum/material/gold = 6000, /datum/material/diamond = 6000, /datum/material/bluespace = 6000)
+	build_path = /obj/item/organ/cyberimp/brainchip/robotic
+	category = list("Medical Designs")
+	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE
+
+//Xeno organs for hand-made hives and stuff//
+/datum/design/plasmavessel
+	name = "Plasma Vessel"
+	id = "plasmavessel"
+	desc = "A design for xenochimeric plasma vessel."
+	build_type = PROTOLATHE
+	construction_time = 150
+	reagents_list = list(/datum/reagent/consumable/organicprecursor/xenochimeric = 200)
+	build_path = /obj/item/organ/alien/plasmavessel/large/queen
+	category = list("Organic Designs")
+	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE
+	materials = list (/datum/material/glass = 30000, /datum/material/plasma = 10000)
+	min_security_level = SEC_LEVEL_RED
+
+/datum/design/resinspinner
+	name = "Resin Spinner"
+	id = "resinspinner"
+	desc = "A design for xenochimeric resin spinner."
+	build_type = PROTOLATHE
+	construction_time = 150
+	reagents_list = list(/datum/reagent/consumable/organicprecursor/xenochimeric = 200)
+	build_path = /obj/item/organ/alien/resinspinner
+	category = list("Organic Designs")
+	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE
+	materials = list (/datum/material/glass = 30000, /datum/material/plasma = 10000)
+	min_security_level = SEC_LEVEL_RED
+
+/datum/design/acidgland
+	name = "Acid Gland"
+	id = "acidgland"
+	desc = "A design for xenochimeric acid gland."
+	build_type = PROTOLATHE
+	construction_time = 150
+	reagents_list = list(/datum/reagent/consumable/organicprecursor/xenochimeric = 200)
+	build_path = /obj/item/organ/alien/acid
+	category = list("Organic Designs")
+	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE
+	materials = list (/datum/material/glass = 30000, /datum/material/plasma = 10000)
+	min_security_level = SEC_LEVEL_RED
+
+/datum/design/neurotoxingland
+	name = "Neurotoxin Gland"
+	id = "neurotoxin"
+	desc = "A design for xenochimeric neurotoxin gland."
+	build_type = PROTOLATHE
+	construction_time = 150
+	reagents_list = list(/datum/reagent/consumable/organicprecursor/xenochimeric = 200)
+	build_path = /obj/item/organ/alien/neurotoxin
+	category = list("Organic Designs")
+	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE
+	materials = list (/datum/material/glass = 30000, /datum/material/plasma = 10000)
+	min_security_level = SEC_LEVEL_RED
+
+/datum/design/eggsac
+	name = "Egg Sac"
+	id = "eggsac"
+	desc = "A design for xenochimeric egg sac."
+	build_type = PROTOLATHE
+	construction_time = 150
+	reagents_list = list(/datum/reagent/consumable/organicprecursor/xenochimeric = 200)
+	build_path = /obj/item/organ/alien/eggsac
+	category = list("Organic Designs")
+	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE
+	materials = list (/datum/material/glass = 30000, /datum/material/plasma = 10000)
+	min_security_level = SEC_LEVEL_RED
+
+/datum/design/hivenode
+	name = "Hive node"
+	id = "hivenode"
+	desc = "A design for xenochimeric hive node."
+	build_type = PROTOLATHE
+	construction_time = 150
+	reagents_list = list(/datum/reagent/consumable/organicprecursor/xenochimeric = 200)
+	build_path = /obj/item/organ/alien/hivenode
+	category = list("Organic Designs")
+	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE
+	materials = list (/datum/material/glass = 30000, /datum/material/plasma = 10000)
+	min_security_level = SEC_LEVEL_RED
+
+/datum/design/alientongue
+	name = "Alien Tongue"
+	id = "alientongue"
+	desc = "A design for xenochimeric alien tongue."
+	build_type = PROTOLATHE
+	construction_time = 150
+	reagents_list = list(/datum/reagent/consumable/organicprecursor/xenochimeric = 200)
+	build_path = /obj/item/organ/tongue/alien
+	category = list("Organic Designs")
+	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE
+	materials = list (/datum/material/glass = 30000, /datum/material/plasma = 10000)
+	min_security_level = SEC_LEVEL_RED

@@ -31,6 +31,7 @@
 	usesound = 'sound/weapons/empty.ogg'
 	drop_sound = 'sound/items/handling/multitool_drop.ogg'
 	pickup_sound = 'sound/items/handling/multitool_pickup.ogg'
+	used_skills = list(/datum/skill/level/job/wiring) //BLUEMOON ADD
 	var/mode = 0
 
 /obj/item/multitool/chaplain
@@ -277,7 +278,8 @@
 /obj/item/multitool/advanced
 	name = "advanced multitool"
 	desc = "The reproduction of an abductor's multitool, this multitool is a classy silver."
-	icon = 'icons/obj/advancedtools.dmi'
+//	icon = 'icons/obj/advancedtools.dmi' BLUEMOON COMMENT OUT use of own .dmi file
+	icon = 'modular_bluemoon/icons/obj/advancedtools_black.dmi'
 	icon_state = "multitool"
 	toolspeed = 0.2
 	show_wires = TRUE

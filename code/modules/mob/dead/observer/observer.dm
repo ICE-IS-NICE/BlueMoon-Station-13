@@ -485,7 +485,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 		var/area/A = V
 		if(!A.hidden)
 			filtered += A
-	var/area/thearea  = input("Area to jump to", "BOOYEA") as null|anything in filtered
+	var/area/thearea = tgui_input_list(src, "Area to jump to", "BOOYEA", filtered)
 
 	if(!thearea)
 		return
@@ -553,6 +553,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	pixel_z = 0
 	animate(src, pixel_z = 2, time = 10, loop = -1, flags = ANIMATION_RELATIVE)
 	animate(pixel_z = -4, time = 10, loop = -1, flags = ANIMATION_RELATIVE)
+	reset_perspective() // Это чинит крепление камеры за телом при auto_observe фиче, если отлететь от цели на кнопки мувмента.
 
 /mob/dead/observer/verb/jumptomob() //Moves the ghost instead of just changing the ghosts's eye -Nodrak
 	set category = "Ghost"
@@ -566,7 +567,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 		var/target = null	   //Chosen target.
 
 		dest += getpois(mobs_only = TRUE) //Fill list, prompt user with list
-		target = input("Please, select a player!", "Jump to Mob", null, null) as null|anything in dest
+		target = tgui_input_list(src, "Please, select a mob!", "Jump to Mob", dest)
 
 		if (!target)//Make sure we actually have a target
 			return
@@ -849,7 +850,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 
 	update_icon()
 
-/mob/dead/observer/canUseTopic(atom/movable/M, be_close=FALSE, no_dextery=FALSE, no_tk=FALSE, check_resting=FALSE)
+/mob/dead/observer/canUseTopic(atom/movable/M, be_close=FALSE, no_dextery=FALSE, no_tk=FALSE, check_resting=FALSE, silent = FALSE)
 	return IsAdminGhost(usr)
 
 /mob/dead/observer/is_literate()

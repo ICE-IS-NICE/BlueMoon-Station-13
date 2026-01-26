@@ -133,7 +133,7 @@
 	} while(FALSE)
 
 //Returns a list in plain english as a string
-/proc/english_list(list/input, nothing_text = "nothing", and_text = " and ", comma_text = ", ", final_comma_text = "" )
+/proc/english_list(list/input, nothing_text = "ничего", and_text = " и ", comma_text = ", ", final_comma_text = "" )
 	var/total = length(input)
 	switch(total)
 		if (0)
@@ -158,7 +158,7 @@
  * English_list but associative supporting. Higher overhead.
  * @depricated
  */
-/proc/english_list_assoc(list/input, nothing_text = "nothing", and_text = " and ", comma_text = ", ", final_comma_text = "")
+/proc/english_list_assoc(list/input, nothing_text = "ничего", and_text = " и ", comma_text = ", ", final_comma_text = "")
 	var/total = length(input)
 	switch(total)
 		if (0)
@@ -205,6 +205,19 @@
 /proc/isemptylist(list/L)
 	if(!L.len)
 		return TRUE
+	return FALSE
+
+/// Is there at least one associative key in the list (i.e. not a numeric index)
+/// Hybrid lists will also return TRUE.
+/proc/is_assoc_list(list/L)
+	if(!LAZYLEN(L))
+		return FALSE
+
+	for(var/i = 1 to L.len)
+		var/k = L[i]
+		if(!isnull(L[k]))
+			return TRUE
+
 	return FALSE
 
 //Checks for specific types in a listc
@@ -349,34 +362,24 @@
 //3. For each element in the list, subtracts its weighting from that number
 //4. If that makes the number 0 or less, return that element.
 //Will output null sometimes if you use decimals (e.g. 0.1 instead of 10) as rand() uses integers, not floats
-/proc/pickweight(list/L, base_weight = 1)
+/proc/pickweight(list/L)
+	if(length(L) == 0)
+		return null
+
 	var/total = 0
-	var/item
-	for (item in L)
-		if (!L[item])
-			L[item] = base_weight
+	for(var/item in L)
+		if(!L[item] && (L[item] != 0)) // The weight is set to 0 intentionally. Otherwise the weight is not defined. Almost every time it's just an oversight.
+			L[item] = 1
 		total += L[item]
 
-	total = rand(base_weight, total)
-	for (item in L)
-		total -=L [item]
-		if (total <= 0)
-			return item
+	total = rand(1, total)
+	for(var/item in L)
+		var/item_weight = L[item]
+		if(item_weight == 0)
+			continue
 
-	return null
-
-/proc/pickweightAllowZero(list/L) //The original pickweight proc will sometimes pick entries with zero weight.  I'm not sure if changing the original will break anything, so I left it be.
-	var/total = 0
-	var/item
-	for (item in L)
-		if (!L[item])
-			L[item] = 0
-		total += L[item]
-
-	total = rand(0, total)
-	for (item in L)
-		total -=L [item]
-		if (total <= 0 && L[item])
+		total -= item_weight
+		if(total <= 0)
 			return item
 
 	return null
@@ -384,13 +387,13 @@
 //Picks a number of elements from a list based on weight.
 //This is highly optimised and good for things like grabbing 200 items from a list of 40,000
 //Much more efficient than many pickweight calls
-/proc/pickweight_mult(list/L, quantity, base_weight = 1)
+/proc/pickweight_mult(list/L, quantity)
 	//First we total the list as normal
 	var/total = 0
 	var/item
 	for (item in L)
-		if (!L[item])
-			L[item] = base_weight
+		if (!L[item] && L[item] != 0) // The weight is set to 0 intentionally. Otherwise the weight is not defined. Almost every time it's just an oversight.
+			L[item] = 1
 		total += L[item]
 
 	//Next we will make a list of randomly generated numbers, called Requests
@@ -446,9 +449,9 @@
 
 //Pick a random element from the list by weight and remove it from the list.
 //Result is returned as a list in the format list(key, value)
-/proc/pickweight_n_take(list/L, base_weight = 1)
+/proc/pickweight_n_take(list/L)
 	if (L.len)
-		. = pickweight(L, base_weight)
+		. = pickweight(L)
 		L.Remove(.)
 
 //Returns the top(last) element from the list and removes it from the list (typical stack function)
@@ -599,7 +602,20 @@
 	L.Insert(toIndex, null)
 	L.Swap(fromIndex, toIndex)
 	L.Cut(fromIndex, fromIndex+1)
+	return TRUE
 
+// Like moveElement but direct to position
+/proc/moveElementToPos(list/L, fromIndex, newPos)
+	if(!L || fromIndex < 1 || fromIndex > L.len)
+		return
+	newPos = clamp(newPos, 1, L.len)
+
+	// convert "new position" -> "insertion index"
+	var/toIndex = newPos
+	if(newPos > fromIndex)
+		toIndex = newPos + 1
+
+	return moveElement(L, fromIndex, toIndex)
 
 //Move elements [fromIndex,fromIndex+len) to [toIndex-len, toIndex)
 //Same as moveElement but for ranges of elements
@@ -623,6 +639,23 @@
 			L.Insert(toIndex, null)
 			L.Swap(fromIndex, toIndex)
 			L.Cut(fromIndex, fromIndex+1)
+
+// changes the key in the list, keeping the index of the element
+/proc/change_assoc_key_preserve_index(list/L, new_key, old_key)
+	if(!(old_key in L))
+		return FALSE
+
+	var/index = L.Find(old_key)
+	if(!index)
+		return FALSE
+
+	var/value = L[old_key]
+
+	L -= old_key
+	L.Insert(index, new_key)
+	L[new_key] = value
+
+	return TRUE
 
 //Move elements from [fromIndex, fromIndex+len) to [toIndex, toIndex+len)
 //Move any elements being overwritten by the move to the now-empty elements, preserving order
@@ -881,6 +914,27 @@
 		if(checked_atom.flags_1 & ignore_flag_1)
 			continue
 		. += checked_atom.contents
+
+/** Прок ищет объект и его дочерние объекты среди указанного листа.
+ * typepath – аргумент атома, обычно записывается как [x.path]
+ * list/type_list – указанный глобально или локально лист, по которому будет произведён поиск
+ */
+/proc/ispath_in_list(atom/thing, list/type_list)
+	if(!islist(type_list))
+		return FALSE
+
+	var/typepath
+	if(ispath(thing))
+		typepath = thing
+	else if(isdatum(thing))
+		typepath = thing.type
+	else
+		return FALSE
+	for(var/T in type_list)
+		if(ispath(T) && ispath(typepath, T))
+			return TRUE
+
+	return FALSE
 
 /// Returns whether a numerical index is within a given list's bounds. Faster than isnull(LAZYACCESS(L, I)).
 #define ISINDEXSAFE(L, I) (I >= 1 && I <= length(L))

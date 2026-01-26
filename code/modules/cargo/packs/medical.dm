@@ -98,17 +98,25 @@
 
 /datum/supply_pack/medical/iv_drip
 	name = "IV Drip Crate"
-	desc = "Содержит одну подставку для капельницы."
+	desc = "Содержит три подставки для капельницы."
 	cost = 800
-	contains = list(/obj/machinery/iv_drip)
+	contains = list(/obj/machinery/iv_drip,
+					/obj/machinery/iv_drip,
+					/obj/machinery/iv_drip)
 	crate_name = "iv drip crate"
 
 /datum/supply_pack/medical/medicalhardsuit
-	name = "Medical Hardsuit"
-	desc = "Есть люди, которых вынесло в космос? Пробоина в той комнате, где труп вашего товарища? Не бойтесь, теперь вы можете купить один медицинский скафандр с маской и баллоном для воздуха, чтобы спасти своих товарищей по экипажу. Требуется медицинский доступ для открытия."
-	cost = 2750
+	name = "Medical Hardsuits crate"
+	desc = "Есть люди, которых вынесло в космос? Пробоина в той комнате, где труп вашего товарища? Не бойтесь, теперь вы можете купить три медицинских скафандра с масками и баллонами для воздуха, чтобы спасти своих товарищей по экипажу. Требуется медицинский доступ для открытия."
+	cost = 8250
 	access = ACCESS_MEDICAL
 	contains = list(/obj/item/tank/internals/air,
+					/obj/item/clothing/mask/gas,
+					/obj/item/clothing/suit/space/hardsuit/medical,
+					/obj/item/tank/internals/air,
+					/obj/item/clothing/mask/gas,
+					/obj/item/clothing/suit/space/hardsuit/medical,
+					/obj/item/tank/internals/air,
 					/obj/item/clothing/mask/gas,
 					/obj/item/clothing/suit/space/hardsuit/medical)
 	crate_name = "medical hardsuit"
@@ -168,12 +176,29 @@
 
 /datum/supply_pack/medical/surgery
 	name = "Surgical Supplies Crate"
-	desc = "Вы хотите сделать операцию, но у вас нет ни одной из этих модных докторских степеней? Просто начните с этого ящика, содержащего медицинскую сумку, стерилизующий спрей и складную кровать на роликах."
-	cost = 1300
+	desc = "Вы хотите сделать операцию, но у вас нет ни одной из этих модных докторских степеней? Просто начните с этого ящика, содержащего медицинскую сумку, стерилизующий спрей, складную кровать на роликах и набор анестетика."
+	cost = 1500
 	contains = list(/obj/item/storage/backpack/duffelbag/med/surgery,
 					/obj/item/reagent_containers/medspray/sterilizine,
-					/obj/item/roller)
+					/obj/item/roller,
+					/obj/item/tank/internals/anesthetic,
+					/obj/item/clothing/mask/breath/medical)
 	crate_name = "surgical supplies crate"
+
+// BLUEMOON ADD START
+/datum/supply_pack/medical/anesthetic
+	name = "Anesthetic Tank Crate"
+	desc = "Много пациентов, нехватка сонного газа? Не беда, этот ящик содержит сразу три набора для анестезии."
+	cost = 1200
+	access = ACCESS_SURGERY
+	contains = list(/obj/item/tank/internals/anesthetic,
+					/obj/item/tank/internals/anesthetic,
+					/obj/item/tank/internals/anesthetic,
+					/obj/item/clothing/mask/breath/medical,
+					/obj/item/clothing/mask/breath/medical,
+					/obj/item/clothing/mask/breath/medical)
+	crate_name = "anesthetic tank crate"
+// BLUEMOON ADD END
 
 //////////////////////////////////////////////////////////////////////////////
 ///////////////////////////// Medical Kits ///////////////////////////////////
@@ -195,7 +220,7 @@
 
 /datum/supply_pack/medical/advrad
 	name = "Radiation Treatment Crate Deluxe"
-	desc = "Ящик на случай, если радиация выйдет из-под контроля... Содержит два набора rad-b-gone kits, one bottle of anti radiation deluxe pills, as well as a radiation treatment deluxe pill bottle!"
+	desc = "Ящик на случай, если радиация выйдет из-под контроля... содержит два набора rad-b-gone, один флакон роскошных таблеток от радиации, а также флакон роскошных таблеток для лучевой терапии."
 	cost = 3500
 	contains = list(/obj/item/storage/pill_bottle/antirad_plus,
 					/obj/item/storage/pill_bottle/mutarad,

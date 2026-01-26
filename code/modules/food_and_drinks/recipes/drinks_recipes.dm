@@ -931,6 +931,13 @@
 	required_reagents = list(/datum/reagent/medicine/ephedrine = 1, /datum/reagent/consumable/ethanol/pina_colada = 1)
 	mix_message = "<span class='warning'>You can hear synthwave in the distance as you can feel your blood boiling with rage.</span>"
 
+/datum/chemical_reaction/millie_kiss
+	name = "Millie Kiss"
+	id = /datum/reagent/consumable/ethanol/millie_kiss
+	results = list(/datum/reagent/consumable/ethanol/millie_kiss = 2)
+	required_reagents = list(/datum/reagent/consumable/ethanol/irishcoffee = 1,  /datum/reagent/consumable/milkshake_strawberry = 1)
+	mix_message = "The drink bubbles, forming pink hearts on the surface."
+
 /datum/chemical_reaction/mauna_loa
 	name = "Mauna Loa"
 	id = /datum/reagent/consumable/ethanol/mauna_loa
@@ -947,18 +954,26 @@
 	mix_message = "When your powers combine, I am Captain Pl-..."
 
 /datum/chemical_reaction/godfather
+	name = "Godfather"
+	id = /datum/reagent/consumable/ethanol/godfather
 	results = list(/datum/reagent/consumable/ethanol/godfather = 2)
 	required_reagents = list(/datum/reagent/consumable/ethanol/amaretto = 1, /datum/reagent/consumable/ethanol/whiskey = 1)
 
 /datum/chemical_reaction/godmother
+	name = "Godmother"
+	id = /datum/reagent/consumable/ethanol/godmother
 	results = list(/datum/reagent/consumable/ethanol/godmother = 2)
 	required_reagents = list(/datum/reagent/consumable/ethanol/amaretto = 1, /datum/reagent/consumable/ethanol/vodka = 1)
 
 /datum/chemical_reaction/amaretto_alexander
+	name = "Amaretto Alexander"
+	id = /datum/reagent/consumable/ethanol/amaretto_alexander
 	results = list(/datum/reagent/consumable/ethanol/amaretto_alexander = 3)
 	required_reagents = list(/datum/reagent/consumable/ethanol/amaretto = 1, /datum/reagent/consumable/ethanol/creme_de_cacao = 1, /datum/reagent/consumable/cream = 1)
 
 /datum/chemical_reaction/ginger_amaretto
+	name = "Ginger Amaretto"
+	id = /datum/reagent/consumable/ethanol/ginger_amaretto
 	results = list(/datum/reagent/consumable/ethanol/ginger_amaretto = 4)
 	required_reagents = list(/datum/reagent/consumable/ethanol/amaretto = 1, /datum/reagent/consumable/sol_dry = 1, /datum/reagent/consumable/ice = 1, /datum/reagent/consumable/lemonjuice = 1)
 

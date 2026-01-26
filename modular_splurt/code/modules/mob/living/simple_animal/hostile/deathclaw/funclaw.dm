@@ -4,8 +4,15 @@
 	var/change_target_hole_cooldown = 0
 	var/chosen_hole
 	var/voremode = FALSE // Fixes runtime when grabbing victim
+	stat_attack = UNCONSCIOUS
+	robust_searching = TRUE
 	gold_core_spawnable = NO_SPAWN // Admin only
 	deathclaw_mode = "rape"
+
+/mob/living/simple_animal/hostile/deathclaw/funclaw/Initialize(mapload)
+	. = ..()
+	if(aggro_vision_range) // Если это не мирный моб, то его нельзя таскать, прятать в ящики и т.д.
+		mob_weight = MOB_WEIGHT_HEAVY_SUPER
 
 /mob/living/simple_animal/hostile/deathclaw/funclaw/gentle
 	desc = "A massive, reptilian creature with powerful muscles, razor-sharp claws, and aggression to match. This one has the bedroom eyes.."
@@ -16,32 +23,223 @@
 	desc = "A massive, reptilian creature with powerful muscles, razor-sharp claws, and aggression to match. This one has a strange smell for some reason.."
 	deathclaw_mode = "abomination"
 
+//BLUEMOON ADD START || The sex mob will no longer even try to attack targets that are not suitable for prefs.
+/mob/living/simple_animal/hostile/deathclaw/funclaw/ListTargets()
+	. = ..()
+	for(var/E in enemies) // Ебашим врагов до смерти
+		if(!(E in .) && can_see(src, E, vision_range))
+			. += E
+
+/mob/living/simple_animal/hostile/deathclaw/funclaw/CanAttack(atom/the_target)
+	. = ..()
+	if(!.)
+		return .
+
+	if(!isliving(the_target))
+		return .
+
+	var/mob/living/M = the_target
+
+	if(CanRape(M) || (M in enemies))
+		return TRUE
+
+	return FALSE
+
+/mob/living/simple_animal/hostile/deathclaw/funclaw/proc/CanRape(mob/living/M)
+	. = FALSE
+
+	if(!M.client)
+		return FALSE
+
+	//So the new pref mobsexpref checks - Gardelin0
+	if(M.client?.prefs.mobsexpref == "No" \
+		|| M.client?.prefs.erppref != "Yes" \
+		|| M.client?.prefs.nonconpref == "No")
+		return FALSE
+
+	if(CHECK_BITFIELD(M.client?.prefs.toggles, VERB_CONSENT))
+		return TRUE
+
+	return .
+
+// Если фанклава обидели, он будет защищаться
+// Удары
+/mob/living/simple_animal/hostile/deathclaw/funclaw/attack_hand(mob/living/user)
+	var/prev = health
+	. = ..()
+	mark_enemy_if_hurt(user, prev)
+
+/mob/living/simple_animal/hostile/deathclaw/funclaw/attackby(obj/item/I, mob/living/user, params, attackchain_flags, damage_multiplier)
+	var/prev = health
+	. = ..()
+	mark_enemy_if_hurt(user, prev)
+
+/mob/living/simple_animal/hostile/deathclaw/funclaw/attack_animal(mob/living/simple_animal/M)
+	var/prev = health
+	. = ..()
+	mark_enemy_if_hurt(M, prev)
+
+/mob/living/simple_animal/hostile/deathclaw/funclaw/attack_alien(mob/living/carbon/alien/humanoid/M)
+	var/prev = health
+	. = ..()
+	mark_enemy_if_hurt(M, prev)
+
+/mob/living/simple_animal/hostile/deathclaw/funclaw/attack_larva(mob/living/carbon/alien/larva/L)
+	var/prev = health
+	. = ..()
+	mark_enemy_if_hurt(L, prev)
+
+/mob/living/simple_animal/hostile/deathclaw/funclaw/attack_slime(mob/living/simple_animal/slime/M)
+	var/prev = health
+	. = ..()
+	mark_enemy_if_hurt(M, prev)
+
+/mob/living/simple_animal/hostile/deathclaw/funclaw/attack_drone(mob/living/simple_animal/drone/M)
+	var/prev = health
+	. = ..()
+	mark_enemy_if_hurt(M, prev)
+
+/mob/living/simple_animal/hostile/deathclaw/funclaw/attack_paw(mob/living/carbon/monkey/M)
+	var/prev = health
+	. = ..()
+	mark_enemy_if_hurt(M, prev)
+
+/mob/living/simple_animal/hostile/deathclaw/funclaw/attack_hulk(mob/living/carbon/human/user, does_attack_animation)
+	var/prev = health
+	. = ..()
+	mark_enemy_if_hurt(user, prev)
+
+/mob/living/simple_animal/hostile/deathclaw/funclaw/attack_robot(mob/living/user)
+	var/prev = health
+	. = ..()
+	mark_enemy_if_hurt(user, prev)
+
+/mob/living/simple_animal/hostile/deathclaw/funclaw/mech_melee_attack(obj/vehicle/sealed/mecha/mecha_attacker, mob/user)
+	var/prev = health
+	. = ..()
+	mark_enemy_if_hurt(user, prev)
+
+// Дальнее оружие
+/mob/living/simple_animal/hostile/deathclaw/funclaw/bullet_act(obj/item/projectile/Proj)
+	var/prev = health
+	. = ..()
+	var/mob/living/A = isliving(Proj.firer) ? Proj.firer : null
+	mark_enemy_if_hurt(A, prev)
+
+// Броски
+/mob/living/simple_animal/hostile/deathclaw/funclaw/hitby(atom/movable/AM, skipcatch, hitpush, blocked, datum/thrownthing/throwingdatum)
+	var/prev = health
+	. = ..()
+	var/mob/living/A = isliving(throwingdatum?.thrower) ? throwingdatum.thrower : null
+	mark_enemy_if_hurt(A, prev)
+
+/mob/living/simple_animal/hostile/deathclaw/funclaw/proc/mark_enemy_if_hurt(mob/living/A, prev_hp)
+	if(!A)
+		return
+	if(prev_hp <= health)
+		return
+	if(A in range(vision_range, src))
+		if(A in enemies)
+			enemies -= A
+		enemies.Insert(1, A) // Условно первый в агролисте личных врагов
+
+/mob/living/simple_animal/hostile/deathclaw/funclaw/moan()
+	var/message_to_display = pick("рычит%S%", "рычит%S% от удовольствия")
+	visible_message(span_lewd("<b>\The [src]</b> [replacetext(message_to_display, "%S%", "")]."),
+		span_lewd("Вы [replacetext(message_to_display, "%S%", "е")]."),
+		span_lewd("Вы слышите наполненный удовольствием рык."),
+		ignored_mobs = get_unconsenting(), omni = TRUE)
+
+	var/static/list/moans = list('modular_splurt/sound/lewd/deathclaw_grunt1.ogg',
+					'modular_splurt/sound/lewd/deathclaw_grunt2.ogg',
+					'modular_splurt/sound/lewd/deathclaw_grunt3.ogg',
+					'modular_splurt/sound/lewd/deathclaw_grunt4.ogg',
+					'modular_splurt/sound/lewd/deathclaw_grunt5.ogg'
+					)
+
+	// Pick a sound from the list.
+	var/sound = pick(moans)
+
+	// If the sound is repeated, get a new from a list without it.
+	if (lastmoan == sound)
+		sound = pick(LAZYCOPY(moans) - lastmoan)
+
+	playlewdinteractionsound(loc, sound, 80, 1, -1)
+	lastmoan = sound
+
+/mob/living/simple_animal/hostile/deathclaw/funclaw/PickTarget(list/Targets)
+	//. = ..() Не требуется
+
+	// targets_from — точка, от которой считаем дистанцию
+	// Targets — список возможных целей
+	// enemies — список личных врагов
+
+	var/list/cands = list()
+	var/min_d = vision_range * 5 // Большая мин дист, что бы перебить при проверке
+
+	// 1) последний ЛИЧНЫЙ враг, что нанес урон
+	for(var/atom/A in enemies)
+		if(A in Targets)
+			return A
+	/*
+	// 1) ближайший ЛИЧНЫЙ враг
+	for(var/atom/A in Targets)
+		if(!(A in enemies))
+			continue
+		var/d = get_dist(targets_from, A)
+		if(d < min_d)
+			min_d = d
+			cands = list(A)
+		else if(d == min_d)
+			cands += A
+	*/
+
+	if(cands.len)
+		return pick(cands)
+
+	// 2) ближайшая ОБЫЧНАЯ цель
+	cands.Cut()
+	min_d = vision_range * 5 // Большая мин дист, что бы перебить при проверке
+
+	for(var/atom/B in Targets)
+		var/d2 = get_dist(targets_from, B)
+		if(d2 < min_d)
+			min_d = d2
+			cands = list(B)
+		else if(d2 == min_d)
+			cands += B
+
+	return cands.len ? pick(cands) : null
+//BLUEMOON ADD END
+
 /mob/living/simple_animal/hostile/deathclaw/funclaw/AttackingTarget()
+
+	if(!CanRape(target))
+		..() // Attack target to death
+		return
+
 	var/mob/living/M = target
 
 	var/onLewdCooldown = FALSE
-	var/wantsNoncon = FALSE
 
 	if(get_refraction_dif() > 0)
 		onLewdCooldown = TRUE
 
-	if(M.client && M.client?.prefs.erppref == "Yes" && CHECK_BITFIELD(M.client?.prefs.toggles, VERB_CONSENT) && M.client?.prefs.nonconpref == "Yes")
-		wantsNoncon = TRUE
-
-	if(M.client && M.client?.prefs.mobsexpref == "No") //So the new pref checks - Gardelin0
-		return
-
 	switch(deathclaw_mode)
 		if("gentle")
-			if(onLewdCooldown || !wantsNoncon)
+			if(onLewdCooldown)
 				return // Do nothing
 		if("abomination")
-			if(onLewdCooldown || !wantsNoncon)
+			if(onLewdCooldown)
 				return // Do nothing
 		if("rape")
-			if(onLewdCooldown || !wantsNoncon || M.health > 60)
+			if(onLewdCooldown || M.health > M.maxHealth * 0.4)
 				..() // Attack target
 				return
+
+	if((target in enemies) && M.health > M.maxHealth * 0.4)
+		..() // Attack target
+		return
 
 	if(!M.pulledby)
 		if(!M.buckled && !M.density)
@@ -73,6 +271,9 @@
 	if(deathclaw_mode != "abomination" || M.client?.prefs.unholypref != "Yes")
 		addtimer(CALLBACK(src, PROC_REF(do_lewd_action), M), rand(12, 16))
 
+/mob/living/simple_animal/hostile/deathclaw/LoseTarget()
+	. = ..()
+	stop_pulling()
 
 /mob/living/simple_animal/hostile/deathclaw/funclaw/proc/pickNewHole(mob/living/M)
 	switch(rand(2))
@@ -87,14 +288,8 @@
 			chosen_hole = CUM_TARGET_THROAT
 
 /mob/living/simple_animal/hostile/deathclaw/funclaw/proc/do_lewd_action(mob/living/M)
-	if(M.client && M.client?.prefs.mobsexpref == "No")
-		return
-
 	if(get_refraction_dif() > 0)
 		return
-
-	if(rand(1,7) == 7)
-		playlewdinteractionsound(loc, "modular_splurt/sound/lewd/deathclaw_grunt[rand(1, 5)].ogg", 30, 1, -1)
 
 	var/datum/interaction/I
 	switch(chosen_hole)
@@ -161,36 +356,38 @@
 	switch(chosen_hole)
 		if(CUM_TARGET_THROAT)
 			if(M.has_mouth() && M.mouth_is_free())
-				message = "shoves their fat reptillian cock deep down \the [M]'s throat and cums."
+	// BLUEMOON EDIT START
+				message = "засовывает свой толстый ящерский член глубоко в глотку \the [M] и кончает!"
 				target_gen = M.getorganslot(ORGAN_SLOT_STOMACH)
 				target_gen.reagents.add_reagent(/datum/reagent/consumable/semen, 30)
 			else
-				message = "cums on \the [M]'s face."
+				message = "кончает на лицо \the [M]!"
 		if(CUM_TARGET_VAGINA)
 			if(M.is_bottomless() && M.has_vagina())
-				message = "rams its meaty cock into \the [M]'s pussy and fills it with sperm."
+				message = "засовывает свой мясистый член в киску \the [M] и наполняет ее спермой!"
 				target_gen = M.getorganslot(ORGAN_SLOT_WOMB)
 				target_gen.reagents.add_reagent(/datum/reagent/consumable/semen, 30)
 				M.impregnate(src, M.getorganslot(ORGAN_SLOT_WOMB), src.type)
 			else
-				message = "cums on \the [M]'s belly."
+				message = "кончает на живот \the [M]!"
 		if(CUM_TARGET_ANUS)
 			if(M.is_bottomless() && M.has_anus())
-				message = "hilts its knot into \the [M]'s ass and floods it with Deathclaw jizz."
+				message = "[pick("вгоняет","вонзает")] свой узловатый член в задницу \the [M] и наполняет ее своей спермой!"
 				target_gen = M.getorganslot(ORGAN_SLOT_ANUS)
 				target_gen.reagents.add_reagent(/datum/reagent/consumable/semen, 30)
 			else
-				message = "cums on \the [M]'s backside."
+				message = "кончает на спину \the [M]!"
 		else
-			message = "кончает, заполняя пространство под собой!"
+			message = "кончает, заливая пространство под собой!"
 
 	if(deathclaw_mode == "abomination" && M.client?.prefs.unholypref == "Yes")
-		message = "cums all over [M]'s body"
+		message = "покрывает все тело \the [M] спермой!"
+	// BLUEMOON EDIT END
 
 	new /obj/effect/decal/cleanable/semen(loc)
 
-	playlewdinteractionsound(loc, "modular_splurt/sound/lewd/deathclaw[rand(1, 2)].ogg", 30, 1, -1)
-	visible_message("<font color=purple><b>\The [src]</b> [message]</font>")
+	playlewdinteractionsound(loc, "modular_splurt/sound/lewd/deathclaw[rand(1, 2)].ogg", 80, 1, -1) // BLUEMOON EDIT
+	visible_message(span_userlove("<b>\The [src]</b> [message]")) // BLUEMOON EDIT
 	shake_camera(M, 6, 1)
 	set_is_fucking(null ,null)
 

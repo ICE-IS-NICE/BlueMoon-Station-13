@@ -22,7 +22,7 @@ SUBSYSTEM_DEF(security_level)
 	if(new_level >= SEC_LEVEL_GREEN && new_level <= SEC_LEVEL_DELTA && new_level != GLOB.security_level)
 		switch(new_level)
 			if(SEC_LEVEL_GREEN)
-				minor_announce(CONFIG_GET(string/alert_green), "Внимание! Уровень тревоги был снижен до ЗЕЛЁНЫЙ:")
+				minor_announce(CONFIG_GET(string/alert_green), "Внимание! Уровень тревоги был снижен до ЗЕЛЁНОГО:")
 				unset_stationwide_emergency_lighting()
 				if(SSshuttle.emergency.mode == SHUTTLE_CALL || SSshuttle.emergency.mode == SHUTTLE_RECALL)
 					if(GLOB.security_level >= SEC_LEVEL_RED)
@@ -119,10 +119,13 @@ SUBSYSTEM_DEF(security_level)
 						SSshuttle.emergency.modTimer(1.6)
 				GLOB.security_level = SEC_LEVEL_AMBER
 				var/obj/machinery/computer/communications/C = locate() in GLOB.machines
-				if(C)
-					C.post_status("alert", "amberalert")
+				if(prob(90))
+					C?.post_status("alert", "amberalert")
+					sound_to_playing_players('sound/misc/alerts/amber.ogg', volume = 50)
+				else
+					C?.post_status("alert", "amberalert_secret")
+					sound_to_playing_players('sound/misc/alerts/amber_secret.ogg')
 				unset_stationwide_emergency_lighting()
-				sound_to_playing_players('sound/misc/alerts/amber.ogg', volume = 50)
 				for(var/obj/machinery/firealarm/FA in GLOB.machines)
 					if(is_station_level(FA.z))
 						FA.update_icon()
@@ -155,10 +158,15 @@ SUBSYSTEM_DEF(security_level)
 				INVOKE_ASYNC(src, PROC_REF(move_shuttle))
 				SSblackbox.record_feedback("tally", "security_level_changes", 1, NUM2SECLEVEL(GLOB.security_level))
 
+			if(SEC_LEVEL_GAMMA)
+				set_stationwide_emergency_lighting()
+				addtimer(CALLBACK(GLOBAL_PROC, GLOBAL_PROC_REF(gamma_process)), 10 SECONDS)
+				INVOKE_ASYNC(src, PROC_REF(move_shuttle))
+				SSblackbox.record_feedback("tally", "security_level_changes", 1, NUM2SECLEVEL(GLOB.security_level))
+
 			if(SEC_LEVEL_EPSILON)
 				set_stationwide_emergency_lighting()
 				addtimer(CALLBACK(GLOBAL_PROC, GLOBAL_PROC_REF(epsilon_process)), 10 SECONDS)
-				INVOKE_ASYNC(src, PROC_REF(move_shuttle))
 				SSblackbox.record_feedback("tally", "security_level_changes", 1, NUM2SECLEVEL(GLOB.security_level))
 
 			if(SEC_LEVEL_DELTA)
@@ -189,8 +197,9 @@ SUBSYSTEM_DEF(security_level)
  * Arguments: min_level: number, eng_access: boolean, maint_access: boolean
 */
 /datum/controller/subsystem/security_level/proc/minimum_security_level(min_level = SEC_LEVEL_ORANGE, eng_access = TRUE, maint_access = FALSE)
-	if(SECLEVEL2NUM(GLOB.security_level) < min_level)
-		set_security_level(min_level)
+	var/current_level = isnum(GLOB.security_level) ? GLOB.security_level : SECLEVEL2NUM(GLOB.security_level)
+	if(current_level < min_level)
+		set_level(min_level)
 
 	if(eng_access)
 		GLOB.force_eng_override = TRUE
@@ -220,7 +229,7 @@ SUBSYSTEM_DEF(security_level)
 				continue
 			if(L.status)
 				continue
-			if(GLOB.security_level == SEC_LEVEL_RED || SEC_LEVEL_LAMBDA || SEC_LEVEL_EPSILON || SEC_LEVEL_DELTA)
+			if(GLOB.security_level == SEC_LEVEL_RED || SEC_LEVEL_LAMBDA || SEC_LEVEL_GAMMA || SEC_LEVEL_EPSILON || SEC_LEVEL_DELTA)
 				L.fire_mode = TRUE
 			L.on = FALSE
 			addtimer(CALLBACK(L, TYPE_PROC_REF(/obj/machinery/light, update), FALSE), rand(5, 10) SECONDS)
@@ -249,21 +258,11 @@ SUBSYSTEM_DEF(security_level)
 		AR.area_emergency_mode = FALSE
 		addtimer(CALLBACK(A, TYPE_PROC_REF(/obj/machinery/power/apc, update), FALSE), rand(5, 10) SECONDS)
 
-/proc/epsilon_process()
-	minor_announce(CONFIG_GET(string/alert_epsilon), "Внимание! Код - ЭПСИЛОН!")
-	sound_to_playing_players('sound/misc/alerts/epsilon.ogg')
-	GLOB.security_level = SEC_LEVEL_EPSILON
-	for(var/obj/machinery/firealarm/FA in GLOB.machines)
-		if(is_station_level(FA.z))
-			FA.update_icon()
-	var/obj/machinery/computer/communications/C = locate() in GLOB.machines
-	if(C)
-		C.post_status("alert", "epsilonalert")
-
 /proc/lambda_process()
 	minor_announce(CONFIG_GET(string/alert_lambda), "Внимание! Код - ЛЯМБДА!")
 	sound_to_playing_players('modular_bluemoon/kovac_shitcode/sound/lambda_code.ogg')
 	GLOB.security_level = SEC_LEVEL_LAMBDA
+	SEND_SIGNAL(SSsecurity_level, COMSIG_SECURITY_LEVEL_CHANGED) // Без этого никакие сигнал_хендлеры, связанные со сменой кода, не ловят лямбду. Включая мой сейф.
 	for(var/obj/machinery/firealarm/FA in GLOB.machines)
 		if(is_station_level(FA.z))
 			FA.update_icon()
@@ -279,6 +278,44 @@ SUBSYSTEM_DEF(security_level)
 	var/obj/machinery/computer/communications/C = locate() in GLOB.machines
 	if(C)
 		C.post_status("alert", "lambdaalert")
+
+/proc/gamma_process()
+	minor_announce(CONFIG_GET(string/alert_gamma), "Внимание! Код - ГАММА!")
+	sound_to_playing_players('sound/misc/alerts/gamma_alert.ogg')
+	GLOB.security_level = SEC_LEVEL_GAMMA
+	SEND_SIGNAL(SSsecurity_level, COMSIG_SECURITY_LEVEL_CHANGED) // Без этого никакие сигнал_хендлеры, связанные со сменой кода, не ловят гамму. Включая мой сейф.
+	for(var/obj/machinery/firealarm/FA in GLOB.machines)
+		if(is_station_level(FA.z))
+			FA.update_icon()
+	for(var/obj/machinery/computer/shuttle/pod/pod in GLOB.machines)
+		pod.admin_controlled = FALSE
+	if(SSshuttle.emergency.mode == SHUTTLE_CALL || SSshuttle.emergency.mode == SHUTTLE_RECALL)
+		if(GLOB.security_level < SEC_LEVEL_BLUE)
+			SSshuttle.emergency.modTimer(0.25)
+		else if(GLOB.security_level == SEC_LEVEL_BLUE)
+			SSshuttle.emergency.modTimer(0.416)
+		else
+			SSshuttle.emergency.modTimer(0.625)
+	var/obj/machinery/computer/communications/C = locate() in GLOB.machines
+	if(C)
+		C.post_status("alert", "gammaalert")
+
+/proc/epsilon_process()
+	minor_announce(CONFIG_GET(string/alert_epsilon), "Внимание! Код - ЭПСИЛОН!")
+	switch(rand(1,10))
+		if(1 to 5)
+			sound_to_playing_players('sound/misc/alerts/epsilon_portal.ogg')
+		if(6 to 9)
+			sound_to_playing_players('sound/misc/alerts/epsilon_mexica.ogg')
+		if(10)
+			sound_to_playing_players('sound/misc/alerts/epsilon_elevator.ogg')
+	GLOB.security_level = SEC_LEVEL_EPSILON
+	for(var/obj/machinery/firealarm/FA in GLOB.machines)
+		if(is_station_level(FA.z))
+			FA.update_icon()
+	var/obj/machinery/computer/communications/C = locate() in GLOB.machines
+	if(C)
+		C.post_status("alert", "epsilonalert")
 
 /proc/delta_process()
 	minor_announce(CONFIG_GET(string/alert_delta), "Тревога! Код - ДЕЛЬТА!")

@@ -585,6 +585,8 @@
 			level = "red"
 		if(SEC_LEVEL_LAMBDA)
 			level = "lambda"
+		if(SEC_LEVEL_GAMMA)
+			level = "gamma"
 		if(SEC_LEVEL_EPSILON)
 			level = "epsilon"
 		if(SEC_LEVEL_DELTA)
@@ -716,6 +718,10 @@
 
 		client.prefs.scars_list["[cur_scar_index]"] = valid_scars
 		client.prefs.save_character()
+
+	// BLUEMOON ADD START - загрузка татуировок
+	client.prefs.apply_tattoos_to_human(H)
+	// BLUEMOON ADD END
 
 	client.prefs.copy_to(H, initial_spawn = TRUE)
 	H.dna.update_dna_identity()

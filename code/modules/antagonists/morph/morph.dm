@@ -59,7 +59,7 @@
 	if(morphed)
 		. = form.examine(user)
 		if(get_dist(user,src)<=3)
-			. += "<span class='warning'>It doesn't look quite right...</span>"
+			. += "<span class='warning'>Выглядит как-то неправильно...</span>"
 	else
 		. = ..()
 
@@ -185,8 +185,9 @@
 		for(var/atom/movable/A in view(src))
 			if(allowed(A))
 				things += A
-		var/atom/movable/T = pick(things)
-		assume(T)
+		if(things)
+			var/atom/movable/T = pick(things)
+			assume(T)
 
 /mob/living/simple_animal/hostile/morph/can_track(mob/living/user)
 	if(morphed)

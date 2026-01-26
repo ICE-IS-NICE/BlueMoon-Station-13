@@ -41,6 +41,7 @@
 	icon_state = "armoralt"
 	item_state = "armoralt"
 	blood_overlay_type = "armor"
+	clothing_flags = THICKMATERIAL
 	dog_fashion = /datum/dog_fashion/back
 
 /obj/item/clothing/suit/armor/vest/alt
@@ -90,6 +91,7 @@
 	armor = list(MELEE = 40, BULLET = 40, LASER = 40, ENERGY = 50, BOMB = 25, BIO = 0, RAD = 0, FIRE = 70, ACID = 90, WOUND = 20)
 	cold_protection = CHEST|GROIN|LEGS|ARMS
 	heat_protection = CHEST|GROIN|LEGS|ARMS
+	clothing_flags = THICKMATERIAL
 	strip_delay = 80
 
 /obj/item/clothing/suit/armor/hos/navyblue
@@ -228,11 +230,10 @@
 	dog_fashion = null
 	resistance_flags = FIRE_PROOF
 
-/obj/item/clothing/suit/armor/vest/capcarapace/syndicate
-	name = "syndicate captain's vest"
-	desc = "A sinister looking vest of advanced armor worn over a black and red fireproof jacket. The gold collar and shoulders denote that this belongs to a high ranking syndicate officer."
-	icon_state = "syndievest"
-	mutantrace_variation = STYLE_DIGITIGRADE
+/obj/item/clothing/suit/armor/vest/capcarapace/centcom
+	name = "CentCom Officer Vest"
+	desc = "A sinister looking vest of advanced armor worn over a green and black fireproof jacket. The gold collar and shoulders denote that this belongs to a high ranking officer."
+	icon_state = "centcom_vest"
 
 /obj/item/clothing/suit/toggle/captains_parade
 	name = "captain's parade jacket"
@@ -246,6 +247,18 @@
 /obj/item/clothing/suit/toggle/captains_parade/Initialize(mapload)
 	. = ..()
 	allowed = GLOB.security_wintercoat_allowed
+
+/obj/item/clothing/suit/toggle/captains_parade/centcom_formal
+	name = "\improper CentCom formal coat"
+	desc = "A stylish coat given to CentCom Commanders. Perfect for sending ERTs to suicide missions with style!"
+	icon_state = "centcom_formal"
+	item_state = "centcom"
+
+/obj/item/clothing/suit/toggle/captains_parade/hos_formal
+	name = "\improper Head of Security's Parade Jacket"
+	desc = "For when an armoured vest isn't fashionable enough."
+	icon_state = "hosformal"
+	item_state = "hostrench"
 
 /obj/item/clothing/suit/armor/riot
 	name = "riot suit"
@@ -294,6 +307,7 @@
 	body_parts_covered = CHEST|GROIN|LEGS|FEET|ARMS
 	strip_delay = 70
 	equip_delay_other = 50
+	clothing_flags = THICKMATERIAL
 	mutantrace_variation = STYLE_DIGITIGRADE
 	unique_reskin = list(
 		"Basic" = list(
@@ -387,6 +401,9 @@
 	desc = "A classic suit of plate armour, highly effective at stopping melee attacks."
 	icon_state = "knight_green"
 	item_state = "knight_green"
+	armor = list(MELEE = 80, BULLET = 40, LASER = 10, ENERGY = 10, BOMB = 10, BIO = 0, RAD = 0, FIRE = 80, ACID = 80, WOUND = 30)
+	slowdown = 0.5
+	flags_inv = HIDEGLOVES|HIDESHOES|HIDEJUMPSUIT
 
 /obj/item/clothing/suit/armor/riot/knight/yellow
 	icon_state = "knight_yellow"
@@ -405,7 +422,6 @@
 	desc = "A classic suit of armour, able to be made from many different materials."
 	icon_state = "knight_greyscale"
 	item_state = "knight_greyscale"
-	armor = list(MELEE = 35, BULLET = 10, LASER = 10, ENERGY = 10, BOMB = 10, BIO = 10, RAD = 10, FIRE = 40, ACID = 40,  WOUND = 15)
 	material_flags = MATERIAL_ADD_PREFIX | MATERIAL_COLOR | MATERIAL_AFFECT_STATISTICS //Can change color and add prefix
 
 /obj/item/clothing/suit/armor/vest/durathread
@@ -417,6 +433,7 @@
 	equip_delay_other = 40
 	max_integrity = 200
 	resistance_flags = FLAMMABLE
+	clothing_flags = null
 	armor = list(MELEE = 20, BULLET = 10, LASER = 30, ENERGY = 20, BOMB = 15, BIO = 0, RAD = 0, FIRE = 40, ACID = 50, WOUND = 10)
 
 /obj/item/clothing/suit/armor/vest/russian
@@ -461,30 +478,3 @@
 	icon_state = "sov_offcoat"
 	item_state = "sov_offcoat"
 	//armor = list(MELEE = 25, BULLET = 20, LASER = 20, ENERGY = 10, BOMB = 20, BIO = 50, RAD = 50, FIRE = -10, ACID = 50,  WOUND = 10)
-
-
-/obj/item/clothing/suit/toggle/armor/vest/centcom_formal
-	name = "\improper CentCom formal coat"
-	desc = "A stylish coat given to CentCom Commanders. Perfect for sending ERTs to suicide missions with style!"
-	icon_state = "centcom_formal"
-	item_state = "centcom"
-	body_parts_covered = CHEST|GROIN|ARMS
-	armor = list(MELEE = 35, BULLET = 40, LASER = 40, ENERGY = 50, BOMB = 35, BIO = 10, RAD = 10, FIRE = 10, ACID = 60, WOUND = 35)
-	togglename = "buttons"
-
-/obj/item/clothing/suit/toggle/armor/vest/centcom_formal/Initialize(mapload)
-	. = ..()
-	allowed = GLOB.security_wintercoat_allowed
-
-/obj/item/clothing/suit/toggle/armor/hos/hos_formal
-	name = "\improper Head of Security's Parade Jacket"
-	desc = "For when an armoured vest isn't fashionable enough."
-	icon_state = "hosformal"
-	item_state = "hostrench"
-	body_parts_covered = CHEST|GROIN|ARMS
-	armor = list(MELEE = 30, BULLET = 30, LASER = 30, ENERGY = 40, BOMB = 25, BIO = 0, RAD = 0, FIRE = 70, ACID = 90, WOUND = 20)
-	togglename = "buttons"
-
-/obj/item/clothing/suit/toggle/armor/hos/hos_formal/Initialize(mapload)
-	. = ..()
-	allowed = GLOB.security_wintercoat_allowed

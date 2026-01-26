@@ -128,15 +128,6 @@
 	flavor_quirk = TRUE
 	mob_trait = TRAIT_LEWD_JOB
 
-/datum/preferences
-	var/summon_nickname = null
-
-/datum/quirk/lewdsummon
-	name = "Призываемый"
-	desc = "Вы были одарены силой демонов похоти или же сами являлись её источником, что давала возможность осмелившимся безумцам призывать вас при помощи рун. Сможете ли вы исполнить их фантазии?."
-	mob_trait = TRAIT_LEWD_SUMMON
-	gain_text = "<span class='notice'>Призываемый - ЕРП квирк. Использование его для абуза механик, будет крайне строго наказываться ©️. </span>"
-
 /datum/quirk/common_pregnancy
 	name = "Обычная беременность"
 	desc = "Ваша беременность протекает как у нормального млекопитающего и вы не откладываете яйца! Залетев, вы не скоро родите ребёнка!"
@@ -160,3 +151,21 @@
 /datum/quirk/bondage_lover/remove()
 	// Remove mood event
 	SEND_SIGNAL(quirk_holder, COMSIG_CLEAR_MOOD_EVENT, QMOOD_BONDAGE)
+
+/datum/quirk/imaginary_friend
+	name = "Воображаемый друг"
+	desc = "У вас появился друг в голове. Кто знает, поможет он вам, или нет... Только не соглашайтесь на его предложение сделать клуб!"
+	value = 0
+	mob_trait = TRAIT_IMAGINARYFRIEND
+	//gain_text handled be trauma
+	//lose_text handled be trauma
+	medical_record_text = "У пациента присутсвует \"Воображаемый Друг\"."
+	on_spawn_immediate = FALSE
+
+/datum/quirk/imaginary_friend/add()
+	var/mob/living/carbon/human/H = quirk_holder
+	H.gain_trauma(/datum/brain_trauma/special/imaginary_friend, TRAUMA_RESILIENCE_ABSOLUTE)
+
+/datum/quirk/imaginary_friend/remove()
+	var/mob/living/carbon/human/H = quirk_holder
+	H.cure_trauma_type(/datum/brain_trauma/special/imaginary_friend, TRAUMA_RESILIENCE_ABSOLUTE)

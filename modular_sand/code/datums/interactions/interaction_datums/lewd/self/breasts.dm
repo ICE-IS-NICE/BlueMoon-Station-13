@@ -44,19 +44,14 @@
 					"деликатно сжимает свой сосок",
 					"возбуждённо проводит пальцем вдоль своей груди")
 		playlewdinteractionsound(get_turf(user), 'modular_sand/sound/interactions/champ_fingering.ogg', 50, 1, -1)
-	if(prob(5 + user.get_lust()))
+	if(prob(user.get_lust() / user.get_climax_threshold() * 50)) // 50%
 		user.visible_message("<span class='lewd'><b>\The [user]</b> [pick("дрожит от возбуждения",
 				"тихо стонет",
 				"выдыхает тихий довольный стон",
 				"мурлыкает и звучно вздыхает",
 				"тихонько вздрагивает",
 				"вздрагивает, хватаясь за причинное место")]</span>")
-		playlewdinteractionsound(get_turf(user), pick('modular_bluemoon/sound/emotes/softmoan1.ogg',
-					'modular_bluemoon/sound/emotes/softmoan2.ogg',
-					'modular_bluemoon/sound/emotes/softmoan3.ogg',
-					'modular_bluemoon/sound/emotes/softmoan4.ogg',
-					'modular_bluemoon/sound/emotes/softmoan5.ogg',
-					'modular_bluemoon/sound/emotes/softmoan6.ogg'), 70, 1, -1)
+		playlewdinteractionsound(get_turf(user), pick(GLOB.lewd_softmoans_female), 70, 1, -1)
 
 	if(liquid_container)
 		message += " прямо в [liquid_container]"

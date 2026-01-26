@@ -5,6 +5,7 @@
 	under_type = /obj/item/clothing/underwear/shirt
 	body_parts_covered = CHEST | ARMS
 	slot_flags = ITEM_SLOT_SHIRT
+	mutantrace_variation = STYLE_DIGITIGRADE|STYLE_NO_ANTHRO_ICON
 
 // please make sure they're sorted alphabetically and categorized, above is the only exception
 
@@ -117,6 +118,10 @@
 /obj/item/clothing/underwear/shirt/bra/halterneck
 	name = "halterneck bra"
 	icon_state = "bra_halterneck"
+
+/obj/item/clothing/underwear/shirt/bra/lizared
+	name = "LIZARED Top"
+	icon_state = "bra_LIZARED"
 
 /obj/item/clothing/underwear/shirt/bra/kinky
 	name = "kinky bra"

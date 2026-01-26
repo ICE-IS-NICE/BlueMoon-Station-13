@@ -88,16 +88,16 @@ GLOBAL_VAR_INIT(round_type, ROUNDTYPE_DYNAMIC_MEDIUM)
 	var/latejoin_delay_min = (10 MINUTES) //BLUEMOON CHANGES
 
 	/// The maximum time the recurring latejoin ruleset timer is allowed to be.
-	var/latejoin_delay_max = (15 MINUTES)
+	var/latejoin_delay_max = (20 MINUTES)
 
 	/// When world.time is over this number the mode tries to inject a midround ruleset.
 	var/midround_injection_cooldown = 0
 
 	/// The minimum time the recurring midround ruleset timer is allowed to be.
-	var/midround_delay_min = (20 MINUTES) //BLUEMOON CHANGES
+	var/midround_delay_min = (10 MINUTES) //BLUEMOON CHANGES
 
 	/// The maximum time the recurring midround ruleset timer is allowed to be.
-	var/midround_delay_max = (30 MINUTES) //BLUEMOON CHANGES
+	var/midround_delay_max = (20 MINUTES) //BLUEMOON CHANGES
 
 	/// If above this threat, increase the chance of injection
 	var/higher_injection_chance_minimum_threat = 70
@@ -312,8 +312,8 @@ GLOBAL_VAR_INIT(round_type, ROUNDTYPE_DYNAMIC_MEDIUM)
 			G.on_report()
 			. += G.get_report()
 
-	print_command_report(., "Отдел ССО Пакта Синих Лун", announce=FALSE)
-	priority_announce("Благодаря неустанным усилиям наших специальных оперативных подразделений мы обнаружили несколько возможных угроз для [station_name()]. Будьте осторожней!", "Отдел ССО Пакта Синих Лун", "intercept")
+	print_command_report(., "Отдел ССО ПАКТа Синих Лун", announce=FALSE)
+	priority_announce("Благодаря неустанным усилиям наших специальных оперативных подразделений мы обнаружили несколько возможных угроз для [station_name()]. Будьте осторожней!", "Отдел ССО ПАКТа Синих Лун", "intercept")
 
 /datum/game_mode/dynamic/proc/show_threatlog(mob/admin)
 	if(!SSticker.HasRoundStarted())
@@ -339,17 +339,17 @@ GLOBAL_VAR_INIT(round_type, ROUNDTYPE_DYNAMIC_MEDIUM)
 	// BLUEMOON ADD START - присвоение минимального и максимального возможного уровня угрозы
 	switch(GLOB.round_type)
 		if(ROUNDTYPE_DYNAMIC_TEAMBASED)
-			GLOB.dynamic_type_threat_min = 75 //от 1 до 2 командных антагов
+			GLOB.dynamic_type_threat_min = 90 //от 1 до 2 командных антагов
 			GLOB.dynamic_type_threat_max = 100
 			GLOB.dynamic_no_stacking = FALSE //Welcome To Space Iraq
 		if(ROUNDTYPE_DYNAMIC_HARD)
-			GLOB.dynamic_type_threat_min = 75
+			GLOB.dynamic_type_threat_min = 95
 			GLOB.dynamic_type_threat_max = 100
 		if(ROUNDTYPE_DYNAMIC_MEDIUM)
-			GLOB.dynamic_type_threat_min = 40
-			GLOB.dynamic_type_threat_max = 60
-		if(ROUNDTYPE_DYNAMIC_LIGHT)
 			GLOB.dynamic_type_threat_min = 50
+			GLOB.dynamic_type_threat_max = 100
+		if(ROUNDTYPE_DYNAMIC_LIGHT)
+			GLOB.dynamic_type_threat_min = 30
 			GLOB.dynamic_type_threat_max = 70
 		if(ROUNDTYPE_EXTENDED)
 			GLOB.dynamic_type_threat_min = 0
@@ -542,7 +542,7 @@ BLUEMOON REMOVAL END*/
 	var/round_start_budget_left = round_start_budget
 
 	while (round_start_budget_left > 0)
-		var/datum/dynamic_ruleset/roundstart/ruleset = pickweightAllowZero(drafted_rules)
+		var/datum/dynamic_ruleset/roundstart/ruleset = pickweight(drafted_rules)
 		if (isnull(ruleset))
 			log_game("DYNAMIC: No more rules can be applied, stopping with [round_start_budget] left.")
 			break
@@ -550,19 +550,19 @@ BLUEMOON REMOVAL END*/
 		var/cost = (ruleset in rulesets_picked) ? ruleset.scaling_cost : ruleset.cost
 		if (cost == 0)
 			stack_trace("[ruleset] cost 0, this is going to result in an infinite loop.")
-			drafted_rules[ruleset] = null
+			drafted_rules[ruleset] = 0
 			continue
 
 		if (cost > round_start_budget_left)
-			drafted_rules[ruleset] = null
+			drafted_rules[ruleset] = 0
 			continue
 
 		if (check_blocking(ruleset.blocking_rules, rulesets_picked))
-			drafted_rules[ruleset] = null
+			drafted_rules[ruleset] = 0
 			continue
 		// BLUEMOON ADD START - проверки для вариаций динамика
 		if(!(GLOB.round_type in ruleset.required_round_type))
-			drafted_rules[ruleset] = null
+			drafted_rules[ruleset] = 0
 			continue
 		// BLUEMOON ADD END
 		round_start_budget_left -= cost
@@ -573,10 +573,10 @@ BLUEMOON REMOVAL END*/
 			for (var/_other_ruleset in drafted_rules)
 				var/datum/dynamic_ruleset/other_ruleset = _other_ruleset
 				if (other_ruleset.flags & HIGH_IMPACT_RULESET)
-					drafted_rules[other_ruleset] = null
+					drafted_rules[other_ruleset] = 0
 
 		if (ruleset.flags & LONE_RULESET)
-			drafted_rules[ruleset] = null
+			drafted_rules[ruleset] = 0
 
 	for (var/ruleset in rulesets_picked)
 		spend_roundstart_budget(picking_roundstart_rule(ruleset, rulesets_picked[ruleset] - 1))

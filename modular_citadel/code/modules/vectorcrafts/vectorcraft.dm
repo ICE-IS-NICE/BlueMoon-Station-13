@@ -13,6 +13,7 @@
 	inertia_moving = FALSE
 	animate_movement = 0
 	max_integrity = 100
+	max_occupants = 2
 	//key_type = /obj/item/key
 	var/obj/structure/trunk //Trunkspace of craft
 	var/vector = list("x" = 0, "y" = 0) //vector math
@@ -42,13 +43,24 @@
 	i_boost = boost_power
 	i_acell = acceleration
 
+/obj/vehicle/sealed/vectorcraft/mob_try_enter(mob/M)
+	if(!iscarbon(M))
+		return FALSE
+	. = ..()
+
 /obj/vehicle/sealed/vectorcraft/mob_enter(mob/living/M)
 	if(!driver)
 		driver = M
 		if(gear != "auto")
 			gear = driver.a_intent
 	start_engine()
-	to_chat(M, "<span class='big notice'>How to drive:</span> \n<span class='notice'><i>Hold wasd to gain speed in a direction, c to enable/disable the clutch, 1 2 3 4 to change gears while holding a direction (make sure the clutch is enabled when you change gears, you should hear a sound when you've successfully changed gears), r to toggle handbrake, hold alt for brake and press shift for boost (the machine will beep when the boost is recharged)! If you hear an ebbing sound like \"brbrbrbrbr\" you need to gear down, the whining sound means you need to gear up. Hearing a pleasant \"whumwhumwhum\" is optimal gearage! It can be a lil slow to start, so make sure you're in the 1st gear.\n</i></span>")
+	to_chat(M, "<span class='big notice'>How to drive:</span> \
+			\n<span class='notice'><i>Hold WASD to gain speed in a direction. \
+			\nToggle [span_bold("Combat Mode (C)")] to enable/disable the clutch. \
+			\nSwitch [span_bold("Intents (1,2,3,4)")] to change gears while holding a direction (make sure the clutch is enabled when you change gears, you should hear a sound when you've successfully changed gears). \
+			\nSwitch [span_bold("Move Intent (Alt)")] for brake. \
+			\nToggle [span_bold("Throw Mode (R)")] to toggle handbrake. \
+			\nIf you hear an ebbing sound like \"brbrbrbrbr\" you need to gear down, the whining sound means you need to gear up. Hearing a pleasant \"whumwhumwhum\" is optimal gearage! It can be a lil slow to start, so make sure you're in the 1st gear.\n</i></span>")
 	return ..()
 
 /obj/vehicle/sealed/vectorcraft/mob_exit(mob/living/M)
@@ -102,7 +114,7 @@
 		mob_exit(driver)
 	dir = cached_direction
 	check_gears()
-	check_boost()
+	// check_boost()
 	calc_acceleration()
 	calc_vector(cached_direction)
 	/*
@@ -130,7 +142,7 @@
 
 //Passive hover drift
 /obj/vehicle/sealed/vectorcraft/proc/hover_loop()
-	check_boost()
+	// check_boost()
 	if(driver.m_intent == MOVE_INTENT_WALK)
 		var/deceleration = max_deceleration
 		if(driver.throw_mode)
@@ -236,15 +248,15 @@
 //////////////////////////////////////////////////////////////
 
 //check the cooldown on the boost
-/obj/vehicle/sealed/vectorcraft/proc/check_boost()
-	if(enginesound_delay < world.time)
-		enginesound_delay = 0
-	if(!boost_cooldown)
-		return
-	if(boost_cooldown < world.time)
-		boost_cooldown = 0
-		playsound(src.loc,'sound/vehicles/boost_ready.ogg', 65, 0)
-	return
+// /obj/vehicle/sealed/vectorcraft/proc/check_boost()
+// 	if(enginesound_delay < world.time)
+// 		enginesound_delay = 0
+// 	if(!boost_cooldown)
+// 		return
+// 	if(boost_cooldown < world.time)
+// 		boost_cooldown = 0
+// 		playsound(src.loc,'sound/vehicles/boost_ready.ogg', 65, 0)
+// 	return
 
 //Make sure the clutch is on while changing gears!!
 /obj/vehicle/sealed/vectorcraft/proc/check_gears()
@@ -290,7 +302,6 @@
 //////////////////////////////////////////////////////////////
 //Repairing
 /obj/vehicle/sealed/vectorcraft/attackby(obj/item/O, mob/user, params)
-	.=..()
 	if(istype(O, /obj/item/weldingtool) && user.a_intent != INTENT_HARM)
 		if(obj_integrity < max_integrity)
 			if(!O.tool_start_check(user, amount=0))
@@ -300,12 +311,13 @@
 				"<span class='notice'>Вы начинаете чинить [src]...</span>", \
 				"<span class='italics'>You hear welding.</span>")
 
-			if(O.use_tool(src, user, 40, volume=50))
+			if(O.use_tool(src, user, 10 SECONDS, volume=50))
 				to_chat(user, "<span class='notice'>Вы починили [src].</span>")
 				apply_damage(-max_integrity)
 		else
 			to_chat(user, "<span class='notice'>[src] does not need repairs.</span>")
-
+	else
+		return ..()
 
 /obj/vehicle/sealed/vectorcraft/attack_hand(mob/user)
 	remove_key(driver)
@@ -314,11 +326,6 @@
 //Heals/damages the car
 /obj/vehicle/sealed/vectorcraft/proc/apply_damage(damage)
 	obj_integrity -= damage
-	var/healthratio = ((obj_integrity/max_integrity)/4) + 0.75
-	max_acceleration = initial(max_acceleration) * healthratio
-	max_deceleration = initial(max_deceleration) * healthratio
-	boost_power = initial(boost_power) * healthratio
-
 	if(obj_integrity <= 0)
 		mob_exit(driver)
 		var/datum/effect_system/reagents_explosion/e = new()
@@ -327,8 +334,23 @@
 		e.start()
 		visible_message("The [src] explodes from taking too much damage!")
 		qdel(src)
-	if(obj_integrity > max_integrity)
-		obj_integrity = max_integrity
+		return
+	obj_integrity = min(obj_integrity, max_integrity)
+	var/healthratio = ((obj_integrity/max_integrity)/4) + 0.75
+	max_acceleration = initial(max_acceleration) * healthratio
+	max_deceleration = initial(max_deceleration) * healthratio
+	// boost_power = initial(boost_power) * healthratio
+	update_icon()
+
+/obj/vehicle/sealed/vectorcraft/update_overlays()
+	. = ..()
+	if(obj_integrity < max_integrity/3)
+		var/mutable_appearance/smoke_over = mutable_appearance('icons/effects/chemsmoke.dmi', "old", alpha = 150)
+		smoke_over.pixel_x = -32
+		smoke_over.pixel_y = -32
+		. += smoke_over
+	if(obj_integrity < max_integrity/4)
+		. += GLOB.fire_overlay
 
 //
 /obj/vehicle/sealed/vectorcraft/Bump(atom/M)
@@ -498,8 +520,12 @@ if(driver.sprinting && !(boost_cooldown))
 
 //Calculates the acceleration
 /obj/vehicle/sealed/vectorcraft/proc/calc_acceleration() //Make speed 0 - 100 regardless of gear here
+	if(enginesound_delay < world.time)
+		enginesound_delay = 0
 	if(SEND_SIGNAL(driver, COMSIG_COMBAT_MODE_CHECK, COMBAT_MODE_ACTIVE))//clutch is on
 		return FALSE
+	if(calc_speed() == 0)
+		acceleration = initial(acceleration)
 	if(gear == "auto")
 		acceleration += accel_step
 		acceleration = clamp(acceleration, initial(acceleration), max_acceleration)
@@ -509,17 +535,32 @@ if(driver.sprinting && !(boost_cooldown))
 		return
 
 	var/gear_val = convert_gear()
-	var/min_accel = max_acceleration*( (((gear_val-1) * 20) + ((gear_val-1)*5)) /100)
-	var/max_accel = max_acceleration*((gear_val * 25)/100) //1.25 - 5
-
+	// var/min_accel = max_acceleration*((gear_val-1)*0.25) //0 - 75%
+	// var/max_accel = max_acceleration*(gear_val*0.25) //25% - 100%
+	var/min_accel
+	var/max_accel
+	switch(gear_val)
+		if(1)
+			min_accel = 0
+			max_accel = max_acceleration * 0.2
+		if(2)
+			min_accel = max_acceleration * 0.15
+			max_accel = max_acceleration * 0.5
+		if(3)
+			min_accel = max_acceleration * 0.4
+			max_accel = max_acceleration * 0.8
+		if(4)
+			min_accel = max_acceleration * 0.7
+			max_accel = max_acceleration
 	if(acceleration < min_accel)
-		acceleration += accel_step/10
+		acceleration -= accel_step
 		if(!enginesound_delay)
 			playsound(src.loc,'sound/vehicles/low_eng.ogg', 25, 0)
 			enginesound_delay = world.time + 16
-	else if (acceleration > max_accel)
-		acceleration -= accel_step
-		if(!enginesound_delay)
+	else if (acceleration >= max_accel)
+		// acceleration -= accel_step
+		acceleration = max_accel
+		if(!enginesound_delay && gear_val != 4)
 			playsound(src.loc,'sound/vehicles/high_eng.ogg', 25, 0)
 			enginesound_delay = world.time + 16
 	else
@@ -530,12 +571,9 @@ if(driver.sprinting && !(boost_cooldown))
 		if(!enginesound_delay)
 			playsound(src.loc,'sound/vehicles/norm_eng.ogg', 25, 0)
 			enginesound_delay = world.time + 16
-
-	if(acceleration > ((max_acceleration*calc_speed())/90) && acceleration > max_acceleration/5)
-		acceleration -= accel_step*2
-		if(!enginesound_delay)
-			playsound(src.loc,'sound/vehicles/high_eng.ogg', 25, 0)
-			enginesound_delay = world.time + 16
+	// (calc_speed()/90) is ratio of current speed to the highest obtainable one in /calc_velocity() proc. The higher your speed -> more max_acceleration -> more acceleration is permitted.
+	if((acceleration > (max_acceleration*((calc_speed())/90))) && (acceleration > max_acceleration/5))
+		acceleration -= accel_step
 		return
 
 	acceleration = clamp(acceleration, initial(acceleration), max_acceleration)
@@ -546,11 +584,11 @@ if(driver.sprinting && !(boost_cooldown))
 		return FALSE
 	var/cached_acceleration = acceleration
 	var/boost_active = FALSE
-	if((driver.combat_flags & COMBAT_FLAG_SPRINT_ACTIVE) && !(boost_cooldown))
-		cached_acceleration += boost_power //You got boost power!
-		boost_cooldown = world.time + 80
-		playsound(src.loc,'sound/vehicles/boost.ogg', 100, 0)
-		boost_active = TRUE
+	// if((driver.combat_flags & COMBAT_FLAG_SPRINT_ACTIVE) && !(boost_cooldown))
+	// 	cached_acceleration += boost_power //You got boost power!
+	// 	boost_cooldown = world.time + 80
+	// 	playsound(src.loc,'sound/vehicles/boost.ogg', 100, 0)
+	// 	boost_active = TRUE
 		//playsound
 
 	var/result_vector = vector

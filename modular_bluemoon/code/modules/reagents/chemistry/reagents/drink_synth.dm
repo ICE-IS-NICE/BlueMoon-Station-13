@@ -358,6 +358,7 @@
 
 // Вариация рестарта для нон-конеров, после него синт не проснётся, пока реагент не закончится
 /datum/reagent/consumable/synthdrink/synthanol/restart/hard
+	name = "Hard Restart"
 	description = "Sometimes you just need to start anew... Welp, this one comes with BIOS update, oh shit."
 	color = "#0095ff"
 	synthetic_taste = "перезагрузки с установкой дополнительного ПО? Оу, это будет долго..."
@@ -415,7 +416,7 @@
 	if(M.client.prefs.erppref == "No" || !M.client.prefs.arousable || (M.client.prefs.cit_toggles & NO_APHRO))
 		return
 	if((prob(min(current_cycle/2,5))))
-		M.emote(pick("moan","blush"))
+		M.emote(pick("moan","blushh"))
 	if(prob(min(current_cycle/4,10)))
 		var/aroused_message = pick("Вы ощущаете лёгкий перегрев...", "Ваши актюаторы работают в ускоренном режиме...", "Ваши гормональные протоколы дают сбой...", "Ваш корпус подрагивает от желания...")
 		to_chat(M, "<span class='userlove'>[aroused_message]</span>")
@@ -423,10 +424,7 @@
 			M.dna.features["ipc_screen"] = "Heart"
 			M.update_body()
 	if(prob(min(current_cycle/5,10)))
-		var/list/genits = M.adjust_arousal(current_cycle, "crocin", aphro = TRUE)
-		for(var/g in genits)
-			var/obj/item/organ/genital/G = g
-			to_chat(M, "<span class='userlove'>[G.arousal_verb]!</span>")
+		M.adjust_arousal(current_cycle, "crocin", aphro = TRUE)
 
 /datum/reagent/consumable/synthdrink/synthanol/database_dropper
 	name = "Database Dropper"

@@ -112,6 +112,38 @@
 		var/mob/living/carbon/human/H = owner
 		H.update_genitals()
 
+/obj/item/organ/genital/proc/pick_cum_overlay()
+	var/result = pick(CUM_STATES_NEUTRAL)
+
+	if(istype(src, /obj/item/organ/genital/penis) || istype(src, /obj/item/organ/genital/testicles))
+		var/obj/item/organ/genital/testicles/balls
+		if(istype(src, /obj/item/organ/genital/testicles))
+			balls = src
+		else if(istype(linked_organ, /obj/item/organ/genital/testicles))
+			balls = linked_organ
+
+		if(!balls)
+			return result
+
+		var/list/states = CUM_STATES
+		for(var/i in 1 to states.len) // Делаем список с весом
+			var/key = states[i]
+			states -= key
+			states[key] = 1
+
+		var/const/state_large = "cum_large" // Подменяем вес у state_large в зависимости от размера (Такая оригинальная логика была)
+		if(state_large in states)
+			if(balls.size < BALLS_SIZE_3)
+				states -= state_large
+			else if(balls.size == BALLS_SIZE_3)
+				states[state_large] = 4
+			else
+				states[state_large] = 10
+
+		result = pickweight(states) // Выбираем state
+
+	return result
+
 /mob/living/carbon/verb/toggle_genitals()
 	set category = "IC"
 	set name = "Expose/Hide genitals"
@@ -323,11 +355,13 @@
 		for(var/A in genitals_to_add)
 			if(istype(A, /obj/item/clothing/underwear/briefs/strapon))
 				var/obj/item/clothing/underwear/briefs/strapon/strapon = A
-				var/datum/sprite_accessory/S = GLOB.cock_shapes_list[GLOB.dildo_shape_to_cock_shape[strapon.dildo_shape]]
+				//BLUEMOON EDIT START
+				var/datum/sprite_accessory/S = GLOB.cock_shapes_list[GLOB.dildo_shape_to_cock_shape[strapon.attached_dildo.dildo_shape]]
 				var/mutable_appearance/genital_overlay = mutable_appearance(S.icon, layer = -layer)
-				genital_overlay.color = strapon.dildo_color
-				genital_overlay.icon_state = "[ORGAN_SLOT_PENIS]_[S.icon_state]_[strapon.dildo_size]_[1]_[layertext]"
-				genital_overlay.alpha = strapon.dildo_alpha
+				genital_overlay.color = strapon.attached_dildo.color
+				genital_overlay.icon_state = "[ORGAN_SLOT_PENIS]_[S.icon_state]_[strapon.attached_dildo.dildo_size]_[1]_[layertext]"
+				genital_overlay.alpha = strapon.attached_dildo.alpha
+				//BLUEMOON EDIT END
 				// dirty fix to render the dildo above the strap
 				if(strapon.is_exposed())
 					genital_overlay.layer = -GENITALS_EXPOSED_LAYER

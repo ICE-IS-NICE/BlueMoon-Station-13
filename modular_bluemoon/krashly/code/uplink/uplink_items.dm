@@ -87,16 +87,16 @@
 	cost = 30
 	purchasable_from = UPLINK_NUKE_OPS
 
-/datum/uplink_item/device_tools/esword_kit
-	name = "Energy sword Kit"
-	desc = "A modkit for making a plasma sword into an energy sword."
-	item = /obj/item/modkit/esword_kit
-	cost = 0
-	purchasable_from = (UPLINK_TRAITORS | UPLINK_NUKE_OPS)
+// /datum/uplink_item/device_tools/esword_kit
+// 	name = "Energy sword Kit"
+// 	desc = "A modkit for making a plasma sword into an energy sword."
+// 	item = /obj/item/modkit/esword_kit
+// 	cost = 0
+// 	purchasable_from = (UPLINK_TRAITORS | UPLINK_NUKE_OPS)
 
-/datum/uplink_item/device_tools/desword_kit
-	name = "Double-bladed energy sword Kit"
-	desc = "A modkit for making a plasma scythe into an double-bladed energy sword."
-	item = /obj/item/modkit/desword_kit
-	cost = 0
-	purchasable_from = (UPLINK_TRAITORS | UPLINK_NUKE_OPS)
+// /datum/uplink_item/device_tools/desword_kit
+// 	name = "Double-bladed energy sword Kit"
+// 	desc = "A modkit for making a plasma scythe into an double-bladed energy sword."
+// 	item = /obj/item/modkit/desword_kit
+// 	cost = 0
+// 	purchasable_from = (UPLINK_TRAITORS | UPLINK_NUKE_OPS)

@@ -121,7 +121,7 @@
 
 /obj/item/clothing/glasses/science
 	name = "science goggles"
-	desc = "A pair of snazzy goggles used to protect against chemical spills. Fitted with an analyzer for scanning items and reagents."
+	desc = "Пара стильных очков для защиты от брызг химикатов. Со встроенным анализатором вещей и жидкостей."
 	icon_state = "purple"
 	item_state = "glasses"
 	clothing_flags = SCAN_REAGENTS //You can see reagents while wearing science goggles
@@ -405,11 +405,11 @@
 
 /obj/item/clothing/glasses/sunglasses/blindfold/white/equipped(mob/living/carbon/human/user, slot)
 	if(ishuman(user) && slot == ITEM_SLOT_EYES)
-		update_icon(user)
+		update_icon(ALL, user)
 		user.update_inv_glasses() //Color might have been changed by update_icon.
 	..()
 
-/obj/item/clothing/glasses/sunglasses/blindfold/white/update_icon(mob/living/carbon/human/user)
+/obj/item/clothing/glasses/sunglasses/blindfold/white/update_icon(updates, mob/living/carbon/human/user)
 	. = ..()
 	if(ishuman(user) && !colored_before)
 		add_atom_colour("#[user.left_eye_color]", FIXED_COLOUR_PRIORITY)
@@ -625,3 +625,18 @@
 	desc = "Lookin' cool."
 	icon_state = "phantom_glasses"
 	item_state = "phantom_glasses"
+
+/obj/item/clothing/glasses/veil
+	name = "Veil"
+	desc = "Furui's company have brought this from far lands using culture of Jingdai"
+	icon_state = "veil"
+	item_state = "veil"
+	icon = 'modular_bluemoon/icons/obj/clothing/glasses.dmi'
+	mob_overlay_icon = 'modular_bluemoon/icons/mob/clothing/eyes.dmi'
+	lefthand_file = 'modular_bluemoon/icons/mob/inhands/clothing_lefthand.dmi'
+	righthand_file = 'modular_bluemoon/icons/mob/inhands/clothing_righthand.dmi'
+	var/list/poly_colors = list("#FFFFFF","#C5302D")
+
+/obj/item/clothing/glasses/veil/ComponentInitialize()
+	. = ..()
+	AddElement(/datum/element/polychromic, poly_colors, 1)

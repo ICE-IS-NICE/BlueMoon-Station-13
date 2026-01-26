@@ -11,6 +11,33 @@
 
 //////////////////////////////////////////////////
 
+/obj/item/modkit/kukri_kit
+	name = "Kukri Kit"
+	desc = "A modkit for making an combat knife into a Kukri."
+	product = /obj/item/kitchen/knife/combat/kukri
+	fromitem = list(/obj/item/kitchen/knife/combat)
+
+/obj/item/kitchen/knife/combat/kukri
+	name = "Кукри-мачете"
+	desc = "Традиционное кукри, с разительным отличием, что делает его похожим на мачете, благодаря своему изогнутому клинку и функционалу как режущего инструмента и оружия. Из-за той же формы лещвия с изгибом центр тяжести смещён к острию, что делает его более эффективным для рубки. На рукояти изображён логотип, напоминающий чёрную розу и круговая надпись Black Rose atelier"
+	item_state = "kukri"
+	icon_state = "kukri"
+	icon = 'modular_bluemoon/fluffs/icons/obj/melee.dmi'
+	lefthand_file = 'modular_bluemoon/fluffs/icons/mob/inhands/melee_lefthand.dmi'
+	righthand_file = 'modular_bluemoon/fluffs/icons/mob/inhands/melee_righthand.dmi'
+	unique_reskin = list(
+		"Black" = list(
+			RESKIN_ICON_STATE = "kukri",
+			RESKIN_ITEM_STATE = "kukri"
+		),
+		"White" = list(
+			RESKIN_ICON_STATE = "kukri_w",
+			RESKIN_ITEM_STATE = "kukri_w"
+		)
+	)
+
+//////////////////////////////////////////////////
+
 /obj/item/modkit/impactbaton_kit
 	name = "Impact Baton Kit"
 	desc = "A modkit for making a police baton into a jitte baton."
@@ -45,14 +72,35 @@
 	lefthand_file = 'modular_bluemoon/fluffs/icons/mob/inhands/melee_lefthand.dmi'
 	righthand_file = 'modular_bluemoon/fluffs/icons/mob/inhands/melee_righthand.dmi'
 
-/obj/item/modkit/esword_kit
-	name = "Energy sword Kit"
-	desc = "A modkit for making a plasma sword into an energy sword."
-	product = /obj/item/melee/transforming/energy/sword/saber
-	fromitem = list(/obj/item/melee/transforming/plasmasword)
+////////////////////////////////////////////////////////////////////////////////////////
 
-/obj/item/modkit/desword_kit
-	name = "Double-bladed energy sword Kit"
-	desc = "A modkit for making a plasma scythe into an double-bladed energy sword."
-	product = /obj/item/dualsaber
-	fromitem = list(/obj/item/plasmascythe)
+/obj/item/modkit/portalabomination_kit
+	name = "Telescopic Abomination Tool Kit"
+	desc = "A modkit for making an telescopic baton into a god forbidden weapon. Hold it tight."
+	product = /obj/item/melee/classic_baton/telescopic/portal_abomination
+	fromitem = list(/obj/item/melee/classic_baton/telescopic)
+
+/obj/item/melee/classic_baton/telescopic/portal_abomination
+	name = "Otherworld Portal Weapon"
+	desc = "A portal tool, revealing some part of otherworld undescribable abomination. Use it carefully or it will use you. Who openned the gates to this thing?!"
+	icon_state = "portalabomination"
+	icon = 'modular_bluemoon/fluffs/icons/obj/UngodlyAbomination.dmi'
+	item_state = "portalabomination"
+	on_icon_state = "portalabomination_active"
+	off_icon_state = "portalabomination"
+	on_item_state = "portalabomination_active"
+	lefthand_file = 'modular_bluemoon/fluffs/icons/mob/guns_left.dmi'
+	righthand_file = 'modular_bluemoon/fluffs/icons/mob/guns_right.dmi'
+	hitsound = 'modular_bluemoon/fluffs/sound/weapon/Abomination.ogg'
+
+// /obj/item/modkit/esword_kit
+// 	name = "Energy sword Kit"
+// 	desc = "A modkit for making a plasma sword into an energy sword."
+// 	product = /obj/item/melee/transforming/energy/sword/saber
+// 	fromitem = list(/obj/item/melee/transforming/plasmasword)
+
+// /obj/item/modkit/desword_kit
+// 	name = "Double-bladed energy sword Kit"
+// 	desc = "A modkit for making a plasma scythe into an double-bladed energy sword."
+// 	product = /obj/item/dualsaber
+// 	fromitem = list(/obj/item/plasmascythe)

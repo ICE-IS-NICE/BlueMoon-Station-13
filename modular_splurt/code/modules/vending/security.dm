@@ -71,7 +71,6 @@
 	name = "brig physician's locker"
 	req_access = list(ACCESS_BRIGDOC)
 	icon_state = "brigdoc"
-	icon = 'modular_splurt/icons/obj/closet.dmi'
 
 /obj/structure/closet/secure_closet/brigdoc/PopulateContents()
 	..()
@@ -96,30 +95,23 @@
 	name = "blueshield's locker"
 	req_access = list(ACCESS_BLUESHIELD)
 	icon_state = "bs"
-	icon = 'modular_splurt/icons/obj/closet.dmi'
+	var/pack_amount = 2
 
 /obj/structure/closet/secure_closet/blueshield/PopulateContents()
 	..()
-	new /obj/item/clothing/head/helmet/sec(src)
-	new /obj/item/flashlight/seclite(src)
-	new /obj/item/clothing/mask/gas/sechailer/swat/blueshield(src)
-	new /obj/item/clothing/mask/gas/sechailer/swat/blueshield(src)
-	new /obj/item/grenade/flashbang(src)
-	new /obj/item/armorkit/blueshield(src)
-	new /obj/item/armorkit/blueshield/helmet(src)
-	new /obj/item/clothing/head/helmet/sec(src)
-	new /obj/item/flashlight/seclite(src)
-	new /obj/item/grenade/flashbang(src)
-	new /obj/item/armorkit/blueshield(src)
-	new /obj/item/armorkit/blueshield/helmet(src)
-	new /obj/item/clothing/neck/cloak/blueshield(src)
-	new /obj/item/clothing/neck/cloak/blueshield(src)
+	for(var/i in 1 to pack_amount)
+		new /obj/item/clothing/head/helmet/sec(src)
+		new /obj/item/flashlight/seclite(src)
+		new /obj/item/clothing/mask/gas/sechailer/swat/blueshield(src)
+		new /obj/item/grenade/flashbang(src)
+		new /obj/item/armorkit/blueshield(src)
+		new /obj/item/armorkit/blueshield/helmet(src)
+		new /obj/item/clothing/neck/cloak/blueshield(src)
 
 /obj/structure/closet/secure_closet/bridgesec
 	name = "bridge officer's locker"
 	req_access = list(ACCESS_BRIDGE_OFFICER)
 	icon_state = "bridge"
-	icon = 'modular_splurt/icons/obj/closet.dmi'
 
 /obj/structure/closet/secure_closet/bridgesec/PopulateContents()
 	..()
@@ -244,6 +236,7 @@
 	new /obj/item/mod/construction/armor/safeguard(src)
 	new /obj/item/mod/module/jetpack(src)
 	new /obj/item/mod/module/holster(src)
+	new /obj/item/choice_beacon/box/desk(src) //BLUEMOON ADD
 
 /obj/structure/closet/secure_closet/ntr
 	name = "representative's locker"
@@ -253,7 +246,8 @@
 /obj/structure/closet/secure_closet/ntr/PopulateContents()
 	..()
 	new /obj/item/megaphone/sec(src)
-	new /obj/item/radio/headset/heads/ntr(src)
+	new /obj/item/radio/headset/headset_cent/ntr(src)
+	new /obj/item/radio/headset/headset_cent/ntr/alt (src)
 	new /obj/item/stamp/syndicate(src)
 	new /obj/item/stamp/ntr(src)
 	new /obj/item/lighter/nt_rep(src)
@@ -261,7 +255,11 @@
 	new /obj/item/camera/detective(src)
 	new /obj/item/storage/box/evidence(src)
 	new /obj/item/melee/classic_baton/ntcane(src)
-	new /obj/item/folder(src)
-	new /obj/item/folder(src)
+	new /obj/item/folder/blue(src) //BLUEMOON add
+	new /obj/item/folder/red(src) //BLUEMOON add
 	new /obj/item/folder(src)
 	new /obj/item/storage/garment_case/ntr(src) //BLUEMOON add
+	new /obj/item/storage/backpack/captain/ntr(src) //BLUEMOON add
+	new /obj/item/storage/backpack/satchel/cap/ntr(src) //BLUEMOON add
+	new /obj/item/storage/backpack/duffelbag/captain/ntr(src) //BLUEMOON add
+	new /obj/item/choice_beacon/box/desk(src) //BLUEMOON add

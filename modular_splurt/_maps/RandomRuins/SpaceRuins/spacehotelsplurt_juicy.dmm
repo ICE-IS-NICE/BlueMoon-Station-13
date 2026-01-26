@@ -6033,7 +6033,7 @@
 /area/ruin/space/has_grav/bluemoon/hotel)
 "Dl" = (
 /obj/machinery/jukebox{
-	queuecost = 0
+	req_one_access = null
 	},
 /turf/open/floor/carpet/black,
 /area/ruin/space/has_grav/bluemoon/hotel/bar)
@@ -9024,7 +9024,7 @@
 /obj/structure/toilet/secret/prison{
 	dir = 8
 	},
-/obj/effect/turf_decal/stripes/line{
+/obj/effect/turf_decal/stripes/yellow/line{
 	dir = 9
 	},
 /turf/open/floor/plating,
@@ -10542,7 +10542,7 @@
 /area/ruin/space/has_grav/bluemoon/hotel/power)
 "Xz" = (
 /obj/machinery/jukebox/disco/indestructible{
-	queuecost = 0
+	req_one_access = null
 	},
 /turf/open/floor/light/colour_cycle/dancefloor_b,
 /area/ruin/space/has_grav/bluemoon/hotel/bar)

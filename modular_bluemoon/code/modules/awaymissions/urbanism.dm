@@ -1,3 +1,32 @@
+/turf/closed/mineral/mesarock
+	name = "rock"
+	icon = 'icons/turf/mining.dmi'
+	smooth_icon = 'icons/turf/walls/rock_wall.dmi'
+	icon_state = "rockyash"
+	smooth = SMOOTH_MORE|SMOOTH_BORDER
+	canSmoothWith = list (/turf/closed)
+
+/turf/closed/mineral/mesarock/rust_heretic_act()
+	return
+
+/turf/closed/mineral/mesarock/TerraformTurf(path, new_baseturf, flags, defer_change = FALSE, ignore_air = FALSE)
+	return
+
+/turf/closed/mineral/mesarock/acid_act(acidpwr, acid_volume, acid_id)
+	return FALSE
+
+/turf/closed/mineral/mesarock/Melt()
+	to_be_destroyed = FALSE
+	return src
+
+/turf/closed/mineral/mesarock/singularity_act()
+	return
+
+/turf/closed/mineral/mesarock/attackby(obj/item/pickaxe/I, mob/user, params)
+	return
+
+/turf/closed/mineral/mesarock/attack_hand(mob/user)
+	return
 
 /obj/machinery/power/floodlight/urbanismlight
 	name = "Floodlight"
@@ -47,6 +76,8 @@
 
 /obj/structure/reagent_dispensers/urbanismbarrel/red
 	icon_state = "redbarrel"
+	reagent_id = /datum/reagent/fuel
+	tank_volume = 300
 
 /obj/structure/barricade/urbanism
 	name = "Barricade"
@@ -76,7 +107,7 @@
 
 /obj/structure/urbanismtire
 	name = "Tire"
-	desc = "Just tire! Tire for cars and fireplaces"
+	desc = "Tire for cars and fireplaces"
 	icon = 'modular_bluemoon/icons/obj/urbanism/urbanism.dmi'
 	icon_state = "shina"
 	anchored = TRUE
@@ -109,6 +140,12 @@
 	armor = list(MELEE = 50, BULLET =40, LASER = 50, ENERGY = 60, BOMB = 50, BIO = 10, RAD = 0, FIRE = 50, ACID = 50)
 	layer = SPACEVINE_LAYER
 
+/obj/structure/urbanismbigcrate/alt
+	name = "heavy boxes"
+	icon = 'modular_bluemoon/icons/obj/urbanism/urbanism.dmi'
+	icon_state = "boxalt"
+
+
 /obj/structure/urbanismcars
 	name = "Damaged car"
 	desc = "Just lost in time broken (and bit rusty) vehicle"
@@ -118,3 +155,123 @@
 	density = TRUE
 	armor = list(MELEE = 70, BULLET =60, LASER = 50, ENERGY = 80, BOMB = 50, BIO = 10, RAD = 10, FIRE = 50, ACID = 50)
 	layer = SPACEVINE_LAYER
+
+/obj/structure/urbanismradio
+	name = "Radio"
+	desc = "Big rusty radio tower"
+	icon = 'modular_bluemoon/icons/obj/urbanism/urbanism_structure32x64.dmi'
+	icon_state = "radio"
+	anchored = TRUE
+	density = TRUE
+	armor = list(MELEE = 50, BULLET =40, LASER = 50, ENERGY = 60, BOMB = 50, BIO = 10, RAD = 0, FIRE = 50, ACID = 50)
+	layer = SPACEVINE_LAYER
+
+
+/obj/structure/urbanismdisplay
+	name = "Black mesa based display"
+	desc = "Looks like black mesa BIOS is sucks."
+	icon = 'modular_bluemoon/icons/obj/urbanism/mesa_display.dmi'
+	icon_state = "display_broken"
+	anchored = TRUE
+	density = FALSE
+	armor = list(MELEE = 50, BULLET =40, LASER = 50, ENERGY = 60, BOMB = 50, BIO = 10, RAD = 0, FIRE = 50, ACID = 50)
+	light_range = 5
+	light_color = "#2652e2"
+	max_integrity = 9999999
+	layer = SPACEVINE_LAYER
+
+/obj/structure/urbanismdisplay/urbanismchalk
+	name = "Big chalkboard"
+	desc = "Here is many of symbols and text... You barely can understand this smart words and scientific formulas"
+	icon = 'modular_bluemoon/icons/obj/urbanism/mesa_display.dmi'
+	icon_state = "chalkboard"
+	anchored = TRUE
+	density = FALSE
+	armor = list(MELEE = 50, BULLET =40, LASER = 50, ENERGY = 60, BOMB = 50, BIO = 10, RAD = 0, FIRE = 50, ACID = 50)
+	light_range = FALSE
+	light_color = FALSE
+	max_integrity = FALSE
+
+/obj/structure/urbanismmachines
+
+	name = "old machine"
+	desc = "some kind of old (and sometimes broken) machine"
+	icon = 'modular_bluemoon/icons/obj/urbanism/urbanism.dmi'
+	icon_state = "server_desrtoyed"
+	anchored = TRUE
+	density = TRUE
+	armor = list(MELEE = 30, BULLET =50, LASER = 30, ENERGY = 20, BOMB = 70, BIO = 15, RAD = 10, FIRE = 40, ACID = 30)
+
+/obj/structure/urbanismmachines/server
+
+	name = "old server"
+	icon = 'modular_bluemoon/icons/obj/urbanism/urbanism_structure32x64.dmi'
+	icon_state = "server"
+
+/obj/structure/urbanismmounted
+
+	name = "Mounted kind of machine"
+	desc = "here's many terminals and generators... Be careful"
+	icon = 'modular_bluemoon/icons/obj/urbanism/urbanism.dmi'
+	icon_state = "terminal_broken"
+	anchored = TRUE
+	density = FALSE
+	armor = list(MELEE = 30, BULLET =50, LASER = 30, ENERGY = 20, BOMB = 70, BIO = 15, RAD = 10, FIRE = 40, ACID = 30)
+
+
+/obj/structure/urbanismbillboard
+	name = "Big billboard"
+	desc = "YOUR AD COULD BE HERE!"
+	icon = 'modular_bluemoon/icons/obj/urbanism/bilboards.dmi'
+	icon_state = "bilboard1"
+	anchored = TRUE
+	density = TRUE
+	armor = list(MELEE = 80, BULLET =80, LASER = 70, ENERGY = 60, BOMB = 80, BIO = 10, RAD = 0, FIRE = 50, ACID = 50)
+	light_range = FALSE
+	light_color = FALSE
+	max_integrity = FALSE
+	layer = SPACEVINE_LAYER
+
+
+/obj/structure/rockpilemesa
+	name = "large rocks"
+	icon_state = "rocks"
+	icon = 'modular_bluemoon/icons/obj/urbanism/stone.dmi'
+	icon_state = "stone1"
+	color = "#f79668"
+
+/obj/effect/turf_decal/misc/brokenwalls
+	name = "crushed wall"
+	icon = 'modular_bluemoon/icons/obj/urbanism/decals.dmi'
+	icon_state = "brokenwall2"
+
+/obj/effect/turf_decal/misc/brokenwalls/alt
+	icon_state = "brokenwall1"
+
+
+/obj/effect/turf_decal/weather/rock
+	name = "rocks"
+	icon = 'modular_bluemoon/icons/obj/urbanism/decals.dmi'
+	icon_state = "rock"
+
+/obj/structure/mesaflora
+	name = "bush"
+	desc = "A wild plant that is found in jungles."
+	icon = 'modular_bluemoon/icons/obj/urbanism/flora.dmi'
+	icon_state = "flora1"
+	anchored = TRUE
+	density = FALSE
+
+/obj/structure/deadmesa
+	name = "Damaged body"
+	desc = "Horrific consequences of Resonance Cascade."
+	icon = 'modular_bluemoon/icons/obj/urbanism/deadhuman.dmi'
+	icon_state = "deadhecu"
+	anchored = TRUE
+	density = FALSE
+	armor = list(MELEE = 50, BULLET =40, LASER = 50, ENERGY = 60, BOMB = 50, BIO = 10, RAD = 0, FIRE = 50, ACID = 50)
+
+/obj/structure/deadmesa/hecughost
+	name = "Призрак лидера отряда HECU"
+	desc = "Он точно потерялся... И он точно перепутал гейт Blackmesa с ihategordon. Появится ли blackmesa и тут? Что значит призрак этого парня? Зачем вы читаете его описание?"
+	icon_state = "Hecughost"

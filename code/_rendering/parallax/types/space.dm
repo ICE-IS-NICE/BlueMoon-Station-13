@@ -1,7 +1,7 @@
 /datum/parallax/space
 	var/static/planet_offset_x = rand(100, 130)
 	var/static/planet_offset_y = rand(100, 130)
-	var/static/random_layer = pickweightAllowZero(list(
+	var/static/random_layer = pickweight(list(
 		/atom/movable/screen/parallax_layer/space/random/asteroids = 35,
 		/atom/movable/screen/parallax_layer/space/random/space_gas = 35,
 		null = 30
@@ -17,6 +17,11 @@
 	var/atom/movable/screen/parallax_layer/space/planet/P = new
 	P.pixel_x = planet_offset_x
 	P.pixel_y = planet_offset_y
+
+	var/matrix/m = matrix()
+	m.Scale(2.5, 2.5)
+	P.transform = m
+
 	. += P
 
 	if(ispath(random_layer, /atom/movable/screen/parallax_layer))
@@ -58,8 +63,10 @@
 /atom/movable/screen/parallax_layer/space/planet
 	icon_state = "planet"
 	blend_mode = BLEND_OVERLAY
-	absolute = FALSE //Status of seperation
-	speed = 3
+	absolute = TRUE //Status of seperation
+	center_x = -100
+	center_y = -100
+	speed = 1
 	layer = 30
 	dynamic_self_tile = FALSE
 

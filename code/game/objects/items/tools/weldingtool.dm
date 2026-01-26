@@ -37,6 +37,7 @@
 	var/light_intensity = 2 //how powerful the emitted light is when used.
 	var/progress_flash_divisor = 10
 	var/burned_fuel_for = 0	//when fuel was last removed
+	var/robotic_healing_in_process = FALSE
 	heat = 3800
 	tool_behaviour = TOOL_WELDER
 	toolspeed = 1
@@ -133,28 +134,49 @@
 	var/obj/item/bodypart/affecting = H.get_bodypart(check_zone(user.zone_selected))
 
 	if(affecting && affecting.is_robotic_limb() && user.a_intent != INTENT_HARM)
-		//only heal to threshhold_passed_mindamage if limb is damaged to or past threshhold, otherwise heal normally
-		var/damage
-		var/heal_amount = 15
-
-		if(src.use_tool(H, user, 0, volume=50, amount=1))
-			if(user == H)
-				user.visible_message("<span class='notice'>[user] starts to fix some of the dents on [H]'s [affecting.name].</span>",
-					"<span class='notice'>You start fixing some of the dents on [H]'s [affecting.name].</span>")
-				if(!do_mob(user, H, 50))
-					return
-			damage = affecting.brute_dam
-			affecting.update_threshhold_state(burn = FALSE)
-			if(affecting.threshhold_brute_passed)
-				heal_amount = min(heal_amount, damage - affecting.threshhold_passed_mindamage)
-
-				if(!heal_amount)
-//					to_chat(user, "<span class='notice'>[user == H ? "Your" : "[H]'s"] [affecting.name] appears to have suffered severe internal damage and requires surgery to repair further.</span>") - BLUEMOON REMOVAL
-					to_chat(user, span_notice("[user == H ? "Ваша [affecting.ru_name]" : "[affecting.ru_name_capital] [H]"] подверглась сильным внутренним повреждениям. Требуется углубленный ремонт с хирургической точностью.")) // BLUEMOON ADD
-					return
-			item_heal_robotic(H, user, heal_amount, 0)
+		if(robotic_healing_in_process)
+			to_chat(H, span_warning("Не так быстро!"))
+			return
+		try_heal_robotic(H, user)
 	else
 		return ..()
+
+/obj/item/weldingtool/proc/try_heal_robotic(mob/living/carbon/human/H, mob/user)
+	//only heal to threshhold_passed_mindamage if limb is damaged to or past threshhold, otherwise heal normally
+	var/damage
+	var/heal_amount = 15
+
+	var/obj/item/bodypart/affecting = H.get_bodypart(check_zone(user.zone_selected))
+
+	if(!affecting || !affecting.is_robotic_limb())
+		robotic_healing_in_process = FALSE
+		return
+	if(!use_tool(H, user, 0, volume=50, amount=1))
+		robotic_healing_in_process = FALSE
+		return
+	robotic_healing_in_process = TRUE
+	if(user == H)
+		user.visible_message("<span class='notice'>[user] starts to fix some of the dents on [H]'s [affecting.name].</span>",
+			"<span class='notice'>You start fixing some of the dents on [H]'s [affecting.name].</span>")
+		if(!do_mob(user, H, 20))
+			robotic_healing_in_process = FALSE
+			return
+	else if(!do_mob(user, H, 5))
+		robotic_healing_in_process = FALSE
+		return
+	damage = affecting.brute_dam
+	affecting.update_threshhold_state(burn = FALSE)
+	if(affecting.threshhold_brute_passed)
+		heal_amount = min(heal_amount, damage - affecting.threshhold_passed_mindamage)
+		if(!heal_amount)
+			to_chat(user, span_notice("[user == H ? "Ваша [affecting.ru_name]" : "[affecting.ru_name_capital] [H]"] подверглась сильным внутренним повреждениям. Требуется углубленный ремонт с хирургической точностью."))
+			robotic_healing_in_process = FALSE
+			return
+	if(item_heal_robotic(H, user, heal_amount, 0))
+		// повторяем
+		INVOKE_ASYNC(src, PROC_REF(try_heal_robotic), H, user)
+	else
+		robotic_healing_in_process = FALSE
 
 
 /obj/item/weldingtool/afterattack(atom/O, mob/user, proximity)
@@ -332,6 +354,7 @@
 	name = "industrial welding tool"
 	desc = "A slightly larger welder with a larger tank."
 	icon_state = "indwelder"
+	item_state = "upindwelder"
 	max_fuel = 40
 	custom_materials = list(/datum/material/glass=60)
 	toolspeed = 0.95 // BLUEMOOD ADD
@@ -339,7 +362,7 @@
 /obj/item/weldingtool/largetank/cyborg
 	name = "integrated welding tool"
 	desc = "An advanced welder designed to be used in robotic systems."
-	icon = 'icons/obj/items_cyborg.dmi'
+	icon = /*'icons/obj/items_cyborg.dmi'*/ 'modular_bluemoon/icons/obj/items_cyborg.dmi'
 	icon_state = "indwelder_cyborg"
 	toolspeed = 0.5
 
@@ -350,6 +373,7 @@
 	name = "emergency welding tool"
 	desc = "A miniature welder used during emergencies."
 	icon_state = "miniwelder"
+	item_state = "miniwelder"
 	max_fuel = 10
 	w_class = WEIGHT_CLASS_TINY
 	custom_materials = list(/datum/material/iron=30, /datum/material/glass=10)
@@ -413,6 +437,7 @@
 	desc = "An alien welding tool. Whatever fuel it uses, it never runs out."
 	icon = 'icons/obj/abductor.dmi'
 	icon_state = "welder"
+	item_state = "alienwelder"
 	self_fueling = TRUE
 	can_off_process = TRUE
 	refueling_interval = 1
@@ -425,11 +450,22 @@
 	desc = "A modern welding tool combined with an alien welding tool, it almost never runs out of fuel and works nearly as fast."
 	icon = 'icons/obj/advancedtools.dmi'
 	icon_state = "welder"
+	item_state = "alienwelder"
 	self_fueling = TRUE
 	can_off_process = TRUE
 	refueling_interval = 2
 	toolspeed = 0.2
 	light_intensity = 0
 	change_icons = 0
+// BLUEMOON ADD START black skin
+	unique_reskin = list(
+		"Carbonized" = list(
+			RESKIN_ICON_STATE_FILE = 'modular_bluemoon/icons/obj/advancedtools_black.dmi',
+		),
+		"Titanium" = list(
+			RESKIN_ICON_STATE = "welder",
+		)
+	)
+// BLUEMOON ADD END
 
 #undef WELDER_FUEL_BURN_INTERVAL

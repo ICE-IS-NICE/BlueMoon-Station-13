@@ -18,7 +18,7 @@
 ///Time in seconds before anomaly is announced
 #define ANOMALY_ANNOUNCE_MEDIUM_TIME (6 EVENT_SECONDS)
 ///Let them know how far away the anomaly is
-#define ANOMALY_ANNOUNCE_MEDIUM_TEXT "сканерах большой дальности. Ожидаемое место соприкосновения:"
+#define ANOMALY_ANNOUNCE_MEDIUM_TEXT "сканерах большого радиуса действия. Ожидаемое место соприкосновения:"
 
 /**
  * Chaotic but not harmful anomalies. Give the station a chance to find it on their own.
@@ -29,7 +29,7 @@
 ///Time in seconds before anomaly is announced
 #define ANOMALY_ANNOUNCE_HARMFUL_TIME (30 EVENT_SECONDS)
 ///Let them know how far away the anomaly is
-#define ANOMALY_ANNOUNCE_HARMFUL_TEXT "сканерах средней дальности. Ожидаемое место соприкосновения:"
+#define ANOMALY_ANNOUNCE_HARMFUL_TEXT "сканерах среднего радиуса действия. Ожидаемое место соприкосновения:"
 
 /**
  * Anomalies that can fuck you up. Give them a bit of warning.
@@ -40,7 +40,7 @@
 ///Time in seconds before anomaly is announced
 #define ANOMALY_ANNOUNCE_DANGEROUS_TIME (30 EVENT_SECONDS)
 ///Let them know how far away the anomaly is
-#define ANOMALY_ANNOUNCE_DANGEROUS_TEXT "сканерах малой дальности. Ожидаемое место соприкосновения:"
+#define ANOMALY_ANNOUNCE_DANGEROUS_TEXT "сканерах малого радиуса действия. Ожидаемое место соприкосновения:"
 
 /// Chance of anomalies moving every process tick
 #define ANOMALY_MOVECHANCE 45

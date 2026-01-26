@@ -92,6 +92,7 @@
 	atmos_requirements = list("min_oxy" = 0, "max_oxy" = 0, "min_tox" = 0, "max_tox" = 0, "min_co2" = 0, "max_co2" = 0, "min_n2" = 0, "max_n2" = 0)
 	minbodytemp = 0
 	spacewalk = TRUE
+	faction = list(ROLE_INTEQ)
 
 /mob/living/simple_animal/hostile/gigachad_inteq/shooter
 	name = "InteQ Machinegunner"
@@ -106,7 +107,7 @@
 	casingtype = /obj/item/ammo_casing/n762
 	retreat_distance = 5
 	minimum_distance = 5
-
+	faction = list(ROLE_INTEQ)
 
 /mob/living/simple_animal/hostile/gigachad_inteq/shooter/sniper
 	name = "InteQ Buffed sniper"
@@ -226,3 +227,114 @@
 		L.adjustBruteLoss(110)
 		qdel(src)
 	return
+/mob/living/simple_animal/hostile/malf_drone/experimental
+	name = "Experimental drone"
+	desc = "You see an unusual drone, primed but not painted.The front part is dotted with sensors, and a large-caliber machine gun and a rocket launcher mouth are visible under the bottom."
+	projectiletype = /obj/item/projectile/bullet/a308
+	projectilesound = 'modular_bluemoon/sound/weapons/carcannon1.ogg'
+	var/alt_projectilesound = 'modular_bluemoon/sound/weapons/rocketlaunch.ogg'
+	var/alternative_fire = /obj/item/projectile/bullet/a84mm_he
+	var/list_sound = list('modular_bluemoon/sound/creatures/drone_speech.ogg', 'modular_bluemoon/sound/creatures/drone_target_search.ogg','modular_bluemoon/sound/creatures/drone_up.ogg','modular_bluemoon/sound/creatures/drone_up2.ogg')
+	icon = 'modular_bluemoon/icons/mob/dron.dmi'
+	icon_dead = "crash"
+	del_on_death = FALSE
+	speak_chance = 50
+	turns_per_move = 1
+	rapid = 2
+	speed = 14
+
+/mob/living/simple_animal/hostile/malf_drone/experimental/proc/changeFireMode()
+	var/mob/living/simple_animal/hostile/malf_drone/experimental/D = src
+	if(D.projectiletype != D.alternative_fire & D.stat == CONSCIOUS)
+		D.projectiletype = D.alternative_fire
+		D.projectilesound = D.alt_projectilesound
+		D.rapid = 1
+		playsound(src, 'modular_bluemoon/sound/creatures/drone_target_search.ogg', 50)
+	else
+		D.projectiletype = /obj/item/projectile/bullet/a308
+		D.rapid = 3
+		D.projectilesound = 'modular_bluemoon/sound/weapons/carcannon1.ogg'
+
+/mob/living/simple_animal/hostile/malf_drone/experimental/update_icons()
+	if(src.stat == UNCONSCIOUS)
+		src.overlays = null
+	return
+
+/mob/living/simple_animal/hostile/malf_drone/experimental/OpenFire(atom/A)
+	. = ..()
+	if(src.projectiletype == src.alternative_fire)
+		new /obj/effect/temp_visual/drone_radar(A.loc)
+
+/mob/living/simple_animal/hostile/malf_drone/experimental/BiologicalLife()
+	. = ..()
+	var/mob/living/simple_animal/hostile/malf_drone/experimental/E = src
+	if(prob(20))
+		E.changeFireMode()
+	else
+		if(E.stat == CONSCIOUS)
+			src.add_overlay(/obj/effect/temp_visual/drone_scan)
+			var/sound = pick(E.list_sound)
+			playsound(src, sound, 50)
+
+/mob/living/simple_animal/hostile/malf_drone/experimental/emp_act(severity)
+	. = ..()
+	adjustHealth(200 / severity)
+	src.AIStatus = AI_OFF
+	playsound(src, 'sound/machines/terminal_alert.ogg', 50, 0)
+	addtimer(CALLBACK(src, PROC_REF(switch_AIStatus_on)), 2 SECONDS)
+
+/mob/living/simple_animal/hostile/malf_drone/experimental/proc/switch_AIStatus_on()
+	AIStatus = AI_ON
+
+/obj/effect/temp_visual/drone_scan
+	icon = 'modular_bluemoon/icons/mob/dron.dmi'
+	icon_state = "scan"
+	anchored = TRUE
+	duration = 15
+
+/obj/effect/temp_visual/drone_radar
+	icon = 'modular_bluemoon/icons/mob/radar.dmi'
+	icon_state = "radar"
+	anchored = TRUE
+	duration = 30
+
+/obj/effect/temp_visual/drone_target_pointer
+	icon = 'icons/effects/mouse_pointers/weapon_pointer.dmi'
+	icon_state = "all"
+	anchored = TRUE
+	duration = 10
+
+/mob/living/simple_animal/hostile/malf_drone/experimental/drop_loot()
+	. = ..()
+	var/turf/T = get_turf(src)
+	new /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/missile_rack(T)
+	new /obj/item/robot_module/syndicate/inteq(T)
+
+/mob/living/simple_animal/hostile/alien/queen/king
+	icon = 'modular_bluemoon/icons/mob/king.dmi'
+	name = "King"
+	desc = "It has a massive body with a characteristic head crest divided into two horns, between which there is a third, shorter protrusion. The king lacks the pair of pectoral limbs typical of the queen, but has a massive tail and dorsal breathing tubes resembling small tails."
+	icon_state = "Normal King Walking"
+	icon_living = "Normal King Walking"
+	icon_dead = "Normal King Dead"
+	health = 800
+	maxHealth = 800
+	melee_damage_lower = 40
+	melee_damage_upper = 70
+	armour_penetration = 20
+	minimum_distance = 1
+	retreat_distance = 1
+	ranged = FALSE
+	loot = list(/obj/effect/mob_spawn/alien/corpse/humanoid/queen/king)
+
+/mob/living/simple_animal/hostile/alien/queen/king/SpreadPlants()
+	return FALSE //Кинг не королева, чтобы создавать яйца
+
+/obj/effect/mob_spawn/alien/corpse/humanoid/queen/king
+	name = "king corpse"
+	mob_type = /mob/living/carbon/alien/humanoid/royal/queen/king
+
+/mob/living/carbon/alien/humanoid/royal/queen/king
+	icon = 'modular_bluemoon/icons/mob/king.dmi'
+	icon_state = "Normal King Dead"
+	stat = DEAD

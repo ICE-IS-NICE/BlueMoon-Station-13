@@ -1758,7 +1758,7 @@ GLOBAL_LIST_EMPTY(roundstart_race_names)
 	if(radiation > RAD_MOB_HAIRLOSS)
 		if(prob(15) && !(H.hair_style == "Bald") && (HAIR in species_traits))
 			to_chat(H, "<span class='danger'>Your hair starts to fall out in clumps...</span>")
-			addtimer(CALLBACK(src, PROC_REF(go_bald), H), 50)
+			go_bald(H)
 
 /datum/species/proc/go_bald(mob/living/carbon/human/H)
 	if(QDELETED(H))	//may be called from a timer
@@ -2023,9 +2023,11 @@ GLOBAL_LIST_EMPTY(roundstart_race_names)
 						target_message = span_lewd("[user] шлёпает по сочной заднице [target]! Она [pick("пульсирует","покачивается","трясётся","хлопает","колеблется","трясётся")] после хорошего удара и мешает вам стоять ровно!"))
 				return FALSE
 		//SPLURT ADDITION END
-		target.adjust_arousal(20,"masochism", maso = TRUE)
-		if (ishuman(target) && HAS_TRAIT(target, TRAIT_MASO) && target.has_dna() && prob(10))
-			target.mob_climax(forced_climax=TRUE, cause = "masochism")
+		// BLUEMOON EDIT START || It's easy to get aroused, but it's hard to cum.
+		if(ishuman(target) && HAS_TRAIT(target, TRAIT_MASO) && target.has_dna() && prob(40))
+			target.adjust_arousal(20,"masochism", maso = TRUE)
+			target.handle_post_sex(NORMAL_LUST, null, null)
+		// BLUEMOON EDIT END
 		if (!HAS_TRAIT(target, TRAIT_PERMABONER))
 			stop_wagging_tail(target)
 		// playsound(target.loc, 'sound/weapons/slap.ogg', 50, 1, -1) // BLUEMOON REMOVAL - это дубль звука сверху (почему он вообще существует?)
@@ -2352,9 +2354,9 @@ GLOBAL_LIST_EMPTY(roundstart_race_names)
 		SEND_SIGNAL(target, COMSIG_HUMAN_DISARM_HIT, user, user.zone_selected)
 
 		if(CHECK_MOBILITY(target, MOBILITY_STAND))
-			target.adjustStaminaLoss(5)
+			target.adjustStaminaLoss(5 + user.dna.species.disarm_bonus) // BLUEMOON EDIT - xenohybrids_improvements - добавлено "+ disarm_bonus"
 		else
-			target.adjustStaminaLoss(IS_STAMCRIT(target)? 2 : 10)
+			target.adjustStaminaLoss((IS_STAMCRIT(target)? 2 : 10) + user.dna.species.disarm_bonus) // BLUEMOON EDIT - xenohybrids_improvements - добавлено "+ disarm_bonus"
 
 		if(target.is_shove_knockdown_blocked())
 			return
@@ -2415,7 +2417,7 @@ GLOBAL_LIST_EMPTY(roundstart_race_names)
 						target.visible_message("<span class='danger'>[target.name] drops \the [target_held_item]!!</span>",
 							"<span class='danger'>You drop \the [target_held_item]!!</span>", null, COMBAT_MESSAGE_RANGE)
 						append_message += ", causing them to drop [target_held_item]"
-		target.ShoveOffBalance(SHOVE_OFFBALANCE_DURATION)
+		target.ShoveOffBalance(SHOVE_OFFBALANCE_DURATION + user.dna.species.disarm_bonus) // BLUEMOON EDIT - xenohybrids_improvements - добавлено "+ disarm_bonus"
 		log_combat(user, target, "shoved", append_message)
 
 /datum/species/proc/apply_damage(damage, damagetype = BRUTE, def_zone = null, blocked, mob/living/carbon/human/H, forced = FALSE, spread_damage = FALSE, wound_bonus = 0, bare_wound_bonus = 0, sharpness = SHARP_NONE)
@@ -2448,7 +2450,13 @@ GLOBAL_LIST_EMPTY(roundstart_race_names)
 	switch(damagetype)
 		if(BRUTE)
 			H.damageoverlaytemp = 20
-			var/damage_amount
+			// BLUEMOON EDIT START
+			var/damage_amount = forced ? damage : damage * hit_percent * brutemod * H.physiology.brute_mod
+			// Да, проверка специально написана, до проверки на прочную кожу
+			if(HAS_TRAIT(H, TRAIT_MASO))
+				if(!(H.IsSleeping() || H.stat >= 2 || H.IsUnconscious())) // BLUEMOON ADD - персонаж не спит, не без сознания и не мертв
+					H.handle_post_sex(min(damage_amount, HIGH_LUST), null, null)
+			// BLUEMOON EDIT END
 			if (HAS_TRAIT(H, TRAIT_TOUGHT) && !forced) // проверка на трейт стойкости
 				if (damage < 10) //если урон до применения модификаторов не привышает 10, то он не учитывается
 					if(HAS_TRAIT(H, TRAIT_ROBOTIC_ORGANISM))
@@ -2462,12 +2470,10 @@ GLOBAL_LIST_EMPTY(roundstart_race_names)
 			if(BP)
 				if(BP.receive_damage(damage_amount, 0, wound_bonus = wound_bonus, bare_wound_bonus = bare_wound_bonus, sharpness = sharpness))
 					H.update_damage_overlays()
-					if(HAS_TRAIT(H, TRAIT_MASO) && prob(damage_amount))
-						if(!(H.IsSleeping() || H.stat >= 2 || H.IsUnconscious())) // BLUEMOON ADD - персонаж не спит, не без сознания и не мертв
-							H.mob_climax(forced_climax=TRUE, cause = "masochism")
-
+			//BLUEMOON EDIT START
 			else//no bodypart, we deal damage with a more general method.
 				H.adjustBruteLoss(damage_amount)
+			//BLUEMOON EDIT END
 		if(BURN)
 			H.damageoverlaytemp = 20
 			var/damage_amount = forced ? damage : damage * hit_percent * burnmod * H.physiology.burn_mod

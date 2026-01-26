@@ -66,7 +66,7 @@
 
 ////////
 
-/obj/item/clothing/glasses/sunglasses/shiro
+/obj/item/clothing/glasses/shiro
 	name = "Shiro's Sunglasses"
 	desc = "These silver aviators belong to Shiro Silverhand."
 	icon_state = "shiro"
@@ -83,6 +83,77 @@
 	mob_overlay_icon = 'modular_bluemoon/fluffs/icons/mob/clothing/accessories.dmi'
 	icon_state = "booma"
 	item_state = "booma"
+
+////////////////////////
+
+/obj/item/clothing/accessory/hateredsoul_dogtag
+	name = "Combat Dogtag"
+	desc = "Связка боевых жетонов с резиновым ободком по их краям. Выполнены из прочного и износостойкого сплава, с маленьким весом, от чего стали практически незаметными для самого носителя. На правом жетоне выбиты основные данные его владельца, в виде полного имени, группы крови и принадлежности к подразделению. На левом жетоне выбита дополнительная информация и очертания владельца."
+	icon = 'modular_bluemoon/fluffs/icons/obj/clothing/accessories.dmi'
+	mob_overlay_icon = 'modular_bluemoon/fluffs/icons/mob/clothing/accessories.dmi'
+	icon_state = "hateredsoul_dogtag_1"
+	item_state = "hateredsoul_dogtag_1"
+	slot_flags = ITEM_SLOT_NECK
+	pocket_storage_component_path = /datum/component/storage/concrete/pockets/small/collar
+	var/tagname = null
+	unique_reskin = list(
+		"Combat dogtag" = list(
+			RESKIN_ICON_STATE = "hateredsoul_dogtag_1",
+			RESKIN_ITEM_STATE = "hateredsoul_dogtag_1"
+		),
+		"Combat Dogtag" = list(
+			RESKIN_ICON_STATE = "hateredsoul_dogtag_2",
+			RESKIN_ITEM_STATE = "hateredsoul_dogtag_2"
+		)
+	)
+
+/obj/item/clothing/accessory/hateredsoul_dogtag/attack_self(mob/user)
+	tagname = stripped_input(user, "Would you like to change the name on the tag?", "Name your new tag", tagname, MAX_NAME_LEN)
+	name = tagname ? "[initial(name)] - [tagname]" : initial(name)
+
+/obj/item/clothing/accessory/hateredsoul_dogtag/nt
+	name = "NT Combat Dogtag"
+	desc = "Связка боевых жетонов с резиновым ободком по их краям. Выполнены из прочного и износостойкого сплава, с маленьким весом, от чего стали практически незаметными для самого носителя. На правом жетоне выбиты основные данные его владельца, в виде полного имени, группы крови и принадлежности к подразделению. На левом жетоне изображён логотип корпорации NanoTrasen."
+	icon = 'modular_bluemoon/fluffs/icons/obj/clothing/accessories.dmi'
+	mob_overlay_icon = 'modular_bluemoon/fluffs/icons/mob/clothing/accessories.dmi'
+	icon_state = "hateredsoul_dogtag_nt_1"
+	item_state = "hateredsoul_dogtag_nt_1"
+	unique_reskin = list(
+		"NT Combat Dogtag" = list(
+			RESKIN_ICON_STATE = "hateredsoul_dogtag_nt_1",
+			RESKIN_ITEM_STATE = "hateredsoul_dogtag_nt_1"
+		),
+		"NT Combat dogtag" = list(
+			RESKIN_ICON_STATE = "hateredsoul_dogtag_nt_2",
+			RESKIN_ITEM_STATE = "hateredsoul_dogtag_nt_2"
+		),
+		"NT combat dogtag" = list(
+			RESKIN_ICON_STATE = "hateredsoul_dogtag_nt_3",
+			RESKIN_ITEM_STATE = "hateredsoul_dogtag_nt_3"
+		)
+	)
+
+/obj/item/clothing/accessory/hateredsoul_dogtag/syndie
+	name = "Syndie Combat Dogtag"
+	desc = "Связка боевых жетонов с резиновым ободком по их краям. Выполнены из прочного и износостойкого сплава, с маленьким весом, от чего стали практически незаметными для самого носителя. На правом жетоне выбиты основные данные его владельца, в виде полного имени, группы крови и принадлежности к подразделению. На левом жетоне изображена трёхглавая змея Синдиката."
+	icon = 'modular_bluemoon/fluffs/icons/obj/clothing/accessories.dmi'
+	mob_overlay_icon = 'modular_bluemoon/fluffs/icons/mob/clothing/accessories.dmi'
+	icon_state = "hateredsoul_dogtag_syndie_1"
+	item_state = "hateredsoul_dogtag_syndie_1"
+	unique_reskin = list(
+		"Syndie Combat Dogtag" = list(
+			RESKIN_ICON_STATE = "hateredsoul_dogtag_syndie_1",
+			RESKIN_ITEM_STATE = "hateredsoul_dogtag_syndie_1"
+		),
+		"Syndie Combat dogtag" = list(
+			RESKIN_ICON_STATE = "hateredsoul_dogtag_syndie_2",
+			RESKIN_ITEM_STATE = "hateredsoul_dogtag_syndie_2"
+		),
+		"Syndie combat dogtag" = list(
+			RESKIN_ICON_STATE = "hateredsoul_dogtag_syndie_3",
+			RESKIN_ITEM_STATE = "hateredsoul_dogtag_syndie_3"
+		)
+	)
 
 ////////////////////////
 
@@ -240,6 +311,26 @@
 
 ////////////////////////
 
+/obj/item/clothing/neck/tie/h_soul_coat
+	name = "Black coat"
+	desc = "Обычное чёрное пальто, выполненное из высококачественного материла, хоть и выглядящим старым, но всё ещё приятное на вид и даже на ощупь, однако всё ещё слишком длинное, чтобы его носить как обычно, но что мешает его продолжать носить иным способом, верно? Во внутреннем кармане пальто заметен логотив в виде чёрной розы и надпись Black Rose atelier."
+	icon = 'modular_bluemoon/fluffs/icons/obj/clothing/accessories.dmi'
+	mob_overlay_icon = 'modular_bluemoon/fluffs/icons/mob/clothing/accessories.dmi'
+	icon_state = "h_soul_coat"
+	item_state = "h_soul_coat"
+
+////////////////////////
+
+/obj/item/clothing/neck/tie/mu88_tie
+	name = "M.U. 88 New hope tie"
+	desc = "Кол, представляющий собой белый воротник и светло-зелёного оттенка галстук, носящие за собой смысл лишь декорации, хоть и выполнены из износостойкой ткани, для работ в области повышенной опасности. Во внутренней части галстука имеется логотип в виде чёрной розы, а также надпись - Black Rose atelier."
+	icon = 'modular_bluemoon/fluffs/icons/obj/clothing/accessories.dmi'
+	mob_overlay_icon = 'modular_bluemoon/fluffs/icons/mob/clothing/accessories.dmi'
+	icon_state = "mu88_tie"
+	item_state = "mu88_tie"
+
+////////////////////////
+
 /obj/item/clothing/neck/tie/hahun_cape
 	name = "Praxil Mk.6"
 	desc = "A cape that awarded to trusted agents of Syndicate, pleasant to the touch and look very stylish, doesn't even restrict movement"
@@ -318,3 +409,29 @@
 	desc = "Banner of kingdom Norn"
 
 //////////////////////// БАНЕРЫ
+
+
+/obj/item/storage/box/fall_out_kit
+	name = "Ranger kit"
+	desc = "Military box that contains a full kit of Ranger uniform."
+	icon_state = "ammobox"
+
+/obj/item/storage/box/fall_out_kit/PopulateContents()
+	new /obj/item/clothing/suit/donator/bm/ranger_coat(src)
+	new /obj/item/clothing/head/ranger_helmet(src)
+	new /obj/item/clothing/under/donator/bm/ranger_uniform(src)
+	new /obj/item/clothing/mask/gas/syndicate/ranger_gasmask(src)
+
+////////////////////////
+
+/obj/item/clothing/glasses/halvedspectacles
+	name = "halved violet spectacles"
+	desc = "\"Половинки\"-очки в оправе тёмно-золотого оттенка. В них вставлены линзы фиалкового цвета. Пахнут фундуком."
+	icon_state = "coldhalved_s"
+	item_state = "coldhalved_s"
+	icon = 'modular_bluemoon/fluffs/icons/obj/clothing/accessories.dmi'
+	mob_overlay_icon = 'modular_bluemoon/fluffs/icons/mob/clothing/accessories.dmi'
+	lefthand_file = 'modular_bluemoon/fluffs/icons/mob/inhands/accessories_left.dmi'
+	righthand_file = 'modular_bluemoon/fluffs/icons/mob/inhands/accessories_right.dmi'
+
+////////////////////////

@@ -21,6 +21,7 @@
 	pickup_sound = 'sound/items/handling/wirecutter_pickup.ogg'
 	tool_behaviour = TOOL_WIRECUTTER
 	toolspeed = 1
+	used_skills = list(/datum/skill/level/job/wiring) //BLUEMOON ADD
 	armor = list(MELEE = 0, BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 0, BIO = 0, RAD = 0, FIRE = 50, ACID = 30)
 	var/random_color = TRUE
 	var/static/list/wirecutter_colors = list(
@@ -185,3 +186,18 @@
 	icon_state = "cutters"
 	toolspeed = 0.2
 	random_color = FALSE
+// BLUEMOON ADD START black skin
+	unique_reskin = list(
+		"Carbonized" = list(
+			RESKIN_ICON_STATE_FILE = 'modular_bluemoon/icons/obj/advancedtools_black.dmi',
+			RESKIN_ICON_STATE = "cutters_black",
+		),
+		"Titanium" = list(
+			RESKIN_ICON_STATE = "cutters",
+		)
+	)
+
+/obj/item/wirecutters/advanced/reskin_obj(mob/user)
+	if(current_skin == "Carbonized")
+		desc = "A set of reproduction alien wirecutters, they have a carbon handle with an exceedingly sharp blade."
+// BLUEMOON ADD END

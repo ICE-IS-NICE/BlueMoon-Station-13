@@ -29,8 +29,9 @@
 		return
 	// BLUEMOON EDIT END
 	// Remove quirk ability action datum
-	var/datum/action/cooldown/hypnotize/act_hypno = locate() in quirk_mob.actions
-	act_hypno.Remove(quirk_mob)
+	var/datum/action/cooldown/hypnotize/act_hypno = locate(/datum/action/cooldown/hypnotize) in quirk_mob.actions
+	if(act_hypno)
+		act_hypno.Remove(quirk_mob)
 
 	// Remove examine text
 	UnregisterSignal(quirk_holder, COMSIG_PARENT_EXAMINE)
@@ -79,7 +80,7 @@
 	// Check if owner has eye protection
 	if(action_owner.get_eye_protection())
 		// Warn the user, then return
-		to_chat(action_owner, span_warning("Your eyes need to be visible for this ability to work."))
+//		to_chat(action_owner, span_warning("Your eyes need to be visible for this ability to work.")) // REDMOON REMOVAL - hypno_less_spam
 		return FALSE
 
 	// Define owner's eyes

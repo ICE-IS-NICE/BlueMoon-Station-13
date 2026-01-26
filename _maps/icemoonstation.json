@@ -5,6 +5,7 @@
 	"station_ruin_budget": 0,
 	"space_ruin_levels": 0,
 	"space_empty_levels": 0,
+	"planetary": true,
 	"shuttles": {
 		"cargo": "cargo_box",
 		"ferry": "ferry_fancy",
@@ -16,6 +17,7 @@
 			"Up": 1,
 			"Gravity": true,
 			"Baseturf": "/turf/open/lava/plasma/ice_moon",
+			"Ice Ruins Underground": true,
 			"Linkage": "null",
 			"Mining": true
 		},
@@ -24,6 +26,7 @@
 			"Down": -1,
 			"Gravity": true,
 			"Baseturf": "/turf/open/openspace/icemoon",
+			"Ice Ruins Underground": true,
 			"Linkage": "null",
 			"Mining": true
 		},

@@ -33,6 +33,23 @@
 	icon =  'modular_bluemoon/krashly/icons/obj/structures.dmi'
 	icon_state = "madonna"
 
+/obj/item/sign/flag
+	var/can_lock_coffin = FALSE
+
+// Прок для закрытия гробов флагами. У нас в DMI еще куча гробов с флагами, кто захочет, поменяйте им стейты в DMI или сделайте отдельную переменную для этого
+/obj/item/sign/flag/proc/lock_coffin(obj/structure/closet/crate/coffin/grob)
+	if(grob?.type != /obj/structure/closet/crate/coffin || !can_lock_coffin || !ispath(sign_path))
+		return
+	var/icon_state_name = sign_path:icon_state
+	if(!icon_state_name)
+		return
+	grob.icon = icon
+	grob.icon_state = "grob_"+icon_state_name
+	grob.locked = TRUE
+	qdel(src)
+
+	return TRUE
+
 /obj/structure/sign/flag/skull
 	name = "flag of PMC Skull"
 	desc = "Черный флаг с Черепом по центру. Флаг пахнет кровью."
@@ -40,28 +57,13 @@
 	icon_state = "full"
 	item_flag = /obj/item/sign/flag/skull
 
-/obj/item/sign/flag
-	var/flag_type = ""
-
 /obj/item/sign/flag/skull
 	name = "folded flag of the PMC Skull"
 	desc = "Сложенный флаг ЧВК 'Череп'."
-	flag_type = "skull"
 	icon = 'modular_bluemoon/krashly/icons/obj/skull_flag.dmi'
 	icon_state = "mini"
+	can_lock_coffin = TRUE
 	sign_path = /obj/structure/sign/flag/skull
-
-/obj/structure/closet/crate/coffin/attacked_by(obj/item/sign/flag/I, mob/living/user)
-	if(I.flag_type == "skull")
-		icon = 'modular_bluemoon/krashly/icons/obj/skull_flag.dmi'
-		icon_state = "grob_full"
-		locked = TRUE
-		qdel(I)
-	if(I.flag_type == "inteq")
-		icon = 'modular_bluemoon/krashly/icons/obj/inteq_flag.dmi'
-		icon_state = "grob_full"
-		locked = TRUE
-		qdel(I)
 
 /datum/gear/donator/bm/skull_flag
 	name = "PMC Skull flag"
@@ -82,9 +84,9 @@
 /obj/item/sign/flag/fake_inteq
 	name = "Folded Flag of the PMC InteQ"
 	desc = "Сложенный флаг ЧВК 'InteQ'."
-	flag_type = "inteq"
 	icon = 'modular_bluemoon/krashly/icons/obj/inteq_flag.dmi'
 	icon_state = "mini"
+	can_lock_coffin = TRUE
 	sign_path = /obj/structure/sign/flag/fake_inteq
 
 /obj/structure/sign/flag/inteq
@@ -118,9 +120,9 @@
 /obj/item/sign/flag/inteq
 	name = "folded flag of the PMC InteQ"
 	desc = "Сложенный флаг ЧВК 'InteQ'."
-	flag_type = "inteq"
 	icon = 'modular_bluemoon/krashly/icons/obj/inteq_flag.dmi'
 	icon_state = "mini"
+	can_lock_coffin = TRUE
 	sign_path = /obj/structure/sign/flag/inteq
 
 /obj/item/sign/flag/inteq/afterattack(atom/target, mob/user, proximity)
@@ -268,7 +270,7 @@
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/clothing/mask/vape
 	ckeywhitelist = list("trollandrew")
-	subcategory = LOADOUT_SUBCATEGORIES_DON02
+	subcategory = LOADOUT_SUBCATEGORIES_DON03
 	loadout_flags = LOADOUT_CAN_NAME | LOADOUT_CAN_DESCRIPTION
 
 /datum/gear/donator/bm/electropack
@@ -276,7 +278,7 @@
 	slot = ITEM_SLOT_HANDS
 	path = /obj/item/electropack
 	ckeywhitelist = list("trollandrew")
-	subcategory = LOADOUT_SUBCATEGORIES_DON02
+	subcategory = LOADOUT_SUBCATEGORIES_DON03
 	loadout_flags = LOADOUT_CAN_NAME | LOADOUT_CAN_DESCRIPTION
 
 /datum/gear/donator/bm/straight_jacket
@@ -284,7 +286,7 @@
 	slot = ITEM_SLOT_OCLOTHING
 	path = /obj/item/clothing/suit/straight_jacket
 	ckeywhitelist = list("trollandrew")
-	subcategory = LOADOUT_SUBCATEGORIES_DON02
+	subcategory = LOADOUT_SUBCATEGORIES_DON03
 	loadout_flags = LOADOUT_CAN_NAME | LOADOUT_CAN_DESCRIPTION
 
 /datum/gear/donator/bm/boxing
@@ -292,7 +294,7 @@
 	slot = ITEM_SLOT_GLOVES
 	path = /obj/item/clothing/gloves/boxing
 	ckeywhitelist = list("trollandrew")
-	subcategory = LOADOUT_SUBCATEGORIES_DON02
+	subcategory = LOADOUT_SUBCATEGORIES_DON03
 	loadout_flags = LOADOUT_CAN_NAME | LOADOUT_CAN_DESCRIPTION
 
 /datum/gear/donator/bm/coconut_bong

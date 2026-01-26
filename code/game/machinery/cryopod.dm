@@ -23,6 +23,7 @@ GLOBAL_LIST_EMPTY(ghost_records)
 	interaction_flags_machine = INTERACT_MACHINE_OFFLINE
 	req_one_access = list(ACCESS_HEADS, ACCESS_ARMORY) // Heads of staff or the warden can go here to claim recover items from their department that people went were cryodormed with.
 	var/mode = null
+	flags_1 = NODECONSTRUCT_1 // BLUEMOON ADD
 
 	max_integrity = 10000
 	obj_integrity = 10000
@@ -539,6 +540,7 @@ GLOBAL_LIST_EMPTY(ghost_records)
 /obj/effect/mob_spawn
 	/// For figuring out where the local cryopod computer is. Must be set for cryo computer announcements.
 	var/area/computer_area
+	var/addition_warning = "<span class='boldwarning'>В режим игры Extended станцию посещать допустимо, в Dynamic — запрещено!</span>"
 
 /obj/machinery/computer/cryopod/proc/announce(message_type, user, rank)
 	switch(message_type)

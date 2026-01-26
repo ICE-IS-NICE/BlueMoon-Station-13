@@ -111,10 +111,22 @@
 	glass_name = "glass of watermelon juice"
 	glass_desc = "A glass of watermelon juice."
 
+// BLUEMOON ADD START
+/datum/reagent/consumable/melonjuice
+	name = "Melon Juice"
+	description = "Delicious juice made from melon."
+	color = "#FFCC00" // rgb(255, 204, 0)
+	taste_description = "juicy melon"
+	glass_icon_state = "glass_yellow"
+	glass_name = "glass of melon juice"
+	glass_desc = "A glass of melon juice."
+	hydration = 4
+// BLUEMOON ADD END
+
 /datum/reagent/consumable/lemonjuice
 	name = "Lemon Juice"
 	description = "This juice is VERY sour."
-	color = "#863333" // rgb: 175, 175, 0
+	color = "#AFAF00" // rgb: 175, 175, 0
 	taste_description = "sourness"
 	glass_icon_state  = "lemonglass"
 	glass_name = "glass of lemon juice"
@@ -124,7 +136,7 @@
 /datum/reagent/consumable/banana
 	name = "Banana Juice"
 	description = "The raw essence of a banana. HONK"
-	color = "#863333" // rgb: 175, 175, 0
+	color = "#AFAF00" // rgb: 175, 175, 0
 	taste_description = "banana"
 	glass_icon_state = "banana"
 	glass_name = "glass of banana juice"
@@ -225,7 +237,7 @@
 
 /datum/reagent/consumable/milk/on_mob_life(mob/living/carbon/M)
 	if(HAS_TRAIT(M, TRAIT_CALCIUM_HEALER))
-		M.heal_bodypart_damage(1.5,0, 0)
+		M.heal_bodypart_damage(1.5, 1.5, 0)
 		for(var/i in M.all_wounds)
 			var/datum/wound/iter_wound = i
 			iter_wound.on_xadone(2)
@@ -645,12 +657,9 @@
 		M.reagents.add_reagent(/datum/reagent/consumable/honey,1)
 	..()
 
-/datum/reagent/consumable/buzz_fuzz/reaction_mob(mob/living/M, method=TOUCH, reac_volume)
-	if(iscarbon(M) && (method in list(TOUCH, VAPOR, PATCH)))
-		var/mob/living/carbon/C = M
-		for(var/s in C.surgeries)
-			var/datum/surgery/S = s
-			S.success_multiplier = max(0.1, S.success_multiplier) // +10% success probability on each step, compared to bacchus' blessing's ~46%
+/datum/reagent/consumable/buzz_fuzz/reaction_mob(mob/living/M, method=TOUCH, reac_volume, affected_bodypart)
+	if(method in list(TOUCH, VAPOR, PATCH))
+		M.sterilize(10, 1 MINUTES * reac_volume/5) // +10% success probability on each step, compared to bacchus' blessing's ~46%
 	..()
 
 /datum/reagent/consumable/buzz_fuzz/addiction_act_stage1(mob/living/M)
@@ -1116,7 +1125,7 @@
 			to_chat(M, "<span class = 'notice'>[pick("Headpats feel nice.", "The feeling of a hairball...", "Backrubs would be nice.", "Whats behind those doors?")]</span>")
 	if(ishuman(M) && !(M.client?.prefs.cit_toggles & NO_APHRO))
 		var/mob/living/carbon/human/H = M
-		var/list/adjusted = H.adjust_arousal(5,aphro = TRUE)
+		var/list/adjusted = H.adjust_arousal(5,aphro = TRUE, silent = TRUE)
 		for(var/g in adjusted)
 			var/obj/item/organ/genital/G = g
 			to_chat(M, "<span class='userlove'>You feel like playing with your [G.name]!</span>")

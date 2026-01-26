@@ -3,7 +3,8 @@
 
 /obj/item/reagent_containers/food/snacks/store/cheesewheel
 	name = "cheese wheel"
-	desc = "A big wheel of delcious Cheddar."
+	desc = "Большой круг великолепного чеддера."
+	icon = 'modular_bluemoon/icons/obj/food/food.dmi'
 	icon_state = "cheesewheel"
 	slice_path = /obj/item/reagent_containers/food/snacks/cheesewedge
 	slices_num = 5
@@ -25,7 +26,8 @@
 
 /obj/item/reagent_containers/food/snacks/cheesewedge
 	name = "cheese wedge"
-	desc = "A wedge of delicious Cheddar. The cheese wheel it was cut from can't have gone far."
+	desc = "Кусок-треугольник великоголепного чеддера. Сырный круг, от которого его отрезали, не мог уйти далеко."
+	icon = 'modular_bluemoon/icons/obj/food/food.dmi'
 	icon_state = "cheesewedge"
 	filling_color = "#FFD700"
 	list_reagents = list(/datum/reagent/consumable/nutriment = 3, /datum/reagent/consumable/nutriment/vitamin = 1)
@@ -41,6 +43,24 @@
 	foodtype = FRUIT
 	juice_results = list(/datum/reagent/consumable/watermelonjuice = 5)
 
+// BLUEMOON ADD START || melon
+/obj/item/reagent_containers/food/snacks/melonslice
+	name = "melon slice"
+	desc = "A slice of watery goodness."
+	icon_state = "melonslice"
+	filling_color = "#FFCC00"
+	tastes = list("melon" = 1)
+	foodtype = FRUIT
+	juice_results = list(/datum/reagent/consumable/melonjuice = 5)
+
+/obj/item/reagent_containers/food/snacks/melonslice/space
+	name = "space melon slice"
+	desc = "A slice of something strange, like a liquid void."
+	icon_state = "spacemelonslice"
+	filling_color = "#147cb9"
+	tastes = list("spacemelon" = 1)
+// BLUEMOON ADD END
+
 /obj/item/reagent_containers/food/snacks/candy_corn
 	name = "candy corn"
 	desc = "It's a handful of candy corn. Can be stored in a detective's hat."
@@ -52,7 +72,7 @@
 
 /obj/item/reagent_containers/food/snacks/chocolatebar
 	name = "chocolate bar"
-	desc = "Such, sweet, fattening food."
+	desc = "Такой сладкий и полнящий перекус..."
 	icon_state = "chocolatebar"
 	list_reagents = list(/datum/reagent/consumable/nutriment = 2, /datum/reagent/consumable/sugar = 2, /datum/reagent/consumable/coco = 2)
 	filling_color = "#A0522D"
@@ -70,7 +90,8 @@
 
 /obj/item/reagent_containers/food/snacks/popcorn
 	name = "popcorn"
-	desc = "Now let's find some cinema."
+	desc = "Теперь пора найти интересное зрелище. Или кино."
+	icon = 'modular_bluemoon/icons/obj/food/food.dmi'
 	icon_state = "popcorn"
 	trash = /obj/item/trash/popcorn
 	list_reagents = list(/datum/reagent/consumable/nutriment = 2)
@@ -95,7 +116,7 @@
 
 /obj/item/reagent_containers/food/snacks/fries
 	name = "space fries"
-	desc = "AKA: French Fries, Freedom Fries, etc."
+	desc = "Также известно как \"Картошка-фри\", \"Френч-фрай\", и так далее."
 	icon_state = "fries"
 	trash = /obj/item/trash/plate
 	list_reagents = list(/datum/reagent/consumable/nutriment = 4)
@@ -370,7 +391,7 @@
 
 /obj/item/reagent_containers/food/snacks/nachos
 	name = "nachos"
-	desc = "Chips from Space Mexico."
+	desc = "Чипсы из Космической Мексики."
 	icon_state = "nachos"
 	bonus_reagents = list(/datum/reagent/consumable/nutriment = 1, /datum/reagent/consumable/nutriment/vitamin = 1)
 	list_reagents = list(/datum/reagent/consumable/nutriment = 6, /datum/reagent/consumable/nutriment/vitamin = 2)
@@ -610,8 +631,10 @@
 
 /obj/item/reagent_containers/food/snacks/branrequests
 	name = "Bran Requests Cereal"
-	desc = "A dry cereal that satiates your requests for bran. Tastes uniquely like raisins and salt."
+	desc = "Сухие хлопья для ваших потребностей в полезных отрубях. Удивительный вкус изюма и соли."
+	icon = 'modular_bluemoon/icons/obj/food/food.dmi'
 	icon_state = "bran_requests"
+	trash = /obj/item/trash/brancereal
 	list_reagents = list(/datum/reagent/consumable/nutriment = 3, /datum/reagent/consumable/nutriment/vitamin = 2, /datum/reagent/consumable/sodiumchloride = 5)
 	bonus_reagents = list(/datum/reagent/consumable/sodiumchloride = 10)
 	tastes = list("bran" = 4, "raisins" = 3, "salt" = 1)
@@ -693,7 +716,8 @@
 
 /obj/item/reagent_containers/food/snacks/cannedpeaches
 	name = "Canned Peaches"
-	desc = "Just a nice can of ripe peaches swimming in their own juices."
+	desc = "Консервированная банка неплохих и спелых персиков в собственном соку."
+	icon = 'modular_bluemoon/icons/obj/food/food.dmi'
 	icon_state = "peachcan"
 	list_reagents = list(/datum/reagent/consumable/peachjuice = 20, /datum/reagent/consumable/sugar = 8, /datum/reagent/consumable/nutriment = 2)
 	filling_color = "#ffdf26"
@@ -703,7 +727,8 @@
 
 /obj/item/reagent_containers/food/snacks/cannedpeaches/maint
 	name = "Maintenance Peaches"
-	desc = "I have a mouth and I must eat."
+	desc = "У меня есть рот и я должен есть."
+	icon = 'modular_bluemoon/icons/obj/food/food.dmi'
 	icon_state = "peachcanmaint"
 	tastes = list("peaches" = 1, "tin" = 7)
 
@@ -739,11 +764,12 @@
 
 /obj/item/reagent_containers/food/snacks/cornchips
 	name = "boritos corn chips"
-	desc = "Triangular corn chips. They do seem a bit bland but would probably go well with some kind of dipping sauce."
+	desc = "Треугольные кукурузные чипсы. Какие-то пресные, но с соусом должны сочетаться просто отлично."
+	icon = 'modular_bluemoon/icons/obj/food/food.dmi'
 	icon_state = "boritos"
 	trash = /obj/item/trash/boritos
 	bitesize = 2
-	list_reagents = list(/datum/reagent/consumable/nutriment = 3, /datum/reagent/consumable/cooking_oil = 2, /datum/reagent/consumable/sodiumchloride = 3)
+	list_reagents = list(/datum/reagent/consumable/nutriment = 5, /datum/reagent/consumable/cooking_oil = 2, /datum/reagent/consumable/sodiumchloride = 3)
 	filling_color = "#ECA735"
 	tastes = list("fried corn" = 1)
 	foodtype = JUNKFOOD | FRIED

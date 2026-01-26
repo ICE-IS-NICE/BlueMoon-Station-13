@@ -370,7 +370,7 @@
 	duration = 100
 
 /datum/status_effect/tarcookie/tick()
-	for(var/mob/living/carbon/human/L in range(get_turf(owner),1))
+	for(var/mob/living/carbon/human/L in range(get_turf(owner),2))
 		if(L != owner)
 			L.apply_status_effect(/datum/status_effect/tarfoot)
 
@@ -411,7 +411,7 @@
 	duration = 100
 
 /datum/status_effect/peacecookie/tick()
-	for(var/mob/living/L in range(get_turf(owner),1))
+	for(var/mob/living/L in range(get_turf(owner),2))
 		L.apply_status_effect(/datum/status_effect/plur)
 
 /datum/status_effect/plur
@@ -953,7 +953,8 @@
 	colour = "light pink"
 
 /datum/status_effect/stabilized/lightpink/on_apply()
-	ADD_TRAIT(owner, TRAIT_FREESPRINT, "stabilized_slime")
+	ADD_TRAIT(owner, TRAIT_PACIFISM, STABILIZED_LIGHT_PINK_TRAIT)
+	ADD_TRAIT(owner, TRAIT_FREESPRINT, STABILIZED_LIGHT_PINK_TRAIT)
 	owner.add_movespeed_modifier(/datum/movespeed_modifier/status_effect/slime/light_pink)
 	return ..()
 
@@ -972,7 +973,8 @@
 	return ..()
 
 /datum/status_effect/stabilized/lightpink/on_remove()
-	REMOVE_TRAIT(owner, TRAIT_FREESPRINT, "stabilized_slime")
+	REMOVE_TRAIT(owner, TRAIT_PACIFISM, STABILIZED_LIGHT_PINK_TRAIT)
+	REMOVE_TRAIT(owner, TRAIT_FREESPRINT, STABILIZED_LIGHT_PINK_TRAIT)
 	owner.remove_movespeed_modifier(/datum/movespeed_modifier/status_effect/slime/light_pink)
 	return ..()
 

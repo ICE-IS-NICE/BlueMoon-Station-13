@@ -72,6 +72,29 @@
 	category = list("Tool Designs")
 	departmental_flags = DEPARTMENTAL_FLAG_ENGINEERING
 
+//BLUEMOON ADD START - переношу с ТГ Т2 инструменты для учёных
+/datum/design/handdrillsci
+	name = "Science Hand Drill"
+	desc = "This one sports a nifty science paintjob, but is otherwise normal."
+	id = "handdrillsci"
+	build_type = PROTOLATHE
+	materials = list(/datum/material/iron = 2000, /datum/material/silver = 1000, /datum/material/titanium = 1500)
+	build_path = /obj/item/screwdriver/power/science
+	category = list("Tool Designs")
+	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE
+
+/datum/design/jawsoflifesci
+	name = "Hybrid cutters"
+	desc = "Quite similar to the jaws of life, this tool combines the utility of a crowbar and a set of wirecutters without the hydraulic force required to pry open doors."
+	id = "jawsoflifesci"
+	build_path = /obj/item/crowbar/power/science
+	build_type = PROTOLATHE
+	materials = list(/datum/material/iron = 3000, /datum/material/silver = 2000, /datum/material/titanium = 1500)
+	category = list("Tool Designs")
+	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE
+
+// BLUEMOON ADD END
+
 /datum/design/exwelder
 	name = "Experimental Welding Tool"
 	desc = "An experimental welder capable of self-fuel generation."
@@ -115,7 +138,7 @@
 /////////////////////////////////////////
 //////////////Alien Tools////////////////
 /////////////////////////////////////////
-
+/* BLUEMOON COMMENTED OUT we're using own .dm for modular purposes modular_bluemoon\code\modules\research\designs\tool_designs.dm
 /datum/design/alienwrench
 	name = "Alien Wrench"
 	desc = "An advanced wrench obtained through Abductor technology."
@@ -175,7 +198,7 @@
 	materials = list(/datum/material/iron = 5000, /datum/material/silver = 2500, /datum/material/plasma = 5000, /datum/material/titanium = 2000, /datum/material/diamond = 2000)
 	category = list("Tool Designs")
 	departmental_flags = DEPARTMENTAL_FLAG_ENGINEERING
-
+*/
 /////////////////////////////////////////
 /////////Alien Surgical Tools////////////
 /////////////////////////////////////////
@@ -294,3 +317,24 @@
 	materials = list(/datum/material/iron = 4500, /datum/material/glass = 4500, /datum/material/silver = 4500, /datum/material/gold = 2500, /datum/material/diamond = 1500)
 	category = list("Tool Designs")
 	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE
+
+// BLUEMOON Перенёс РПЕДы из parts в tools.
+/datum/design/RPED
+	name = "Rapid Part Exchange Device"
+	desc = "\"Модуль механический специальный\" для хранения, сортировки и применения стандартизированных деталей."
+	id = "rped"
+	build_type = PROTOLATHE
+	materials = list(/datum/material/iron = 10000, /datum/material/glass = 5000) //hardcore
+	build_path = /obj/item/storage/part_replacer
+	category = list("Tool Designs")
+	departmental_flags = DEPARTMENTAL_FLAG_ENGINEERING | DEPARTMENTAL_FLAG_SCIENCE
+
+/datum/design/BS_RPED
+	name = "Bluespace RPED"
+	desc = "Усиленный блюспейс-технологиями, этот RPED может улучшать машинерию дистанционно, без необходимости отвинчивать её панель."
+	id = "bs_rped"
+	build_type = PROTOLATHE
+	materials = list(/datum/material/iron = 15000, /datum/material/glass = 5000, /datum/material/silver = 2500) //hardcore
+	build_path = /obj/item/storage/part_replacer/bluespace
+	category = list("Tool Designs")
+	departmental_flags = DEPARTMENTAL_FLAG_ENGINEERING | DEPARTMENTAL_FLAG_SCIENCE

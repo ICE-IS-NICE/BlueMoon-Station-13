@@ -43,7 +43,7 @@
 	W.access += get_centcom_access("Death Commando")//Let's add their alloted CentCom access.
 	W.registered_name = H.real_name
 	W.assignment = "Tribunal Ordinator"
-	W.update_label(W.registered_name)
+	W.update_label()
 
 /datum/outfit/lfwb_ordinator/officer
 	name = "Офицер-ординатор трибунала"
@@ -122,16 +122,17 @@
 
 	id = /obj/item/card/id/ert
 	suit = /obj/item/clothing/suit/space/hardsuit/ert/alert/sec/fire
+	suit_store = /obj/item/gun/energy/laser/hellgun/immolator/multi
 	glasses = /obj/item/clothing/glasses/thermal/eyepatch
 	back = /obj/item/storage/backpack/rucksack
 	belt = /obj/item/storage/belt/grenade/fire_grenade
 	r_hand = /obj/item/gun/energy/laser/hellgun
-	backpack_contents = list(/obj/item/storage/box/survival/engineer=1,\
+	backpack_contents = list(/obj/item/storage/box/survival/centcom=1,\
 		/obj/item/clothing/mask/gas/sechailer/swat=1,\
-		/obj/item/flamethrower/full/tank=1,\
 		/obj/machinery/igniter=1,\
 		/obj/item/storage/ifak=1,\
-		/obj/item/tank/internals/plasma=3)
+		/obj/item/stack/sheet/mineral/plasma/thirty, \
+		/obj/item/gun/energy/m2a100)
 	l_pocket = /obj/item/melee/transforming/energy/sword/saber
 
 // BLUEMOON ADD START - командная коробочка для командира
@@ -157,16 +158,17 @@
 
 	id = /obj/item/card/id/ert/Security
 	suit = /obj/item/clothing/suit/space/hardsuit/ert/alert/sec/fire
+	suit_store = /obj/item/gun/energy/laser/hellgun/immolator/multi
 	glasses = /obj/item/clothing/glasses/thermal/eyepatch
 	back = /obj/item/storage/backpack/rucksack
 	belt = /obj/item/storage/belt/grenade/fire_grenade
 	l_hand = /obj/item/gun/energy/laser/hellgun
-	r_hand = /obj/item/flamethrower/full/tank/m240
-	backpack_contents = list(/obj/item/storage/box/survival/engineer=1,\
+	backpack_contents = list(/obj/item/storage/box/survival/centcom=1,\
 		/obj/item/clothing/mask/gas/sechailer=1,\
 		/obj/machinery/igniter=1,\
 		/obj/item/storage/ifak=1,\
-		/obj/item/tank/internals/plasma=3)
+		/obj/item/stack/sheet/mineral/plasma/thirty, \
+		/obj/item/gun/energy/m2a100)
 
 /datum/outfit/ert/firesquad_trooper/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE, client/preference_source)
 	..()
@@ -611,10 +613,10 @@
 	glasses = /obj/item/clothing/glasses/hud/health/night/syndicate
 	back = /obj/item/storage/backpack/ert_commander/ert_security
 	belt = /obj/item/storage/belt/military/ert_min
-	l_pocket = /obj/item/clothing/accessory/lawyers_badge
 	backpack_contents = list(/obj/item/storage/box/survival/centcom=1,\
 		/obj/item/storage/box/ert_commander=1,
 		/obj/item/storage/firstaid/regular=1,)
+	accessory = list(/obj/item/clothing/accessory/lawyers_badge)
 
 // BLUEMOON ADD START - командная коробочка для командира
 /datum/outfit/ert/ntr_ert_leader/pre_equip(mob/living/carbon/human/H, visualsOnly, client/preference_source)
@@ -644,11 +646,11 @@
 	glasses = /obj/item/clothing/glasses/hud/health/night/syndicate
 	back = /obj/item/storage/backpack/ert_commander/ert_security
 	belt = /obj/item/storage/belt/military/ert_min
-	l_pocket = /obj/item/clothing/accessory/lawyers_badge
 	backpack_contents = list(/obj/item/storage/box/survival/centcom=1,\
 		/obj/item/pda/heads=1,
 		/obj/item/stamp/law=1,
 		/obj/item/storage/firstaid/regular=1,)
+	accessory = list(/obj/item/clothing/accessory/lawyers_badge)
 
 /datum/outfit/ert/ntr_ert_agent/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE, client/preference_source)
 	..()
@@ -676,7 +678,6 @@
 	belt = /obj/item/storage/belt/janitor/ert_maid
 	mask = /obj/item/clothing/mask/gas/sechailer/syndicate
 	r_hand = /obj/item/mop/advanced
-	//l_pocket = /obj/item/clothing/accessory/lawyers_badge
 	backpack_contents = list(/obj/item/storage/box/survival/engineer=1,\
 		/obj/item/storage/ifak=1)
 	l_pocket = /obj/item/dualsaber
@@ -715,7 +716,6 @@
 	belt = /obj/item/storage/belt/janitor/ert_maid
 	r_hand = /obj/item/mop/advanced
 	mask = /obj/item/clothing/mask/gas/sechailer/syndicate
-	//l_pocket = /obj/item/clothing/accessory/lawyers_badge
 	backpack_contents = list(/obj/item/storage/box/survival/engineer=1,\
 		/obj/item/storage/ifak=1)
 

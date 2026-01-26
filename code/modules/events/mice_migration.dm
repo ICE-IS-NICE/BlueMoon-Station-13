@@ -23,10 +23,10 @@
 		"\[REDACTED\]", "места, где находятся вкусные провода")
 	if(prob(50))
 		priority_announce("По причине [cause], [plural] [name] [movement] \
-		в [location].", "Миграционная Тревога",
+		в [location].", "ВНИМАНИЕ: Мыши!",
 		'sound/effects/mousesqueek.ogg')
 	else
-		print_command_report("По причине [cause], [plural] [name] [movement] в [location].", "Миграционная Тревога")
+		print_command_report("По причине [cause], [plural] [name] [movement] в [location].", "ВНИМАНИЕ: Мыши!")
 
 /datum/round_event/mice_migration/start()
 	SSminor_mapping.trigger_migration(rand(minimum_mice, maximum_mice))

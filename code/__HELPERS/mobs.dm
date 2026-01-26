@@ -172,7 +172,7 @@
 		"ears"				= "None",
 		"frills"			= pick(GLOB.frills_list),
 		"spines"			= pick(GLOB.spines_list),
-		"legs"				= pick("Plantigrade","Digitigrade"),
+		"legs"				= "Plantigrade",
 		"caps"				= pick(GLOB.caps_list),
 		"insect_wings"		= pick(GLOB.insect_wings_list),
 		"insect_fluff"		= "None",
@@ -274,6 +274,9 @@
 		"headshot_link"		= "", //SPLURT edit
 		"headshot_link1"		= "", //BLUEMOON edit
 		"headshot_link2"		= "", //BLUEMOON edit
+		"headshot_naked_link"		= "", //BLUEMOON ADD
+		"headshot_naked_link1"		= "", //BLUEMOON ADD
+		"headshot_naked_link2"		= "", //BLUEMOON ADD
 		"meat_type"			= "Mammalian",
 		"body_model"		= body_model,
 		"body_size"			= RESIZE_DEFAULT_SIZE,
@@ -608,3 +611,36 @@ GLOBAL_LIST_EMPTY(species_datums)
 	// BLUEMOON EDIT END
 	update_all_mob_security_hud()
 	return TRUE
+
+// ==============================
+// Описания каким органом ты трахаешь (BlueMoon Add)
+// ==============================
+
+/proc/get_penis_shape_desc(mob/living/carbon/human/H)
+	var/obj/item/organ/genital/penis/P = H?.getorganslot(ORGAN_SLOT_PENIS)
+	if(!P)
+		if(H.has_strapon())
+			return "дилдо"
+		else
+			return "член"
+
+	var/datum/sprite_accessory/S = GLOB.cock_shapes_list[P.shape]
+	var/lowershape = lowertext(S?.icon_state || P.shape)
+
+	switch(lowershape)
+		if("penis", "human") return "член"
+		if("knotted") return "узловатый член"
+		if("flared") return "конический член"
+		if("barbknot") return "узловатый шипованный член"
+		if("tapered") return "утончённый член"
+		if("tentacle") return "тентяклевидный член"
+		if("taperedteshari") return "тешарьский член"
+		if("taperedbarbed") return "утонченный шипованный член"
+		if("thick", "nondescript") return "обрезанный член"
+		// Если кто-то это будет трогать, придумайте что-то с окончаниями (автор не соизволил)
+		if("hemi") return "двойные члены"
+		if("hemiknot") return "двойные узловатые члены"
+		if("bhemiknot") return "двойные с узлами колючие члены"
+
+		else return "необычной формы член"
+

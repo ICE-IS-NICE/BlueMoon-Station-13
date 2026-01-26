@@ -1,6 +1,6 @@
 /obj/machinery/vending/medical
 	name = "\improper NanoMed Plus"
-	desc = "Medical drug dispenser."
+	desc = "Раздатчик медпрепаратов и снаряжения."
 	icon_state = "med"
 	icon_deny = "med-deny"
 	//panel_type = "panel11"
@@ -25,15 +25,16 @@
 		/obj/item/reagent_containers/glass/bottle/morphine = 4,
 		/obj/item/reagent_containers/glass/bottle/toxin = 3,
 		/obj/item/reagent_containers/syringe/antiviral = 6,
-		/obj/item/storage/hypospraykit/fire = 2,
+		/obj/item/storage/hypospraykit/fire = 3,
 		/obj/item/storage/hypospraykit/toxin = 2,
 		/obj/item/storage/hypospraykit/o2 = 2,
-		/obj/item/storage/hypospraykit/brute = 2,
+		/obj/item/storage/hypospraykit/brute = 3,
 		/obj/item/storage/hypospraykit/enlarge = 2,
 		/obj/item/reagent_containers/glass/bottle/vial/small = 5,
 		/obj/item/storage/briefcase/medical = 2,
 		/obj/item/stack/sticky_tape/surgical = 3,
 		/obj/item/healthanalyzer/wound = 4,
+		/obj/item/reagent_containers/hypospray/medipen = 4,
 		/obj/item/stack/medical/ointment = 2,
 		/obj/item/stack/medical/suture = 2,
 		/obj/item/stack/medical/bone_gel = 4,
@@ -77,7 +78,7 @@
 
 /obj/machinery/vending/medical/syndicate_access/cybersun
 	name = "\improper CyberMed ++"
-	desc = "An advanced vendor that dispenses medical drugs, both recreational and medicinal."
+	desc = "Продвинутый раздатчик препаратов и лекарств, как \"рекреационных\", так и медицинских."
 	products = list(
 		/obj/item/reagent_containers/syringe = 4,
 		/obj/item/healthanalyzer/advanced = 4,
@@ -90,14 +91,15 @@
 		/obj/item/reagent_containers/glass/bottle/potass_iodide = 5,
 		/obj/item/reagent_containers/glass/bottle/salglu_solution = 3,
 		/obj/item/reagent_containers/syringe/antiviral = 5,
+		/obj/item/reagent_containers/hypospray/medipen = 4,
 		/obj/item/stack/medical/ointment = 2,
 		/obj/item/stack/medical/suture = 2,
 		/obj/item/stack/medical/bone_gel = 4,
 		/obj/item/stack/medical/nanogel = 4,
-		/obj/item/storage/hypospraykit/fire = 2,
+		/obj/item/storage/hypospraykit/fire = 3,
 		/obj/item/storage/hypospraykit/toxin = 2,
 		/obj/item/storage/hypospraykit/o2 = 2,
-		/obj/item/storage/hypospraykit/brute = 2,
+		/obj/item/storage/hypospraykit/brute = 3,
 		/obj/item/storage/hypospraykit/enlarge = 2,
 		/obj/item/reagent_containers/medspray/styptic = 2,
 		/obj/item/reagent_containers/medspray/silver_sulf = 2,
@@ -134,7 +136,7 @@
 //Created out of a necessity to get these dumb chems out of the medical tools vendor.
 /obj/machinery/vending/drugs
 	name = "\improper NanoDrug Plus"
-	desc = "Medical drugs dispenser."
+	desc = "Раздатчик медпрепаратов и снаряжения."
 	icon_state = "drug"
 	icon_deny = "drug-deny"
 	//panel_type = "panel11"

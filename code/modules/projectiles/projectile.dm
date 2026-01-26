@@ -742,6 +742,7 @@
 		pixel_increment_amount = SSprojectiles.global_pixel_increment_amount
 	trajectory = new(starting.x, starting.y, starting.z, pixel_x, pixel_y, Angle, pixel_increment_amount)
 	fired = TRUE
+	play_fov_effect(starting, 6, "gunfire", angle = Angle - 180)
 	if(hitscan)
 		INVOKE_ASYNC(src, PROC_REF(process_hitscan))
 		return
@@ -1026,6 +1027,11 @@
 /proc/is_energy_reflectable_projectile(atom/A)
 	var/obj/item/projectile/P = A
 	return istype(P) && P.is_reflectable
+
+/// Это основанный на проке выше хелпер для определения сугубо пулевых снарядов.
+/proc/is_bullet_reflectable_projectile(atom/A)
+	var/obj/item/projectile/bullet/BP = A
+	return istype(BP) && BP.is_reflectable
 
 #undef MOVES_HITSCAN
 #undef MINIMUM_PIXELS_TO_ANIMATE

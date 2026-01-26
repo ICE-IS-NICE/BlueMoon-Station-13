@@ -117,6 +117,7 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 	var/type_butt = /obj/item/cigbutt
 	var/lastHolder = null
 	var/smoketime = 300
+	var/vapetime = 0
 	var/chem_volume = 30
 	var/list/list_reagents = list(/datum/reagent/drug/nicotine = 15)
 	heat = 1000
@@ -227,12 +228,16 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 	if(isliving(loc))
 		M.IgniteMob()
 	smoketime--
+	vapetime++
 	if(smoketime < 1)
 		new type_butt(location)
 		if(ismob(loc))
 			to_chat(M, "<span class='notice'>Your [name] goes out.</span>")
 		qdel(src)
 		return
+	if((vapetime > rand(4, 8)))
+		new /obj/effect/particle_effect/smoke/cigsmoke(location)
+		vapetime = 0
 	open_flame()
 	if(reagents && reagents.total_volume)
 		handle_reagents()
@@ -833,6 +838,14 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 	icon_state = "lighter_overlay_contractorzippo"
 	overlay_state = "contractorzippo"
 	item_state = "contractorzippo"
+
+//Bluemoon Edit
+/obj/item/lighter/plighter
+	name = "\improper Player's lighter"
+	desc = "A worn-out lighter with an unknown mechanism. A dent is visible on the back..."
+	icon_state = "lighter_overlay_zippo_player"
+	overlay_state = "playerzippo"
+	item_state = "playerzippo"
 
 ///////////
 //ROLLING//

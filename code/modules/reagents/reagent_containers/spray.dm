@@ -102,12 +102,12 @@
 		current_range = spray_range
 	to_chat(user, "<span class='notice'>You switch the nozzle setting to [stream_mode ? "\"stream\"":"\"spray\""]. You'll now use [amount_per_transfer_from_this] units per use.</span>")
 
-/obj/item/reagent_containers/spray/attackby(obj/item/I, mob/user, params)
-	var/hotness = I.get_temperature()
-	if(hotness && reagents)
-		reagents.expose_temperature(hotness)
-		to_chat(user, "<span class='notice'>You heat [name] with [I]!</span>")
-	return ..()
+// /obj/item/reagent_containers/spray/attackby(obj/item/I, mob/user, params)
+// 	var/hotness = I.get_temperature()
+// 	if(hotness && reagents)
+// 		reagents.expose_temperature(hotness)
+// 		to_chat(user, "<span class='notice'>You heat [name] with [I]!</span>")
+// 	return ..()
 
 /obj/item/reagent_containers/spray/verb/empty()
 	set name = "Empty Spray Bottle"
@@ -125,7 +125,7 @@
 //space cleaner
 /obj/item/reagent_containers/spray/cleaner
 	name = "space cleaner"
-	desc = "BLAM!-brand non-foaming space cleaner!"
+	desc = "Непенистый спрей бренда \"BLAM!\" с космоочистителем!"
 	volume = 100
 	list_reagents = list(/datum/reagent/space_cleaner = 100)
 	amount_per_transfer_from_this = 2

@@ -363,6 +363,11 @@
 	. = ..()
 	register_item_context()
 
+/obj/item/surgical_drapes/examine(mob/user)
+	. = ..()
+	if(user?.client?.prefs)
+		. += span_notice("Alt click to [user.client.prefs.surgical_disable_radial ? "enable" : "disable"] surgical radial menu.")
+
 /obj/item/surgical_drapes/add_item_context(obj/item/source, list/context, atom/target, mob/living/user)
 	. = ..()
 	if(iscarbon(target))
@@ -372,6 +377,18 @@
 /obj/item/surgical_drapes/attack(mob/living/M, mob/user)
 	if(!attempt_initiate_surgery(src, M, user))
 		..()
+
+/obj/item/surgical_drapes/AltClick(mob/user)
+	. = ..()
+	if(iscarbon(user))
+		var/mob/living/carbon/C = user
+		if(C.client?.prefs)
+			C.client.prefs.surgical_disable_radial = !C.client.prefs.surgical_disable_radial
+			if(C.client.prefs.surgical_disable_radial)
+				to_chat(C, "You will now use list menu.")
+			else
+				to_chat(C, "You will now use radial menu.")
+			return TRUE
 
 /obj/item/surgical_drapes/advanced
 	name = "smart surgical drapes"
@@ -486,7 +503,7 @@
 	icon_state = "bonesetter"
 	lefthand_file = 'icons/mob/inhands/equipment/medical_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/equipment/medical_righthand.dmi'
-	custom_materials = list(/datum/material/iron=5000, /datum/material/glass=2500)
+	custom_materials = list(/datum/material/iron=1000)
 	flags_1 = CONDUCT_1
 	item_flags = SURGICAL_TOOL
 	w_class = WEIGHT_CLASS_SMALL
@@ -510,11 +527,11 @@
 /obj/item/robotic_processor
 	name = "\improper Robotic Processor"
 	desc = "A device for scanning and initiating new synthetic parts to help fix problems even for unqualified personnel."
-	icon = 'icons/obj/device.dmi'
+	icon = 'modular_bluemoon/icons/obj/device.dmi'
 	icon_state = "roboscan"
 	item_flags = NOBLUDGEON | SURGICAL_TOOL
 	slot_flags = ITEM_SLOT_BELT
-	var/const/tmp_qualification = QUALIFIED_ROBOTIC_MAINTER
+	var/const/tmp_qualification = TRAIT_GUIDED_ROBOTIC_MAINTER
 	var/list/already_notified = list()         // для pickup
 	var/list/dropped_notified = list()         // для dropped
 
@@ -522,14 +539,74 @@
 	. = ..()
 	if(user?.mind && !HAS_TRAIT(user.mind, tmp_qualification))
 		ADD_TRAIT(user.mind, tmp_qualification, src)
-		if(!(user.mind in already_notified))
-			to_chat(user, "<span class='notice' style='font-size:125%'>С помощью [src] вы теперь можете обслуживать синтетиков со сложным техобслуживанием.</span>")
+		if(!(user.mind in dropped_notified) && !HAS_TRAIT(user.mind, TRAIT_QUALIFIED_ROBOTIC_MAINTER))
+			to_chat(user, span_warning("С помощью [src] вы можете пытаться обслуживать синтетиков со сложным техобслуживанием."))
 			already_notified += user.mind
 
 /obj/item/robotic_processor/dropped(mob/user)
 	. = ..()
 	if(user?.mind && HAS_TRAIT(user.mind, tmp_qualification))
 		REMOVE_TRAIT(user.mind, tmp_qualification, src)
-		if(!(user.mind in dropped_notified))
-			to_chat(user, "<span class='warning' style='font-size:125%'>Без [src] вы больше не можете обслуживать синтетиков со сложным техобслуживанием.</span>")
+		if(!(user.mind in dropped_notified) && !HAS_TRAIT(user.mind, TRAIT_QUALIFIED_ROBOTIC_MAINTER))
+			to_chat(user, span_warning("Без [src] вы больше не можете обслуживать синтетиков со сложным техобслуживанием."))
 			dropped_notified += user.mind
+
+/obj/item/blood_filter
+	name = "blood filter"
+	desc = "For filtering the blood."
+	icon = 'icons/obj/surgery.dmi'
+	icon_state = "bloodfilter"
+	lefthand_file = 'icons/mob/inhands/equipment/medical_lefthand.dmi'
+	righthand_file = 'icons/mob/inhands/equipment/medical_righthand.dmi'
+	custom_materials = list(/datum/material/iron = 3000, /datum/material/glass = 3000)
+	item_flags = SURGICAL_TOOL
+	w_class = WEIGHT_CLASS_SMALL
+	attack_verb_continuous = list("pumps", "siphons")
+	attack_verb_simple = list("pump", "siphon")
+	tool_behaviour = TOOL_BLOODFILTER
+	toolspeed = 1
+	/// Assoc list of chem ids to names, used for deciding which chems to filter when used for surgery
+	var/list/whitelist = list()
+
+/obj/item/blood_filter/augment
+	flags_1 = CONDUCT_1
+	w_class = WEIGHT_CLASS_TINY
+	toolspeed = 0.5
+
+/obj/item/blood_filter/ui_interact(mob/user, datum/tgui/ui)
+	ui = SStgui.try_update_ui(user, src, ui)
+	if(!ui)
+		ui = new(user, src, "BloodFilter", name)
+		ui.open()
+
+/obj/item/blood_filter/ui_data(mob/user)
+	. = list()
+
+	.["whitelist"] = list()
+	for(var/key in whitelist)
+		.["whitelist"] += whitelist[key]
+
+/obj/item/blood_filter/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
+	. = ..()
+	if(.)
+		return
+
+	. = TRUE
+	switch(action)
+		if("add")
+			var/selected_reagent = tgui_input_list(usr, "Select reagent to filter", "Whitelist reagent", GLOB.name2reagent)
+			if(!selected_reagent)
+				return FALSE
+
+			var/datum/reagent/chem_id = GLOB.name2reagent[selected_reagent]
+			if(!chem_id)
+				return FALSE
+
+			if(!(chem_id in whitelist))
+				whitelist[chem_id] = selected_reagent
+
+		if("remove")
+			var/chem_name = params["reagent"]
+			for(var/path in whitelist)
+				if(whitelist[path] == chem_name)
+					whitelist -= path

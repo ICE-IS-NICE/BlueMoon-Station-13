@@ -1,4 +1,4 @@
-//Персонал чёрной мезы
+//учёные
 
 /obj/effect/mob_spawn/human/black_mesa
 	name = "Black mesa scientist"
@@ -10,10 +10,11 @@
 	outfit = /datum/outfit/science_team
 	short_desc = "Ты являешься одним из немногих выживших после инцидента в чёрной мезе"
 	flavour_text = "Ты старший научный научный сотрудник сектора H. Недавно тебя повысили в должности, перенаправив в этот сектор, но что-то пошло не так. Исходя из оповещений BMAS, По всему сектору начались портальные штормы. По этому вы, засев в одном из кабинетов, ждёте помощи."
-	important_info = "Не пытайся исследовать комплекс до прибытия экспедиционной группы. В случае, когда прошло 20 минут от начала раунда, а исследователи так и не пришли, ты можешь постепенно продвигаться по комплексу."
+	important_info = "(ПРИ ИСПОЛЬЗОВАНИИ АКТУАЛИЗАТОРА СТРОГО ЗАПРЕЩЕНО ВЫБИРАТЬ ЛЮБУЮ ДРУГУЮ РАСУ КРОМЕ ЧЕЛОВЕКА. ПРИ НАРУШЕНИЯХ ИЛИ ОШИБКАХ ПРОСЬБА ОБРАТИТСЯ К АДМИНИСТРАЦИИ) Не пытайся исследовать комплекс до прибытия экспедиционной группы. В случае, когда прошло 20 минут от начала раунда, а исследователи так и не пришли, ты можешь постепенно продвигаться по комплексу."
 	category = "offstation"
 	faction = list(FACTION_BLACKMESA)
 	antagonist_type = /datum/antagonist/ghost_role/black_mesa
+	color = "#9a74ac"
 
 /obj/effect/mob_spawn/human/black_mesa/special(mob/living/carbon/human/spawned_human)
 	. = ..()
@@ -25,27 +26,24 @@
 	uniform = /obj/item/clothing/under/rank/rnd/scientist/halflife
 	suit = /obj/item/clothing/suit/toggle/labcoat
 	shoes = /obj/item/clothing/shoes/laceup
-	back = /obj/item/storage/backpack
-	backpack_contents = list(/obj/item/radio, /obj/item/reagent_containers/glass/beaker)
-	id = /obj/item/card/id/hlscientist
-	id_trim = /datum/id_trim/science_team
+	back = /obj/item/storage/backpack/satchel/leather
+	backpack_contents = list(/obj/item/radio, /obj/item/reagent_containers/glass/beaker, /obj/item/storage/wallet)
+	id = /obj/item/card/id/away/mesasci
 
-/datum/id_trim/science_team
-	assignment = "Учёный Чёрной Мезы"
-	trim_state = "retro"
-
-/obj/item/card/id/hlscientist
+/obj/item/card/id/away/mesasci
 	name = "Black mesa scientist"
-	assignment = "Учёный Чёрной Мезы"
-	icon_state = "retro"
+	assignment = "Black mesa scientist"
+	desc = "An access card designated for \"the science team\". You are forgotten basically immediately when it comes to the lab."
+	access = list(ACCESS_ROBOTICS, ACCESS_AWAY_GENERAL, ACCESS_WEAPONS)
 
-
+//охрана
 
 /obj/effect/mob_spawn/human/black_mesa/guard
 	name = "Black mesa guard"
 	outfit = /datum/outfit/security_guard
 	short_desc = "Ты являешься выжившим охранником чёрной мезы"
 	flavour_text = "Ты один из охранников Чёрной Мезы, а конкретно Сектора H. Твоя работа была размеренной и спокойной, но что-то пошло не так. Теперь ты, оставшись со своим напарником, лежишь без сознания в чудом уцелевшем КПП охраны"
+	color = "#656c8f"
 
 /obj/effect/mob_spawn/human/black_mesa/special(mob/living/carbon/human/spawned_human)
 	. = ..()
@@ -54,25 +52,35 @@
 
 /datum/outfit/security_guard
 	name = "Black mesa guard"
-	uniform = /obj/item/clothing/under/rank/security/officer/peacekeeper
+	uniform = /obj/item/clothing/under/rank/security/officer/blueshirt
 	head = /obj/item/clothing/head/helmet/blueshirt
 	gloves = /obj/item/clothing/gloves/color/black
 	suit = /obj/item/clothing/suit/armor/vest/blueshirt
 	shoes = /obj/item/clothing/shoes/jackboots
-	back = /obj/item/storage/backpack
+	back = /obj/item/storage/backpack/satchel/blueshield/mesasec
+	belt = /obj/item/storage/belt/security/blackmesa
 	backpack_contents = list(/obj/item/radio, /obj/item/gun/ballistic/automatic/pistol/hl9mm, /obj/item/ammo_box/magazine/pistolm9mm, /obj/item/reagent_containers/food/snacks/donut/apple,)
-	id = /obj/item/card/id/hlguard
-	id_trim = /datum/id_trim/security_guard
+	id = /obj/item/card/id/away/mesasec
 
-/obj/item/card/id/hlguard
-	name = "Black mesa guard"
-	assignment = "Охранник чёрной мезы"
-	icon_state = "retro"
+/obj/item/card/id/away/mesasec
+	name = "Black mesa security id card"
+	assignment = "Black mesa security guard"
+	desc = "An access card designated for \"security members\". Everyone wants your guns, partner. Yee-haw."
+	access = list(ACCESS_AWAY_GENERAL, ACCESS_BRIG, ACCESS_WEAPONS, ACCESS_SEC_DOORS, ACCESS_SECURITY)
 
-/datum/id_trim/security_guard
-	assignment = "Охранник Чёрной Мезы"
-	trim_state = "retro"
-	access = list(ACCESS_BRIG, ACCESS_SECURITY, ACCESS_AWAY_SEC)
+//одежда?
+
+/obj/item/storage/belt/security/blackmesa/PopulateContents()
+	new /obj/item/reagent_containers/spray/pepper(src)
+	new /obj/item/restraints/handcuffs(src)
+	new /obj/item/grenade/flashbang(src)
+	new /obj/item/melee/classic_baton(src)
+	update_icon()
+
+
+/obj/item/storage/backpack/satchel/blueshield/mesasec
+	name = "Black mesa security guard satchel"
+	desc = "A robust satchel for security guard related needs."
 
 /obj/item/clothing/under/rank/rnd/scientist/halflife
 	name = "science team costume"
@@ -84,6 +92,8 @@
 	item_state = "hl_scientist"
 	can_adjust = FALSE
 
+//директор
+
 /obj/effect/mob_spawn/human/black_mesa/sectorhdirector
 	name = "Black mesa sector H director"
 	icon = 'icons/obj/machines/sleeper.dmi'
@@ -94,9 +104,10 @@
 	outfit = /datum/outfit/sectorhdirector
 	short_desc = "Вы являетесь главным директором Сектора H"
 	flavour_text = "Ты стоял на одной из высших должностей в Чёрной Мезе, пока в одном из секторов не случился каскадный резонанс с последующим портальным штормом. Ты инициировал эвакуацию большей части персонала. Но в последний момент, когда вы собирались покинуть свой кабинет, один из порталов отправил вас прямо в сердце сектора. Теперь же вам ничего не остаётся, кроме как ожидать помощи и попытаться привести в чувства оставшийся персонал"
-	important_info = "Не пытайся исследовать комплекс до прибытия экспедиционной группы. В случае, когда прошло 20 минут от начала раунда, а исследователи так и не пришли, ты можешь постепенно продвигаться по комплексу."
+	important_info = "(ПРИ ИСПОЛЬЗОВАНИИ АКТУАЛИЗАТОРА СТРОГО ЗАПРЕЩЕНО ВЫБИРАТЬ ЛЮБУЮ ДРУГУЮ РАСУ КРОМЕ ЧЕЛОВЕКА. ПРИ НАРУШЕНИЯХ ИЛИ ОШИБКАХ ПРОСЬБА ОБРАТИТСЯ К АДМИНИСТРАЦИИ)Не пытайся исследовать комплекс до прибытия экспедиционной группы. В случае, когда прошло 20 минут от начала раунда, а исследователи так и не пришли, ты можешь постепенно продвигаться по комплексу."
 	category = "offstation"
 	antagonist_type = /datum/antagonist/ghost_role/black_mesa
+	color = "#a2fcff"
 
 /obj/effect/mob_spawn/human/black_mesa/special(mob/living/carbon/human/spawned_human)
 	. = ..()
@@ -109,20 +120,17 @@
 	head = /obj/item/clothing/head/beret/sci
 	suit = /obj/item/clothing/suit/toggle/labcoat
 	shoes = /obj/item/clothing/shoes/laceup
-	back = /obj/item/storage/backpack
+	back = /obj/item/storage/backpack/satchel/leather
 	belt = /obj/item/melee/classic_baton
-	backpack_contents = list(/obj/item/radio, /obj/item/reagent_containers/glass/beaker)
-	id = /obj/item/card/id/sectorhdirector
-	id_trim = /datum/id_trim/sectorhdirector
+	backpack_contents = list(/obj/item/radio, /obj/item/reagent_containers/glass/beaker, /obj/item/storage/wallet)
+	id = /obj/item/card/id/away/mesadirector
 
-/obj/item/card/id/sectorhdirector
-	name = "Sector H director"
-	assignment = "Директор сектора H"
-	icon_state = "retro"
+/obj/item/card/id/away/mesadirector
+	name = "Black mesa sector H director id card"
+	assignment = "Black mesa security guard"
+	desc = "An access card designated for \"the science team leaders\". You are forgotten basically immediately when it comes to the lab."
+	access = list(ACCESS_AWAY_GENERAL, ACCESS_SEC_DOORS, ACCESS_SECURITY, ACCESS_BRIG, ACCESS_ROBOTICS, ACCESS_AWAY_GENERAL, ACCESS_WEAPONS, ACCESS_RD)
 
-/datum/id_trim/sectorhdirector
-	assignment = "Директор сектора H"
-	trim_state = "retro"
 
 //ХЕКУ
 
@@ -131,7 +139,7 @@
 	outfit = /datum/outfit/hecu
 	short_desc = "Ты являешься, скорее всего, одним из немногих обычных пехотинцев, оставшихся в секторе H без какой либо поддержки со стороны правительства."
 	flavour_text = "Ваш отряд был направлен в Чёрную Мезу для оказания медицинской, инженерной и боевой помощи основным отрядам HECU. Но, к сожалению, с каждым часом ситуация становилась всё хуже. Ведь правительство, поняв, что посланные пехотинцы не справляются, решили их всех предательски убить. Всё, что вы смутно знаете о миссии, так это только то, что основная задача отрядов, которым вы помогали - устранять всех свидетелей? Но имеет ли это вес, когда вас бросили? Теперь ваша задача сейчас - окопаться в этом клятом лагере и или ждать помощи, или попытаться следовать приказу основных отрядов."
-	important_info = "Не пытайтесь исследовать карту далее основного атриума, ангара с автобусами и вашего палаточного медицинского отдела ( не ломайте стены в комнаты, закрытые ключ картами). Вы можете покинуть гейт/исследовать его ТОЛЬКО В ТОМ СЛУЧАЕ, когда договоритесь с исследовательской командой. Если вы решили враждовать с исследователями, то вам после этого запрещено покидать гейт и как либо пытатся продвигатся далее по локации."
+	important_info = "(ПРИ ИСПОЛЬЗОВАНИИ АКТУАЛИЗАТОРА СТРОГО ЗАПРЕЩЕНО ВЫБИРАТЬ ЛЮБУЮ ДРУГУЮ РАСУ КРОМЕ ЧЕЛОВЕКА. ПРИ НАРУШЕНИЯХ ИЛИ ОШИБКАХ ПРОСЬБА ОБРАТИТСЯ К АДМИНИСТРАЦИИ) Не пытайтесь исследовать карту далее основного атриума, ангара с автобусами и вашего палаточного медицинского отдела ( не ломайте стены в комнаты, закрытые ключ картами). Вы можете покинуть гейт/исследовать его ТОЛЬКО В ТОМ СЛУЧАЕ, когда договоритесь с исследовательской командой. Если вы решили враждовать с исследователями, то вам после этого запрещено покидать гейт и как либо пытатся продвигатся далее по локации."
 	roundstart = FALSE
 	death = FALSE
 	density = TRUE
@@ -174,13 +182,12 @@
 	shoes = /obj/item/clothing/shoes/combat
 	l_pocket = /obj/item/reagent_containers/food/drinks/flask
 	r_pocket = /obj/item/flashlight/flare
-	r_hand = /obj/item/gun/ballistic/automatic/mp5
+	r_hand = /obj/item/choice_beacon/mesagrunt
 	back = /obj/item/storage/backpack/hecu
 	backpack_contents = list(
 		/obj/item/storage/box/survival/radio,
 		/obj/item/storage/firstaid/emergency,
 		/obj/item/kitchen/knife/combat,
-		/obj/item/ammo_box/magazine/mp5,
 	)
 
 /datum/outfit/hecu_engineer
@@ -220,15 +227,14 @@
 	shoes = /obj/item/clothing/shoes/combat
 	l_pocket = /obj/item/reagent_containers/food/drinks/flask
 	r_pocket = /obj/item/flashlight/flare
-	r_hand = /obj/item/gun/ballistic/shotgun/spas
-	back = /obj/item/storage/backpack/hecu
+	r_hand = /obj/item/choice_beacon/mesabreacher
+	back = /obj/item/storage/backpack/rucksack/green
 	backpack_contents = list(
 		/obj/item/storage/box/survival/radio,
 		/obj/item/storage/firstaid/emergency,
 		/obj/item/kitchen/knife/combat,
 		/obj/item/gun/ballistic/automatic/pistol/hl9mm,
 		/obj/item/ammo_box/magazine/pistolm9mm,
-		/obj/item/ammo_box/shotgun/loaded/buckshot,
 	)
 
 /datum/outfit/hecu_medic
@@ -242,15 +248,12 @@
 	shoes = /obj/item/clothing/shoes/combat
 	l_pocket = /obj/item/reagent_containers/food/drinks/flask
 	r_pocket = /obj/item/flashlight/flare
+	r_hand = /obj/item/choice_beacon/mesamedic
 	back = /obj/item/storage/backpack/hecu
 	backpack_contents = list(
 		/obj/item/storage/box/survival/radio,
 		/obj/item/storage/firstaid/emergency,
 		/obj/item/kitchen/knife/combat,
-		/obj/item/storage/firstaid/tactical,
-		/obj/item/gun/ballistic/automatic/pistol/hl9mm,
-		/obj/item/ammo_box/magazine/pistolm9mm,
-		/obj/item/ammo_box/magazine/pistolm9mm,
 	)
 
 /obj/effect/mob_spawn/human/black_mesa/hecu/leader
@@ -264,12 +267,12 @@
 	head = /obj/item/clothing/head/beret/sec
 	suit = /obj/item/clothing/suit/armor/hecu
 	gloves = /obj/item/clothing/gloves/tackler/combat/insulated
-	belt = /obj/item/storage/belt/military/assault/hecu
+	belt = /obj/item/storage/belt/military/russianweb
 	shoes = /obj/item/clothing/shoes/combat
 	l_pocket = /obj/item/grenade/smokebomb
 	r_pocket = /obj/item/binoculars
 	r_hand = /obj/item/gun/ballistic/automatic/mp5
-	back = /obj/item/storage/backpack/hecu
+	back = /obj/item/storage/backpack/rucksack/green
 	backpack_contents = list(
 		/obj/item/storage/box/survival/radio,
 		/obj/item/storage/firstaid/emergency,
@@ -293,7 +296,7 @@
 	outfit = /datum/outfit/losthecu
 	short_desc = "Ты являешься, скорее всего, одним из немногих обычных пехотинцев, оставшихся в секторе H без какой либо поддержки со стороны правительства."
 	flavour_text = "Ты был отправлен в Чёрную Мезу для выполнения особо важной миссии, но во время начала инструктажа на ваш конвой напали. Ты и немногие выжившие бежали, пока, в конце концов, все, кроме тебя, были убиты местной фауной и чёрными оперативниками. Оставшись один в полуразрушенном туннеле с минимумом боеприпасов и провианта, ты увидел яркий свет. Кажется, это твой шанс покинуть это место... Или нет?."
-	important_info = "Вы можете начать исследовать свою локацию только по прошествию десяти минут (Начиная с начала смены). Но заходить дальше Гейтвея до того, как вы встретили исследователей, запрещено. Конфликтовать нежелательно, но если вы решили напасть на исследователей, то вам будет запрещено покинуть гейт и исследовать его дальше. Персонаж НИЧЕГО не знает о приказе на устранение свидетелей."
+	important_info = "(ПРИ ИСПОЛЬЗОВАНИИ АКТУАЛИЗАТОРА СТРОГО ЗАПРЕЩЕНО ВЫБИРАТЬ ЛЮБУЮ ДРУГУЮ РАСУ КРОМЕ ЧЕЛОВЕКА. ПРИ НАРУШЕНИЯХ ИЛИ ОШИБКАХ ПРОСЬБА ОБРАТИТСЯ К АДМИНИСТРАЦИИ) Вы можете начать исследовать свою локацию только по прошествию десяти минут (Начиная с начала смены). Но заходить дальше Гейтвея до того, как вы встретили исследователей, запрещено. Конфликтовать нежелательно, но если вы решили напасть на исследователей, то вам будет запрещено покинуть гейт и исследовать его дальше. Персонаж НИЧЕГО не знает о приказе на устранение свидетелей."
 	roundstart = FALSE
 	death = FALSE
 	density = TRUE
@@ -372,7 +375,7 @@
 	outfit = /datum/outfit/blackops
 	short_desc = "Ты являешься чудом попавшим в сектор H чёрным оперативником"
 	flavour_text = "Ваш отряд был отправлен для зачистки оставшихся отрядов HECU, но в один момент почти все ваши напарники были устранены. Теперь вас только двое, и вы буквально виживаете среди всего того происходящего хаоса, что окружает этот клятый сектор. Вам в любом случае плевать на весь этот низший персонал, если они только не будут угрожать вашей жизни."
-	important_info = "Не пытайтесь исследовать карту далее основного атриума, комнат с туррелями ( не ломайте стены в комнаты, закрытые ключ картами/заболтироваными дверьми ). Вы можете покинуть гейт/исследовать его ТОЛЬКО В ТОМ СЛУЧАЕ, когда договоритесь с исследовательской командой. Если вы решили враждовать с исследователями, то вам после этого запрещено покидать гейт и как либо пытатся продвигатся далее по локации"
+	important_info = "(ПРИ ИСПОЛЬЗОВАНИИ АКТУАЛИЗАТОРА СТРОГО ЗАПРЕЩЕНО ВЫБИРАТЬ ЛЮБУЮ ДРУГУЮ РАСУ КРОМЕ ЧЕЛОВЕКА. ПРИ НАРУШЕНИЯХ ИЛИ ОШИБКАХ ПРОСЬБА ОБРАТИТСЯ К АДМИНИСТРАЦИИ) Не пытайтесь исследовать карту далее основного атриума, комнат с туррелями ( не ломайте стены в комнаты, закрытые ключ картами/заболтироваными дверьми ). Вы можете покинуть гейт/исследовать его ТОЛЬКО В ТОМ СЛУЧАЕ, когда договоритесь с исследовательской командой. Если вы решили враждовать с исследователями, то вам после этого запрещено покидать гейт и как либо пытатся продвигатся далее по локации"
 	category = "offstation"
 	antagonist_type = /datum/antagonist/ghost_role/black_mesa
 
@@ -404,3 +407,4 @@
 	new /obj/item/reagent_containers/hypospray/combat/omnizine(src)
 	new /obj/item/storage/box/survival/radio(src,30,pick("red","yellow","orange"))
 	new /obj/item/kitchen/knife/combat(src)
+

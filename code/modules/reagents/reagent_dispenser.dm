@@ -28,6 +28,19 @@
 		reagents.add_reagent(reagent_id, tank_volume)
 	. = ..()
 
+// BLUEMOON ADD START
+/obj/structure/reagent_dispensers/examine(mob/user)
+	. = ..()
+	if(anchored)
+		. += span_notice("It is <b>bolted</b> to the floor.")
+
+/obj/structure/reagent_dispensers/wrench_act(mob/living/user, obj/item/I)
+	. = ..()
+	if(density)
+		default_unfasten_wrench(user, I)
+		return TRUE
+// BLUEMOON ADD END
+
 //BLUEMOON CHANGE - FUELTANK
 /obj/structure/reagent_dispensers/proc/boom()
 	var/datum/reagent/fuel/volatiles = reagents.has_reagent(/datum/reagent/fuel)
@@ -82,7 +95,24 @@
 	name = "high-capacity water tank"
 	desc = "A highly pressurized water tank made to hold gargantuan amounts of water."
 	icon_state = "water_high" //I was gonna clean my room...
-	tank_volume = 100000
+	tank_volume = 3000
+
+/obj/structure/reagent_dispensers/watertank/holy
+	name = "BIG HOLY FLASK"
+	desc = "A VERY large and VERY holy flask, pure holy waterness!"
+	icon_state = "holyflask"
+	reagent_id = /datum/reagent/water/holywater
+	layer = ABOVE_ALL_MOB_LAYER // Big sprite
+
+/obj/structure/reagent_dispensers/watertank/holy/Initialize(mapload)
+	. = ..()
+	var/const/scale = 2
+	var/matrix/m = matrix()
+	m.Scale(scale)
+	// смещаем спрайт вверх
+	var/shift = (scale - 1) * 16
+	m.Translate(0, shift)
+	transform = m
 
 /obj/structure/reagent_dispensers/foamtank
 	name = "firefighting foam tank"
@@ -308,23 +338,69 @@
 	icon_state = "beer"
 	reagent_id = /datum/reagent/consumable/ethanol/beer
 
+// BLUEMOON EDIT START
 /obj/structure/reagent_dispensers/beerkeg/attack_animal(mob/living/simple_animal/M)
-	if(isdog(M))
+	var/explosion_chance = 10
+	if(!isdog(M))
+		explosion_chance = 0
+	else
+		if(M.a_intent == INTENT_HARM)
+			explosion_chance += 30
+
+	M.visible_message(span_danger("[M] играется с пивной кегой!"),
+		span_nicegreen("Ты играешься с пивной кегой!"),
+		span_hear("Кто-то катает пивную кегу рядом с вами!"))
+
+	if(prob(explosion_chance))
 		explosion(src, light_impact_range = 3, flame_range = 5, flash_range = 10)
 		playsound(src, 'sound/effects/kega.ogg', 100, 1)
 		if(!QDELETED(src))
 			qdel(src)
 		return TRUE
+	else
+		playsound(M, 'sound/weapons/thudswoosh.ogg', 100, TRUE, 1)
+		do_jitter_animation()
 	. = ..()
 
-/obj/structure/reagent_dispensers/beerkeg/on_attack_hand(mob/living/carbon/human/M)
+/obj/structure/reagent_dispensers/beerkeg/on_attack_hand(mob/living/carbon/M)
 	. = ..()
-	if(ismammal(M))
+
+	var/explosion_chance = 10
+	if(!(ismammal(M) || ismonkey(M)))
+		explosion_chance = 0
+	else
+		if(M.a_intent == INTENT_HARM)
+			explosion_chance += 10
+		if(ismonkey(M))
+			explosion_chance += 10
+
+	var/message = ""
+	var/self_message = ""
+	var/blind_message = span_hear("Кто-то катает пивную кегу рядом с вами!")
+
+	if(isdwarf(M)) // ROCK AND STONE!
+		message = span_nicegreen("[M] мастерски играется с пивной кегой!")
+		self_message = span_nicegreen("Ты мастерски играешься с пивной кегой!")
+	else
+		if(explosion_chance != 0 && M.a_intent == INTENT_HARM)
+			message = span_danger("[M] пинает пивную кегу!")
+			self_message = span_danger("Ты пинаешь пивную кегу!")
+			blind_message = span_hear("Кто-то пинает пивную кегу рядом с вами!")
+		else
+			message = span_danger("[M] играется с пивной кегой!")
+			self_message = "[span_nicegreen("Ты играешься с пивной кегой!")][explosion_chance != 0 ? (span_warning(" Кажется это небезопасно...")) : ""]"
+	M.visible_message(message, self_message, blind_message)
+
+	if(prob(explosion_chance))
 		explosion(src, light_impact_range = 3, flame_range = 5, flash_range = 10)
 		playsound(src, 'sound/effects/kega.ogg', 100, 1)
 		if(!QDELETED(src))
 			qdel(src)
 		return TRUE
+	else
+		playsound(M, 'sound/weapons/thudswoosh.ogg', 100, TRUE, 1)
+		do_jitter_animation()
+// BLUEMOON EDIT END
 
 /obj/structure/reagent_dispensers/beerkeg/blob_act(obj/structure/blob/B)
 	explosion(src, light_impact_range = 3, flame_range = 5, flash_range = 10)
@@ -403,7 +479,8 @@
 	name = "Space Cleaner Refiller"
 	desc = "Refills space cleaner bottles."
 	icon_state = "cleaner"
-	anchored = 1
-	density = 0
+	anchored = TRUE
+	density = FALSE
+	plane = ABOVE_WALL_PLANE
 	tank_volume = 5000
 	reagent_id = /datum/reagent/space_cleaner

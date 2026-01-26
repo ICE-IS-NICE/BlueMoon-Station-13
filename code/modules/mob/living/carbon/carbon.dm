@@ -108,7 +108,7 @@
 	var/damage = max(0, 10 + ((src.mob_weight - MOB_WEIGHT_NORMAL) * 25))
 	var/combat_knockdown = max(0, 20 + ((src.mob_weight - MOB_WEIGHT_NORMAL) * 20))
 	// BLUEMOON ADDITION END
-	if(throwingdatum?.thrower != src)
+	if(throwingdatum && throwingdatum.thrower != src)
 		extra_speed = min(max(0, throwingdatum.speed - initial(throw_speed)), 3)
 	if(GetComponent(/datum/component/tackler))
 		return
@@ -286,6 +286,13 @@
 		else
 			if(src && buckled)
 				to_chat(src, "<span class='warning'>Тебе не удалось выбраться!</span>")
+	else if(ishuman(buckled))
+		var/mob/living/carbon/human/H = buckled
+		var/datum/component/riding/human/riding_comp = H.GetComponent(/datum/component/riding/human)
+		if(riding_comp)
+			riding_comp.force_dismount(src, TRUE)
+		else
+			buckled.user_unbuckle_mob(src,src)
 	else
 		buckled.user_unbuckle_mob(src,src)
 
@@ -1231,3 +1238,12 @@
 
 /mob/living/carbon/proc/functional_blood()
 	return blood_volume + integrating_blood
+
+/mob/living/carbon/has_pain(obj/item/bodypart/limb)
+	. = ..()
+	if(. == PAIN_NO)
+		return .
+	if(limb && limb.is_robotic_limb())
+		return PAIN_NO
+	if(. > PAIN_MEDIUM && drunkenness > 20)
+		return PAIN_MEDIUM

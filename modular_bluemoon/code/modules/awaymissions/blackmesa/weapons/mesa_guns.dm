@@ -12,6 +12,13 @@
 	fire_select_modes = list(SELECT_SEMI_AUTOMATIC)
 	automatic_burst_overlay = FALSE
 	fire_sound = 'modular_bluemoon/sound/weapons/mesa/9mm.ogg'
+	gunlight_state = "mini-light"
+	can_flashlight = 0
+
+/obj/item/gun/ballistic/automatic/pistol/hl9mm/Initialize(mapload)
+	gun_light = new /obj/item/flashlight/seclite(src)
+	return ..()
+
 
 /obj/item/gun/ballistic/automatic/pistol/hl9mm/update_icon_state()
 	icon_state = "[initial(icon_state)][chambered ? "" : "-e"]"
@@ -64,7 +71,7 @@
 
 /obj/item/gun/ballistic/automatic/mp5
 	name = "MP5 machinegun"
-	desc = "Heckler Koch Mp5 является хоть и устаревшим, но невероятно сильным оружием в виду своей скорострельности. Какой идиот вообще подумал, что будет отличной идеей отобрать его у морпеха Хеку?"
+	desc = "Heckler Koch Mp5 является хоть и устаревшим, но невероятно сильным оружием в виду своей скорострельности. Какой идиот вообще подумал, что будет отличной идеей отобрать его у морпеха HECU?"
 	icon = 'modular_bluemoon/icons/obj/guns/projectile.dmi'
 	lefthand_file = 'modular_bluemoon/icons/mob/inhands/weapons/guns_lefthand.dmi'
 	righthand_file = 'modular_bluemoon/icons/mob/inhands/weapons/guns_righthand.dmi'
@@ -103,6 +110,28 @@
 	else
 		icon_state = "[initial(icon_state)]"
 
+/obj/item/gun/ballistic/shotgun/m870
+	name = "m870 shotgun"
+	desc = "Remington 870 - это классический помповый дробовик, который был представлен компанией Remington Arms в 1950 году и до сих пор остается одним из самых популярных и продаваемых ружей в США."
+	icon = 'modular_bluemoon/icons/obj/guns/projectile48x32.dmi'
+	lefthand_file = 'modular_bluemoon/icons/mob/inhands/weapons/guns_lefthand.dmi'
+	righthand_file = 'modular_bluemoon/icons/mob/inhands/weapons/guns_righthand.dmi'
+	icon_state = "m870"
+	item_state = "m870"
+	w_class = WEIGHT_CLASS_BULKY
+	recoil = 4
+	attack_speed = 10
+	force = 40
+	fire_delay = 4
+	mag_type = /obj/item/ammo_box/magazine/internal/shot/m870
+	weapon_weight = WEAPON_HEAVY
+
+/obj/item/ammo_box/magazine/internal/shot/m870
+	name = "shotgun internal magazine"
+	ammo_type = /obj/item/ammo_casing/shotgun/buckshot
+	caliber = "shotgun"
+	max_ammo = 4
+
 /obj/item/gun/ballistic/shotgun/spas
 	name = "SPAS 12 shotgun"
 	desc = "Этот невероятно старый и брутальный дробовик заставляет вас надеть балаклаву с горнолыжными очками."
@@ -113,13 +142,16 @@
 	item_state = "spas"
 	fire_sound = 'modular_bluemoon/sound/weapons/mesa/shotgun.ogg'
 	w_class = WEIGHT_CLASS_BULKY
-	burst_size = 2
-	recoil = 4
-	force = 35
-	fire_delay = 15
+	recoil = 3
+	force = 10
+	fire_delay = 4
 	mag_type = /obj/item/ammo_box/magazine/internal/shot/spas
 	pumpsound = 'modular_bluemoon/sound/weapons/mesa/shotgun_rack.ogg'
 	weapon_weight = WEAPON_HEAVY
+
+/obj/item/gun/ballistic/shotgun/spas/shoot_live_shot(mob/living/user, pointblank = FALSE, mob/pbtarget, message = 1, stam_cost = 0)
+	..()
+	src.pump(user)
 
 /obj/item/ammo_box/magazine/internal/shot/spas
 	name = "shotgun internal magazine"
@@ -184,7 +216,7 @@
 
 /obj/item/gun/ballistic/automatic/m16a4/mesa
 	name = "\improper old M16 rifle"
-	desc = "Невероятно старая версия М16 с сломанным подствольным гранатомётом и... Большей отдачей что-ли? Держа её в руках, вы чувствуете странные ощущения"
+	desc = "Невероятно старая версия М16 с сломанным подствольным гранатомётом и... Большей отдачей что-ли? Держа её в руках, вы чувствуете странные ощущения... Да и отряды HECU с таким замечены не были"
 	icon = 'modular_bluemoon/icons/obj/guns/projectile48x32.dmi'
 	icon_state = "m16hl"
 	burst_size = 1
@@ -196,7 +228,166 @@
 	if(magazine)
 		icon_state = "m16hl"
 	else
-		icon_state = "m16hl_mag"
+		icon_state = "m16hl-e"
+
+/obj/item/gun/ballistic/automatic/mp7
+	name = "\improper mp7"
+	desc = "Heckler & Koch MP7 A1 PDW — пистолет-пулемёт, разработанный в начале 2000-х годов немецкой фирмой Heckler & Koch. Отлично подойдёт, если вместо лечения союзников медик вашего отряда HECU хочет устроить бойню"
+	icon = 'modular_bluemoon/icons/obj/guns/projectile.dmi'
+	lefthand_file = 'modular_bluemoon/icons/mob/inhands/weapons/guns_lefthand.dmi'
+	righthand_file = 'modular_bluemoon/icons/mob/inhands/weapons/guns_righthand.dmi'
+	icon_state = "mp7"
+	item_state = "mp7"
+	fire_delay = 1 //ATATATATATATATATA!!!
+	spread = 8
+	fire_sound = 'modular_bluemoon/sound/weapons/mesa/mp7.ogg'
+	weapon_weight = WEAPON_LIGHT
+	mag_type = /obj/item/ammo_box/magazine/mp7
+
+/obj/item/gun/ballistic/automatic/mp7/update_icon_state()
+	icon_state = "[initial(icon_state)][chambered ? "" : ""]"
+	if(magazine)
+		icon_state = "mp7"
+	else
+		icon_state = "mp7nomag"
+
+/obj/item/ammo_box/magazine/mp7
+	name = "MP7 magazine"
+	desc = "A standart magazine for mp7"
+	icon = 'modular_bluemoon/icons/obj/ammo.dmi'
+	icon_state = "mp7"
+	ammo_type = /obj/item/ammo_casing/mm46
+	caliber = "4.6mm"
+	max_ammo = 30
+
+/obj/item/ammo_box/magazine/mp7/update_icon()
+	. = ..()
+	if(ammo_count())
+		icon_state = "[initial(icon_state)]-ammo"
+	else
+		icon_state = "[initial(icon_state)]"
+
+/obj/item/ammo_casing/mm46
+	name = "4.6mm bullet casing"
+	desc = "A 4.6mm bullet casing."
+	icon = 'modular_bluemoon/icons/obj/ammo.dmi'
+	icon_state = "5.8x40mm"
+	caliber = "4.6mm"
+	projectile_type = /obj/item/projectile/bullet/mm46
+
+/obj/item/projectile/bullet/mm46
+	name = "4.6mm bullet"
+	damage = 10
+	armour_penetration = 3
+	wound_bonus = -3
+	bare_wound_bonus = 1
+
+/obj/item/gun/ballistic/automatic/scar
+	name = "\improper HC scar"
+	desc = "Модифицированная версия FN Scar, предназначенная для ведения стрельбы на средние и дальние дистанции. В отличие от M4oa1, имеет автоматический режим стрельбы и менее убойный калибр + крутой песчаный камуфляж (Но вы же помните то, что орудуете только в научном комплексе?)"
+	icon = 'modular_bluemoon/icons/obj/guns/projectile48x32.dmi'
+	lefthand_file = 'modular_bluemoon/icons/mob/inhands/weapons/guns_lefthand.dmi'
+	righthand_file = 'modular_bluemoon/icons/mob/inhands/weapons/guns_righthand.dmi'
+	icon_state = "scar"
+	item_state = "scar"
+	fire_delay = 5
+	spread = 10
+	fire_sound = 'modular_bluemoon/sound/weapons/mesa/scar.ogg'
+	weapon_weight = WEAPON_HEAVY
+	w_class = WEIGHT_CLASS_BULKY
+	mag_type = /obj/item/ammo_box/magazine/scar
+
+/obj/item/gun/ballistic/automatic/scar/update_icon_state()
+	icon_state = "[initial(icon_state)][chambered ? "" : ""]"
+	if(magazine)
+		icon_state = "scar"
+	else
+		icon_state = "scar_mag"
+
+/obj/item/ammo_box/magazine/scar
+	name = " HC SCAR magazine"
+	desc = "A standart magazine for HC SCAR"
+	icon = 'modular_bluemoon/icons/obj/ammo.dmi'
+	icon_state = "scar"
+	ammo_type = /obj/item/ammo_casing/mm762
+	caliber = "7.62mm"
+	max_ammo = 15
+
+/obj/item/ammo_box/magazine/scar/update_icon()
+	. = ..()
+	if(ammo_count())
+		icon_state = "[initial(icon_state)]-ammo"
+	else
+		icon_state = "[initial(icon_state)]"
+
+/obj/item/ammo_casing/mm762
+	name = "7.62mm bullet casing"
+	desc = "A 7.62mm bullet casing."
+	icon = 'modular_bluemoon/icons/obj/ammo.dmi'
+	icon_state = "5.8x40mm"
+	caliber = "7.62mm"
+	projectile_type = /obj/item/projectile/bullet/mm762
+
+/obj/item/projectile/bullet/mm762
+	name = "7.62mm bullet"
+	damage = 25
+	armour_penetration = 4
+	wound_bonus = -6
+	bare_wound_bonus = 5
+
+/obj/item/gun/ballistic/automatic/p90
+	name = "\improper P90"
+	desc = "FN P90 является оружием индивидуальной самообороны бельгийской компании Fabrique Nationale Herstal."
+	icon = 'modular_bluemoon/icons/obj/guns/projectile48x32.dmi'
+	lefthand_file = 'modular_bluemoon/icons/mob/inhands/weapons/guns_lefthand.dmi'
+	righthand_file = 'modular_bluemoon/icons/mob/inhands/weapons/guns_righthand.dmi'
+	icon_state = "p90"
+	item_state = "p90"
+	fire_delay = 1.5 //FUUUUUUUUCK!!!!!
+	spread = 17
+	fire_sound = 'sound/weapons/gunshot_smg_alt.ogg'
+	weapon_weight = WEAPON_HEAVY
+	w_class = WEIGHT_CLASS_BULKY
+	mag_type = /obj/item/ammo_box/magazine/p90
+
+/obj/item/gun/ballistic/automatic/p90/update_icon_state()
+	icon_state = "[initial(icon_state)][chambered ? "" : ""]"
+	if(magazine)
+		icon_state = "p90"
+	else
+		icon_state = "p90_mag"
+
+/obj/item/ammo_box/magazine/p90
+	name = "p90 magazine"
+	desc = "A standart magazine for p90"
+	icon = 'modular_bluemoon/icons/obj/ammo.dmi'
+	icon_state = "p90"
+	ammo_type = /obj/item/ammo_casing/mm57
+	caliber = "5.7mm"
+	max_ammo = 50
+
+/obj/item/ammo_box/magazine/p90/update_icon()
+	. = ..()
+	if(ammo_count())
+		icon_state = "[initial(icon_state)]-ammo"
+	else
+		icon_state = "[initial(icon_state)]"
+
+/obj/item/ammo_casing/mm57
+	name = "5.7mm bullet casing"
+	desc = "A 5.7mm bullet casing."
+	icon = 'modular_bluemoon/icons/obj/ammo.dmi'
+	icon_state = "5.8x40mm"
+	caliber = "5.7mm"
+	projectile_type = /obj/item/projectile/bullet/mm57
+
+/obj/item/projectile/bullet/mm57
+	name = "5.7mm bullet"
+	damage = 10
+	armour_penetration = 4
+	wound_bonus = -4
+	bare_wound_bonus = 2
+
 
 /obj/item/uber_teleporter
 	name = "\improper Nihilanth's Divinity"
@@ -246,3 +437,163 @@
 	if(!success)
 		do_teleport(user, possible_turfs, channel = TELEPORT_CHANNEL_FREE)
 		playsound(get_turf(user), 'sound/magic/LightningShock.ogg', 50, TRUE)
+
+
+
+//SPECGUNS
+//В РАЗРАБОТКЕ
+
+//obj/item/gun/energy/beam_rifle/mesa
+//	name = "CARGO HELPER 1998"
+//	desc = "Критично ПРОВАЛЬНЫЙ прототип который должен был помогать работникам чёрной мезы перетаскивать предметы при помощи антигравитационного луча. К превиликому сожалению или счастью, этот монстр вместо того, что-бы поднимать предметы буквально ПРОШИВАЕТ их смертоносной энергией зена. На корпусе видно куча торчащих проводков и надписей с предупреждениями"
+//	icon = 'icons/obj/guns/energy.dmi'
+//	icon_state = "esniper"
+//	item_state = "esniper"
+//	fire_sound = 'sound/weapons/beam_sniper.ogg'
+//	slot_flags = FALSE
+//	force = 20
+//	recoil = 6
+//	ammo_x_offset = 0
+//	ammo_y_offset = 0
+//	ammo_type = list(/obj/item/projectile/beam/emitter/hitscan)
+//	cell_type = /obj/item/stock_parts/cell/beam_rifle
+//	canMouseDown = TRUE
+//	can_turret = FALSE
+//	can_circuit = FALSE
+//	//Cit changes: beam rifle stats.
+//	slowdown = 1
+//	item_flags = NO_MAT_REDEMPTION | SLOWS_WHILE_IN_HAND
+//	pin = /obj/item/firing_pin
+//	aiming_time = 6
+//	aiming_time_fire_threshold = 4
+//	aiming_time_left = 5
+//	aiming_time_increase_user_movement = 10
+//	structure_piercing = 1
+//	wall_pierce_amount = 1
+//	projectile_damage = 40
+//	projectile_stun = 1
+//	delay = 25
+
+//	var/static/image/charged_overlay = image(icon = 'icons/obj/guns/energy.dmi', icon_state = "esniper_charged")
+//	var/static/image/drained_overlay = image(icon = 'icons/obj/guns/energy.dmi', icon_state = "esniper_empty")
+
+
+
+//ПРИЗЫВ ПУШЕК??!??!?!?7
+//Grunt
+/obj/item/choice_beacon/mesagrunt
+	name = "Grunt type choice beacon"
+	desc = "Secret USA army technology. Get your guns here and now"
+
+/obj/item/choice_beacon/mesagrunt/generate_display_names()
+	var/static/list/grunt_item_list
+	if(!grunt_item_list)
+		grunt_item_list = list()
+		var/list/templist = typesof(/obj/item/storage/box/basedgrunt)
+		for(var/V in templist)
+			var/atom/A = V
+			grunt_item_list[initial(A.name)] = A
+	return grunt_item_list
+
+/obj/item/storage/box/basedgrunt
+	name = "MP5 machinegun kit"
+
+
+/obj/item/storage/box/basedgrunt/PopulateContents()
+	new /obj/item/ammo_box/magazine/mp5(src)
+	new /obj/item/gun/ballistic/automatic/mp5(src)
+	new /obj/item/ammo_box/magazine/mp5(src)
+
+
+/obj/item/storage/box/basedgrunt/marksman
+	name = "HC SCAR marksman kit"
+
+/obj/item/storage/box/basedgrunt/marksman/PopulateContents()
+	new /obj/item/gun/ballistic/automatic/scar(src)
+	new /obj/item/ammo_box/magazine/scar(src)
+	new /obj/item/ammo_box/magazine/scar(src)
+	new /obj/item/ammo_box/magazine/scar(src)
+	new /obj/item/binoculars(src)
+
+/obj/item/storage/box/basedgrunt/rapidgrunt
+	name = "p90 machinegun kit"
+
+/obj/item/storage/box/basedgrunt/rapidgrunt/PopulateContents()
+	new /obj/item/gun/ballistic/automatic/p90(src)
+	new /obj/item/ammo_box/magazine/p90(src)
+	new /obj/item/ammo_box/magazine/p90(src)
+	new /obj/item/ammo_box/magazine/p90(src)
+
+//breacher
+
+/obj/item/choice_beacon/mesabreacher
+	name = "breacher type choice beacon"
+	desc = "Secret USA army technology. Get your guns here and now"
+
+/obj/item/choice_beacon/mesabreacher/generate_display_names()
+	var/static/list/breacher_item_list
+	if(!breacher_item_list)
+		breacher_item_list = list()
+		var/list/templist = typesof(/obj/item/storage/box/basedbreacher)
+		for(var/V in templist)
+			var/atom/A = V
+			breacher_item_list[initial(A.name)] = A
+	return breacher_item_list
+
+/obj/item/storage/box/basedbreacher
+	name = "SPAS 12 crowd control kit"
+
+/obj/item/storage/box/basedbreacher/PopulateContents()
+	new /obj/item/gun/ballistic/shotgun/spas(src)
+	new /obj/item/ammo_box/shotgun/loaded/buckshot(src)
+
+
+/obj/item/storage/box/basedbreacher/m870
+	name = "m870 breacher kit"
+
+/obj/item/storage/box/basedbreacher/m870/PopulateContents()
+	new /obj/item/gun/ballistic/shotgun/m870(src)
+	new /obj/item/ammo_box/shotgun/loaded/buckshot(src)
+	new /obj/item/ammo_box/shotgun/loaded/buckshot(src)
+	new /obj/item/grenade/plastic/c4(src)
+
+//medic
+
+/obj/item/choice_beacon/mesamedic
+	name = "medic type choice beacon"
+	desc = "Secret USA army technology. Get your MEDS here and now"
+
+/obj/item/choice_beacon/mesamedic/generate_display_names()
+	var/static/list/medic_item_list
+	if(!medic_item_list)
+		medic_item_list = list()
+		var/list/templist = typesof(/obj/item/storage/box/basedmedic)
+		for(var/V in templist)
+			var/atom/A = V
+			medic_item_list[initial(A.name)] = A
+	return medic_item_list
+
+/obj/item/storage/box/basedmedic
+	name = "9mm and based meds kit"
+
+/obj/item/storage/box/basedmedic/PopulateContents()
+	new /obj/item/gun/ballistic/automatic/pistol/hl9mm(src)
+	new /obj/item/ammo_box/magazine/pistolm9mm(src)
+	new /obj/item/ammo_box/magazine/pistolm9mm(src)
+	new /obj/item/storage/firstaid/emergency(src)
+
+/obj/item/storage/box/basedmedic/mp7
+	name = "mp7 and toxin treatment kit"
+
+/obj/item/storage/box/basedmedic/mp7/PopulateContents()
+	new /obj/item/gun/ballistic/automatic/mp7(src)
+	new /obj/item/ammo_box/magazine/mp7(src)
+	new /obj/item/ammo_box/magazine/mp7(src)
+	new /obj/item/storage/firstaid/toxin(src)
+
+/obj/item/storage/box/basedmedic/medbeam
+	name = "medbeam and tactical meds (No weapons) kit"
+
+/obj/item/storage/box/basedmedic/medbeam/PopulateContents()
+	new /obj/item/gun/medbeam(src)
+	new /obj/item/storage/firstaid/tactical(src)

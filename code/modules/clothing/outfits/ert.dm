@@ -8,13 +8,13 @@
 
 	mask = /obj/item/clothing/mask/gas/sechailer/swat
 	uniform = /obj/item/clothing/under/syndicate/combat/ert
-	accessory = /obj/item/clothing/accessory/bodycamera
+	accessory = list(/obj/item/clothing/accessory/bodycamera)
 	shoes = /obj/item/clothing/shoes/combat/swat/knife
 	gloves = /obj/item/clothing/gloves/tackler/combat/insulated
 	ears = /obj/item/radio/headset/headset_cent/alt
 
 	internals_slot = ITEM_SLOT_RPOCKET
-	l_pocket = /obj/item/storage/bag/security
+	l_pocket = /obj/item/extinguisher/mini
 	r_pocket = /obj/item/tank/internals/emergency_oxygen/double
 	suit_store = /obj/item/gun/energy/e_gun/nuclear/ert
 
@@ -43,7 +43,7 @@
 	var/obj/item/card/id/W = H.wear_id
 	if(W)
 		W.registered_name = H.real_name
-		W.update_label(W.registered_name, W.assignment)
+		W.update_label()
 
 /datum/outfit/ert/commander/green
 	name = "ERT Commander - Green Alert"
@@ -375,7 +375,7 @@
 		/obj/item/rcd_ammo/large=2,
 		/obj/item/construction/rcd/combat=1,
 		/obj/item/inducer=1,
-		/obj/item/stock_parts/cell/bluespacereactor=1,
+		/obj/item/stock_parts/cell/vortex=1,
 	)
 
 	cybernetic_implants = list(
@@ -402,7 +402,7 @@
 		/obj/item/rcd_ammo/large=2,
 		/obj/item/construction/rcd/combat=1,
 		/obj/item/inducer=1,
-		/obj/item/stock_parts/cell/bluespacereactor=1,
+		/obj/item/stock_parts/cell/vortex=1,
 		)
 
 	cybernetic_implants = list(
@@ -433,7 +433,7 @@
 		/obj/item/storage/firstaid/regular=1,\
 		/obj/item/construction/rcd/combat=1,
 		/obj/item/inducer/sci/combat=1,
-		/obj/item/stock_parts/cell/bluespacereactor=1,
+		/obj/item/stock_parts/cell/vortex=1,
 		)
 
 	cybernetic_implants = list(
@@ -455,7 +455,7 @@
 		/obj/item/storage/firstaid/regular=1,\
 		/obj/item/construction/rcd/combat=1,
 		/obj/item/inducer/sci/combat=1,
-		/obj/item/stock_parts/cell/bluespacereactor=1,
+		/obj/item/stock_parts/cell/vortex=1,
 		)
 
 	cybernetic_implants = list(
@@ -529,7 +529,7 @@
 	W.registered_name = H.real_name
 	W.assignment = "Assistant"
 	W.access = list(ACCESS_MAINT_TUNNELS,ACCESS_CENT_GENERAL)
-	W.update_label(W.registered_name, W.assignment)
+	W.update_label()
 
 /datum/outfit/ert/commander/inquisitor
 	name = "Inquisition Commander"
@@ -666,4 +666,4 @@
 	W.access += get_centcom_access("Death Commando")//Let's add their alloted CentCom access.
 	W.assignment = "CentCom Official"
 	W.registered_name = H.real_name
-	W.update_label(W.registered_name, W.assignment)
+	W.update_label()

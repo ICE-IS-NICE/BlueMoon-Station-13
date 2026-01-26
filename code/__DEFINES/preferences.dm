@@ -21,6 +21,7 @@
 #define LEWD_VERB_SOUNDS		(1<<18) // Sandstorm - ERP Mechanic Addition
 #define TG_PLAYER_PANEL			(1<<19) // SPLURT - Opt for the old splashscreen player panel
 #define SOUND_JUKEBOXES			(1<<20)
+#define RANGED_VERBS_CONSENT	(1<<21) // BLUEMOON ADD интеракты с расстояния
 
 #define DEADMIN_ALWAYS				(1<<0)
 #define DEADMIN_ANTAGONIST			(1<<1)
@@ -96,13 +97,6 @@
 #define JP_LOW 1
 #define JP_MEDIUM 2
 #define JP_HIGH 3
-
-//Chaos levels for dynamic voting
-#define CHAOS_NONE "None (Extended)"
-#define CHAOS_LOW "Low"
-#define CHAOS_MED "Medium"
-#define CHAOS_HIGH "High"
-#define CHAOS_MAX "Maximum"
 
 // 'Be Victim' consent options for preferences panel / antag target HUD
 #define BEVICTIM_NO "No"

@@ -2,6 +2,17 @@
 	element_flags = ELEMENT_BESPOKE|ELEMENT_DETACH
 	id_arg_index = 2
 	var/allowed_slot
+	var/original_name // Сохраняем оригинальное имя
+	var/static/list/hud_to_hide = list(
+		HEALTH_HUD,
+		STATUS_HUD,
+		ID_HUD,
+        WANTED_HUD,
+        IMPLOYAL_HUD,
+        IMPCHEM_HUD,
+        IMPTRACK_HUD,
+        RAD_HUD,
+    )
 
 /datum/element/tactical/Attach(datum/target, allowed_slot)
 	. = ..()
@@ -28,6 +39,13 @@
 	source.add_alt_appearance(/datum/atom_hud/alternate_appearance/basic/everyone, "sneaking_mission", I)
 	I.layer = ABOVE_MOB_LAYER
 
+	// Скрывание имени - сохраняем оригинальное имя и заменяем на имя предмета
+	if(ishuman(user))
+		original_name = user.name
+		user.name = source.name
+
+	set_hud_alpha(user, 100)
+
 /datum/element/tactical/proc/unmodify(obj/item/source, mob/user)
 	if(!user)
 		if(!ismob(source.loc))
@@ -35,3 +53,15 @@
 		user = source.loc
 
 	user.remove_alt_appearance("sneaking_mission")
+	
+	// Восстанавливаем оригинальное имя
+	if(ishuman(user) && original_name)
+		user.name = original_name
+		original_name = null
+
+	set_hud_alpha(user, 255)
+
+/datum/element/tactical/proc/set_hud_alpha(mob/user, alpha = 255)
+    for(var/hud_id in hud_to_hide)
+        var/image/hud_image = user.hud_list[hud_id]
+        hud_image?.alpha = alpha

@@ -511,14 +511,19 @@ SUBSYSTEM_DEF(job)
 		flavor_display_text += "<p>Начните своё сообщение с :р или .р, чтобы воспользоваться радиоканалом вашего отдела. Другие префиксы указаны на вашей гарнитуре.\n</p>"
 		flavor_display_text += "<b class='notice_l'>Обратите внимание:\n</b>"
 		if(job.req_admin_notify)
-			flavor_display_text += "\n<li><span class='notice'>вы играете роль, важную для прогрессии раунда. Если вам необходимо отключиться, пожалуйста, уведомите администрацию и верните всю экипировку в шкафчик.</span></li>"
+			flavor_display_text += "\n<li><span class='notice'>Вы играете роль, важную для прогрессии раунда. Если вам необходимо отключиться, пожалуйста, уведомите администрацию и верните всю экипировку в шкафчик.</span></li>"
 		if(CONFIG_GET(number/minimal_access_threshold) && !CONFIG_GET(flag/jobs_have_minimal_access))
-			flavor_display_text += "\n<li>ввиду критической нехватки персонала, ваша ID-карта имеет дополнительный доступ.</li>"
+			flavor_display_text += "\n<li>Ввиду критической нехватки персонала, ваша ID-карта имеет дополнительный доступ.</li>"
 		if(job.custom_spawn_text)
-			flavor_display_text += "\n<li>[job.custom_spawn_text]</li>"
+			flavor_display_text += "\n<li>[capitalize(job.custom_spawn_text)]</li>"
+	if(H.mind.assigned_role == "Head of Security") // Секция добавления штук для ГСБ
+		for(var/obj/structure/safe/floor/syndi/armory/brigsafe in world)
+			var/code_text = "[brigsafe.tumblers.Join("-")]"
+			flavor_display_text += "\n<li><span class='red'>Вам известен код сейфа оружейной:<br><B>[code_text].</B></span>\n</li>"
+			H.mind.memory += ("Код сейфа оружейной: [code_text].\n") // Нет, add_memory не работает, этот брутфорс был нужен.
 	if(ishuman(H))
 		var/mob/living/carbon/human/wageslave = H
-		flavor_display_text += "\n<li>номер вашего банковского аккаунта - [wageslave.account_id].</li>"
+		flavor_display_text += "\n<li>Номер вашего банковского аккаунта - [wageslave.account_id].</li>"
 		H.add_memory("Номер вашего банковского аккаунта - [wageslave.account_id].")
 	to_chat(M, examine_block(flavor_display_text))
 	// BLUEMOON EDIT END
@@ -751,9 +756,14 @@ SUBSYSTEM_DEF(job)
 			return
 		for(var/i in chosen_gear)
 			var/datum/gear/G = istext(i[LOADOUT_ITEM]) ? text2path(i[LOADOUT_ITEM]) : i[LOADOUT_ITEM]
-			if(!ispath(G))
+			if(!ispath(G, /datum/gear))
 				continue
-			G = GLOB.loadout_items[initial(G.category)][initial(G.subcategory)][initial(G.name)]
+			var/cat = initial(G.category)
+			var/subcat = initial(G.subcategory)
+			var/gname = initial(G.name)
+			if(!GLOB.loadout_items[cat] || !GLOB.loadout_items[cat][subcat])
+				continue
+			G = GLOB.loadout_items[cat][subcat][gname]
 			if(!G)
 				continue
 			var/permitted = TRUE
@@ -798,7 +808,14 @@ SUBSYSTEM_DEF(job)
 					var/obj/item/clothing/neck/petcollar/collar = I
 					collar.tagname = custom_tagname
 					collar.name = "[initial(collar.name)] - [collar.tagname]"
-			if(!M.equip_to_slot_if_possible(I, G.slot, disable_warning = TRUE, bypass_equip_delay_self = TRUE)) // If the job's dresscode compliant, try to put it in its slot, first
+
+			var/already_equiped = FALSE
+			if(G.slot == ITEM_SLOT_ACCESSORY && istype(I, /obj/item/clothing/accessory))
+				var/obj/item/clothing/accessory/A = I
+				var/obj/item/clothing/wear = M.get_item_by_slot(A.accessory_slot)
+				if(istype(wear))
+					already_equiped = wear.attach_accessory(A, M, FALSE)
+			if(!already_equiped && !M.equip_to_slot_if_possible(I, G.slot, disable_warning = TRUE, bypass_equip_delay_self = TRUE)) // If the job's dresscode compliant, try to put it in its slot, first
 				if(iscarbon(M))
 					var/mob/living/carbon/C = M
 					var/obj/item/storage/backpack/B = C.back
@@ -841,9 +858,14 @@ SUBSYSTEM_DEF(job)
 			return
 		for(var/i in chosen_gear)
 			var/datum/gear/G = istext(i[LOADOUT_ITEM]) ? text2path(i[LOADOUT_ITEM]) : i[LOADOUT_ITEM]
-			if(!ispath(G))
+			if(!ispath(G, /datum/gear))
 				continue
-			G = GLOB.loadout_items[initial(G.category)][initial(G.subcategory)][initial(G.name)]
+			var/cat = initial(G.category)
+			var/subcat = initial(G.subcategory)
+			var/gname = initial(G.name)
+			if(!GLOB.loadout_items[cat] || !GLOB.loadout_items[cat][subcat])
+				continue
+			G = GLOB.loadout_items[cat][subcat][gname]
 			if(!G)
 				continue
 			var/permitted = TRUE
@@ -888,7 +910,14 @@ SUBSYSTEM_DEF(job)
 					var/obj/item/clothing/neck/petcollar/collar = I
 					collar.tagname = custom_tagname
 					collar.name = "[initial(collar.name)] - [collar.tagname]"
-			if(!M.equip_to_slot_if_possible(I, G.slot, disable_warning = TRUE, bypass_equip_delay_self = TRUE)) // If the job's dresscode compliant, try to put it in its slot, first
+
+			var/already_equiped = FALSE
+			if(G.slot == ITEM_SLOT_ACCESSORY && istype(I, /obj/item/clothing/accessory))
+				var/obj/item/clothing/accessory/A = I
+				var/obj/item/clothing/wear = M.get_item_by_slot(A.accessory_slot)
+				if(istype(wear))
+					already_equiped = wear.attach_accessory(A, M, FALSE)
+			if(!already_equiped && !M.equip_to_slot_if_possible(I, G.slot, disable_warning = TRUE, bypass_equip_delay_self = TRUE)) // If the job's dresscode compliant, try to put it in its slot, first
 				if(iscarbon(M))
 					var/mob/living/carbon/C = M
 					var/obj/item/storage/backpack/B = C.back
@@ -912,6 +941,16 @@ SUBSYSTEM_DEF(job)
 			// Эффект при спавне
 			G.on_spawn(M, I)
 			// BLUEMOON ADD END
+
+		M.update_inv_wear_id() // Фикс не отображения стикеров и карточек из лодаута
+
+		// Переоформление пермитов, если у нас была загрузка из префов
+		var/obj/item/clothing/under/U = M.get_item_by_slot(ITEM_SLOT_ICLOTHING)
+		if(istype(U))
+			for(var/obj/item/clothing/accessory/permit/special/permit in U.attached_accessories)
+				if(permit.first_inited && permit.owner_name == M.real_name)
+					continue
+				permit.bind_to_user(M, TRUE)
 
 /datum/controller/subsystem/job/proc/FreeRole(rank)
 	if(!rank)

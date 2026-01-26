@@ -31,25 +31,46 @@
 //handles impregnation, also prefs
 /mob/living/proc/impregnate(mob/living/partner, obj/item/organ/W, baby_type = /mob/living/carbon/human)
 	var/obj/item/organ/container = W
-
 	if(!container)
 		container = getorganslot(ORGAN_SLOT_WOMB)
 	if(!container)
 		return
 
-	var/can_impregnate = 100
-	if(partner?.client?.prefs)
-		can_impregnate = partner.client.prefs.virility
-	var/can_get_pregnant = (client?.prefs?.fertility && !is_type_in_typecache(src.type, GLOB.pregnancy_blocked_mob_typecache))
-	if(!(can_impregnate && can_get_pregnant))
+	var/virility = partner?.client?.prefs?.virility || 0
+	var/fertility = client?.prefs?.fertility || 0
+
+	if(!fertility || is_type_in_typecache(src.type, GLOB.pregnancy_blocked_mob_typecache))
 		return
 
-	var/avg = (can_impregnate + client.prefs.fertility) / 2
+	// Базовый шанс с балансом в пользу женщин.. Почему ? Потому что девочки у нас вынашивают. и если у них фертильность 100 то пусть потом не удивляюьтся что залетели от парня.
+	var/chance = min(virility * 0.8, fertility * 1.2) * (1 + (rand(-15, 15) / 100))
 
-	if(prob(avg))
-		var/obj/item/oviposition_egg/eggo = new()
-		eggo.forceMove(container)
-		eggo.AddComponent(/datum/component/pregnancy, src, partner, baby_type)
+	// Бонус от эстрального цикла
+	var/estrus_total_bonus = 0
+
+	// Проверяем квирк у ПОЛУЧАТЕЛЯ
+	if(HAS_TRAIT(src, TRAIT_ESTROUS_ACTIVE))
+		var/datum/quirk/estrous_active/Q = get_quirk(/datum/quirk/estrous_active)
+		if(Q && !QDELETED(Q))
+			// Базовый бонус 5% + накопленный бонус от времени
+			var/estrus_bonus = round((0.05 + Q.time_bonus) * 100)
+			estrus_total_bonus += estrus_bonus
+
+	// Добавляем итоговый бонус
+	if(estrus_total_bonus > 0)
+		chance += estrus_total_bonus
+
+	chance = clamp(chance, 0, 100)
+
+	if(prob(chance))
+		var/num_eggs = rand(1, 2)
+		if(fertility > 80 && prob(30))
+			num_eggs += 1
+
+		for(var/i = 1, i <= num_eggs, i++)
+			var/obj/item/oviposition_egg/eggo = new()
+			eggo.forceMove(container)
+			eggo.AddComponent(/datum/component/pregnancy, src, partner, baby_type)
 
 /mob/living/carbon/human/do_climax(datum/reagents/R, atom/target, obj/item/organ/genital/sender, spill, cover = FALSE, obj/item/organ/genital/receiver, anonymous = FALSE)
 	if(!sender)
@@ -69,34 +90,27 @@
 			sender.set_fluid_id(default)
 
 	if(istype(sender, /obj/item/organ/genital/penis))
-		var/obj/item/organ/genital/penis/bepis = sender
-		if(locate(/obj/item/genital_equipment/sounding) in bepis.contents)
-			spill = TRUE
-			to_chat(src, "<span class='userlove'>Ты чувствуешь, как стержень выталкивается из твоей уретры вместе со струей оргазменной жидкости!</span>")
-			var/obj/item/genital_equipment/sounding/rod = locate(/obj/item/genital_equipment/sounding) in bepis.contents
-			rod.forceMove(get_turf(src))
+		var/obj/item/genital_equipment/sounding/sounding_rod = locate(/obj/item/genital_equipment/sounding) in sender.contents
+		if(sounding_rod)
+			var/message = ""
+			if(locate(/obj/item/genital_equipment/chastity_cage) in sender.contents)
+				message = "Ты ощущаешь, как стержень упирается в клетку и не может выйти, поток жидкости обтекает его, раздувая твой член и вызывая болезненную пульсацию!"
+				if(HAS_TRAIT(src, TRAIT_MASO))
+					message = span_userlove(message)
+				else
+					message = span_alertwarning(message)
+			else
+				spill = TRUE
+				message = span_userlove("Ты чувствуешь, как стержень выталкивается из твоей уретры вместе со струей оргазменной жидкости!")
+				sounding_rod.forceMove(get_turf(src))
+			to_chat(src, message)
 
 	if(cover == TRUE)
-		if(istype(sender, /obj/item/organ/genital/penis))
-			var/obj/item/organ/genital/testicles/testicles = sender
-			var/size = testicles.size
-			var/balls_size_0 = list("cum_normal", "cum_normal_1", "cum_normal_2", "cum_normal_3", "cum_normal_4", "", "", "", "", "", "", "", "", "", "")
-			var/balls_size_1 = list("cum_normal", "cum_normal_1", "cum_normal_2", "cum_normal_3", "cum_normal_4", "", "", "", "", "")
-			var/balls_size_2 = list("cum_normal", "cum_normal_1", "cum_normal_2", "cum_normal_3", "cum_normal_4")
-			var/balls_size_3 = list("cum_normal", "cum_normal_1", "cum_normal_2", "cum_normal_3", "cum_normal_4", "cum_large", "cum_large", "cum_large", "cum_large", "cum_large")
-			var/balls_size_4 = list("cum_normal", "cum_normal_1", "cum_normal_2", "cum_normal_3", "cum_normal_4", "cum_large", "cum_large", "cum_large", "cum_large", "cum_large", "cum_large", "cum_large", "cum_large", "cum_large", "cum_large")
-			switch(size)
-				if(BALLS_SIZE_MIN)
-					size = pick(balls_size_0)
-				if(BALLS_SIZE_DEF)
-					size = pick(balls_size_1)
-				if(BALLS_SIZE_2)
-					size = pick(balls_size_2)
-				if(BALLS_SIZE_3)
-					size = pick(balls_size_3)
-				if(BALLS_SIZE_MAX)
-					size = pick(balls_size_4)
-			target.add_cum_overlay(size)
+		if(istype(sender, /obj/item/organ/genital/penis) || HAS_TRAIT(src, TRAIT_MESSY))
+			var/overlay_color
+			if((istype(sender, /obj/item/organ/genital/penis) || istype(sender, /obj/item/organ/genital/vagina)) && sender.linked_organ)
+				overlay_color = sender.linked_organ.fluid_id.color
+			target.add_cum_overlay(sender.pick_cum_overlay(), overlay_color)
 
 	. = ..()
 
@@ -139,26 +153,35 @@
 /mob/living/carbon/human
 	var/covered_in_cum = FALSE
 
-/atom/proc/add_cum_overlay(size = "cum_normal", cum_color = "#FFFFFF") //This can go in a better spot, for now its here.
+/atom/proc/add_cum_overlay(state = "cum_normal", cum_color = "#FFFFFF") //This can go in a better spot, for now its here.
+	var/const/overlays_limit = 10
 	if(!istype(src, /mob/living/carbon/human))
 		return
+
 	if(initial(icon) && initial(icon_state))
-		add_overlay(mutable_appearance('modular_splurt/icons/effects/cumoverlay.dmi', size, color = cum_color), ICON_MULTIPLY)
+		var/list/active_overlays = get_cum_overlays() //BLUEMOON ADD
+		if(active_overlays.len < overlays_limit) // BLUEMOON EDIT || Ограничение на оверлеи, иначе будет срабатывать VALIDATE_OVERLAY_LIMIT
+			add_overlay(mutable_appearance(CUM_DMI, state, color = cum_color), ICON_MULTIPLY)
 		var/mob/living/carbon/human/H = src
 		H.covered_in_cum = TRUE
 		to_chat(H, span_love("Кажется тебя немножко забрызгали~"))
 
+//BLUEMOON ADD START
+/atom/proc/get_cum_overlays()
+	var/list/active_overlays = list()
+	for(var/over in src.overlays)
+		var/image/MA = over
+		if(MA && MA.icon == CUM_DMI && (MA.icon_state in CUM_STATES))
+			active_overlays += MA
+	return active_overlays
+//BLUEMOON ADD END
+
 /mob/living/carbon/human/proc/getPercentAroused()
-    var/percentage = ((get_lust() / (get_lust_tolerance() * 3)) * 100)
+    var/percentage = ((get_lust() / (get_climax_threshold())) * 100) // BLUEMOON EDIT
     return percentage
 
 /atom/proc/wash_cum()
-	cut_overlay(mutable_appearance('modular_splurt/icons/effects/cumoverlay.dmi', "cum_normal"))
-	cut_overlay(mutable_appearance('modular_splurt/icons/effects/cumoverlay.dmi', "cum_normal_1"))
-	cut_overlay(mutable_appearance('modular_splurt/icons/effects/cumoverlay.dmi', "cum_normal_2"))
-	cut_overlay(mutable_appearance('modular_splurt/icons/effects/cumoverlay.dmi', "cum_normal_3"))
-	cut_overlay(mutable_appearance('modular_splurt/icons/effects/cumoverlay.dmi', "cum_normal_4"))
-	cut_overlay(mutable_appearance('modular_splurt/icons/effects/cumoverlay.dmi', "cum_large"))
+	overlays -= get_cum_overlays()
 	if(ishuman(src))
 		var/mob/living/carbon/human/H = src
 		H.covered_in_cum = FALSE

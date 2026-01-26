@@ -26,6 +26,16 @@ GLOBAL_LIST_INIT(lewd_moans_female, list(
 	'modular_sand/sound/interactions/moan_f6.ogg',
 	'modular_sand/sound/interactions/moan_f7.ogg'
 ))
+// BLUEMOON ADD START
+GLOBAL_LIST_INIT(lewd_softmoans_female, list(
+	'modular_bluemoon/sound/emotes/softmoan1.ogg',
+	'modular_bluemoon/sound/emotes/softmoan2.ogg',
+	'modular_bluemoon/sound/emotes/softmoan3.ogg',
+	'modular_bluemoon/sound/emotes/softmoan4.ogg',
+	'modular_bluemoon/sound/emotes/softmoan5.ogg',
+	'modular_bluemoon/sound/emotes/softmoan6.ogg'
+))
+// BLUEMOON ADD END
 // Kissing sounds
 GLOBAL_LIST_INIT(lewd_kiss_sounds, list(
 	'modular_sand/sound/interactions/kiss1.ogg',
@@ -97,6 +107,9 @@ GLOBAL_LIST_INIT(interaction_speeds, list(
 #define INTERACTION_REQUIRE_VAGINA (1<<9)
 // BLUEMOON ADD хвостики!
 #define INTERACTION_REQUIRE_TAIL (1<<9)
+#define INTERACTION_REQUIRE_KNOT (1<<10) // not replace INTERACTION_REQUIRE_PENIS, use both
+#define INTERACTION_REQUIRE_DOUBLE_PENIS (1<<11) // not replace INTERACTION_REQUIRE_PENIS, use both
+#define INTERACTION_REQUIRE_TK (1<<12)
 // BLUEMOON ADD END
 
 /// Interaction flags
@@ -106,6 +119,10 @@ GLOBAL_LIST_INIT(interaction_speeds, list(
 #define INTERACTION_FLAG_TARGET_NOT_TIRED (1<<3)
 #define INTERACTION_FLAG_USER_IS_TARGET (1<<4)
 #define INTERACTION_FLAG_USER_NOT_TIRED (1<<5)
+#define INTERACTION_FLAG_UNHOLY_CONTENT (1<<6)
+#define INTERACTION_FLAG_REQUIRE_BONDAGE (1<<7) //TODO: move the bondage interactions out of the interaction menu
+#define INTERACTION_FLAG_RANGED_CONSENT (1<<8)
+#define INTERACTION_FLAG_HIDE_IN_PANEL (1<<9) // not show for users
 
 /// Copy-paste prevention for additional details
 /// Fills containers

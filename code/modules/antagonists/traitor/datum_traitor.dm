@@ -63,7 +63,7 @@
 				continue
 			var/weight = LOGISTIC_FUNCTION(1.5*class.weight,0,class.chaos,0)
 			weights[C] = weight * 1000
-	var/choice = pickweight(weights, 0)
+	var/choice = pickweight(weights)
 	if(!choice)
 		choice = TRAITOR_HUMAN // it's an "easter egg"
 	var/datum/traitor_class/actual_class = GLOB.traitor_classes[choice]
@@ -168,7 +168,7 @@
 	data["phrases"] = jointext(GLOB.syndicate_code_phrase, ", ")
 	data["responses"] = jointext(GLOB.syndicate_code_response, ", ")
 	data["theme"] = traitor_kind.tgui_theme //traitor_flavor["ui_theme"]
-	if(uplink.unlock_code)
+	if(uplink?.unlock_code)
 		data["code"] = uplink.unlock_code
 	data["intro"] = "You are from [traitor_kind.employer]." //traitor_flavor["introduction"]
 	data["allies"] = "Most other InteQ operatives are not to be trusted (but try not to rat them out), as they might have been assigned opposing objectives." //traitor_flavor["allies"]

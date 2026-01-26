@@ -329,7 +329,7 @@
 	name = "Loot Box"
 	desc = "Испытайте свою удачу с этими высокозащищенными ящиками с добычей! Разгадайте замок, выиграйте отличные призы! ПРЕДУПРЕЖДЕНИЕ: ВЗРЫВООПАСНЫЙ ПРОВАЛ."
 	contraband = TRUE
-	cost = 15000
+	cost = 10000 // 15к за ящик которые даже не интересно депать? Zaaaaamn
 	contains = list(/obj/structure/closet/crate/secure/loot)
 	crate_name = "abandoned crate"
 	crate_type = /obj/structure/closet/crate/large
@@ -347,7 +347,7 @@
 	crate_name = "potted plants crate"
 	crate_type = /obj/structure/closet/crate/hydroponics
 
-/datum/supply_pack/misc/religious_supplies
+/datum/supply_pack/service/religious_supplies
 	name = "Religious Supplies Crate"
 	desc = "Следите за тем, чтобы ваш местный капеллан был доволен и хорошо снабжался, чтобы они не навлекли осуждение на ваш грузовой отсек. Содержит две бутылки со святой водой, библии, одеяния капеллана и погребальную одежду."
 	cost = 4000	// it costs so much because the Space Church needs funding to build a cathedral
@@ -358,6 +358,26 @@
 					/obj/item/clothing/suit/hooded/chaplain_hoodie,
 					/obj/item/clothing/suit/hooded/chaplain_hoodie)
 	crate_name = "religious supplies crate"
+
+/datum/supply_pack/misc/holy_knight
+	name = "Knights of the Round Table Crate"
+	desc = "Содержит один священный клеймор для особо убеждённых паладинов, три обычных меча для статистов, четыре комплекта рыцарских доспехов для тех, кто хочет тяжело топать по коридорам, и бочку святой воды на случай, если кто-то снова решил дружить с демонами."
+	cost = 24999
+	contains = list(/obj/item/nullrod/claymore,
+					/obj/item/claymore,
+					/obj/item/claymore,
+					/obj/item/claymore,
+					/obj/item/clothing/suit/armor/riot/knight,
+					/obj/item/clothing/suit/armor/riot/knight/blue,
+					/obj/item/clothing/suit/armor/riot/knight/red,
+					/obj/item/clothing/suit/armor/riot/knight/yellow,
+					/obj/item/clothing/head/helmet/knight,
+					/obj/item/clothing/head/helmet/knight/blue,
+					/obj/item/clothing/head/helmet/knight/red,
+					/obj/item/clothing/head/helmet/knight/yellow,
+					/obj/structure/reagent_dispensers/watertank/holy)
+	crate_name = "holy knight crate"
+	crate_type = /obj/structure/closet/crate/wooden
 
 /datum/supply_pack/misc/shower
 	name = "Shower Supplies"
@@ -518,3 +538,12 @@
 			continue
 		crate_value -= I.cost
 		new I.item(C)
+
+/datum/supply_pack/misc/commandkeys
+	name = "Command Encryption Key Crate"
+	desc = "Набор ключей шифрования, которые дают доступ к командной радиосети. Набор ключей шифрования, которые дают доступ к командной радиосети.по крайней мере, свести к минимуму перебранки со стороны командного состава."
+	access = ACCESS_BRIDGE_OFFICER
+	cost = 6000
+	contains = list(/obj/item/encryptionkey/headset_com = 3)
+	crate_type = /obj/structure/closet/crate/secure/gear
+	crate_name = "command encryption key crate"

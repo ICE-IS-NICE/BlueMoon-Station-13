@@ -4,10 +4,6 @@
 #define REQUIRE_UNEXPOSED 2
 #define REQUIRE_ANY 3
 
-//Interaction flags:
-#define INTERACTION_FLAG_UNHOLY_CONTENT (1<<6)
-#define INTERACTION_FLAG_REQUIRE_BONDAGE (1<<7) //TODO: move the bondage interactions out of the interaction menu
-
 //Lewd interaction checks
 #define INTERACTION_REQUIRE_BELLY (1<<10)
 
@@ -17,3 +13,19 @@
 #define CUM_TARGET_THIGHS "thighs"
 #define CUM_TARGET_BELLY "belly"
 #define CUM_TARGET_ARMPIT "armpit"
+
+//Cum overlays
+#define CUM_DMI 'modular_splurt/icons/effects/cumoverlay.dmi'
+#define CUM_STATES list( \
+    "cum_normal", \
+    "cum_normal_1", \
+    "cum_normal_2", \
+    "cum_normal_3", \
+    "cum_normal_4", \
+    "cum_large" \
+)
+#define CUM_STATES_NEUTRAL list( \
+    "cum_normal_1", \
+    "cum_normal_2", \
+    "cum_normal_3"	\
+)
