@@ -51,6 +51,7 @@
 	icon = 'modular_bluemoon/icons/obj/smith/coiled_sword.dmi'
 	icon_state = "coiled"
 	overlay_state = "coiled_flame"
+	resistance_flags = LAVA_PROOF | FIRE_PROOF
 	item_flags = NEEDS_PERMIT
 	sharpness = SHARP_EDGED
 	light_power = 0.5
