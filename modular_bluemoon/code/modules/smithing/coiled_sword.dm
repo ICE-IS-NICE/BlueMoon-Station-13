@@ -2,6 +2,7 @@
 	name = "raw coiled sword"
 	icon = 'modular_bluemoon/icons/obj/smith/coiled_sword.dmi'
 	icon_state = "coiled_raw"
+	resistance_flags = LAVA_PROOF | FIRE_PROOF
 	finishingitem = /obj/item/stack/ore/glass/basalt
 	finalitem = /obj/item/melee/smith/coiled_sword
 	var/heated_in_lava = FALSE
