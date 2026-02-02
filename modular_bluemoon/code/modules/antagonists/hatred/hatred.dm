@@ -1,28 +1,11 @@
 /**
  * Данный антаг был вдоховлен игрою "Hatred" (2015).
  *
- * Краткое пояснение концепта антага и игромеханических решений:
- * 		Концепт: мажорный мидраунд антаг для хард динамика с целью моментального массового ПВП пиздореза. Почти как Lone Operative, но этот не должен
- * просто закончить раунд, убив капитана. Минимум манча и времени на разогрев. Только при существенном онлайне и с достаточным количеством живых офицеров СБ.
- * 		Хил от убийства других игроков: как и в оригинальной игре персонаж восстанавливает здоровье от кинематографичных убийств (glory kills) и это является
- * единственным способом востановить здоровье. Я полагаю и в сске оно будет выглядеть уместно и вполне сбалансированно. Игроку для восстановления
- * здоровья необходимо заставить живую цель не двигаться вплоть до ~10 секунд и убить её выстрелом вплотную для восстановления здоровья. Тем самым мы снижаем
- * градус ахуевания антага и заставляем его делать передышики и играть аккуратнее, ведь он один, всегда уязвим и не может прятаться в космосе или вне станции,
- * как делает абсолютное большинство антагов.
- * 		Оружие с бесконечными патронами: в оригинальной игре по локации разбросана куча других оружий, а также оружие щедро падает с бесконечных волн
- * полицейских. Но в сске у нас ограниченное количество СБ, поэтому рано или поздно антаг пойдет манчить себе оружие. Этот антаг создан для пиздореза,
- * а не получасового манча оружейки, поэтому я хочу свести к минимуму любой существенный манч.
- * 		"Прикрученное намертво" снаряжение: всё минимально необходимое снаряжение намертво прикручено к персонажу. Оно хорошо сбалансированно
- * для ведения продолжительных пвп битв, но не является читами и накладывает массу ограничений, поэтому при возможности игрок скинул бы свое снаряжение и
- * взял бы что-то более мощное, убийственное или полезное, например МОДсьюты или хардсьюты ЕРТшников, но я ему не позволю, ибо как сказано в предыдущем
- * пункте: это антаг не для манча, а для моментального пиздореза.
- *
  * Если будет востребованно, то я возможно сделаю:
  * 		- Антаг худ (квадратик над персонажем с иконкой роли)
- * 		- Счетчик убийств и вывод его в итоги раунда (здесь мне нужна помощь, я не знаю, как считать сочные фраги).
+ * 		- Счетчик убийств и вывод его в итоги раунда (я не знаю, как считать сочные фраги).
  * 			- минимум убийств для получения гринтекста.
  * 			- события после определенного кол-ва убийств
- * 		- Больше QOL фич, если у меня или других игроков будут хорошие и выполнимые идеи.
  */
 
 //////////////////////////////////////////////
@@ -34,24 +17,25 @@
 
 /**
  * 		TODO
- * ak карман
  * дробовик
  * патроны для дробовика
- * запреты на стрельбу с других оружий?
  * новое оружие - super shotgun двустволка
  * ROLE_MASS_SHOOTER
  * проверка на спавнды в динамики
  * калибровка скорости, спросить у смайли конфиги?
- * русификация
  * есть ли у антагов свои тгуи окошки? Chetr nyy hagehguf naq ubabe Ratvar / open antag information: mafioso Цель Твоей Семьи | You have been provided with a standard uplink to accomplish your task.
  * Do not forget to prepare your spells
  * дубинка
  *
  *
  * 		DONE
+ * +ak карман
  * +mood
  * +heal
  * +knife добвивания
+ * +запреты на стрельбу с других оружий?
+ * +русификация
+ * +padding и плитники overcoat Rampart Armor Kit
  *
  *
  */
@@ -67,7 +51,7 @@
 	// antag_moodlet = /datum/mood_event/focused
 	suicide_cry = "I REGRET NOTHING."
 	show_to_ghosts = TRUE
-	show_in_antagpanel = TRUE
+	show_in_antagpanel = FALSE
 	// antag_hud_type = ANTAG_HUD_WIZ // TO BE ADDED
 	// antag_hud_name = "wizard"
 	// ui_name = "AntagInfoWizard"
@@ -144,7 +128,7 @@
 	if(chosen_gun == "Pistols")
 		greet_text += "[span_red("Кобура Ненависти")] всегда готова предоставить тебе особое парное оружие (стрелять с двух рук - в харме). После использования можешь просто выбросить их, ибо их цель была выполнена.<br>"
 	else
-		greet_text += "[span_red("Cумка для патронов")] сама пополняет пустые магазины/картриджи/клипсы. Никогда не выбрасывай их!<br>"
+		greet_text += "[span_red("Cумка для патронов")] сама пополняет пустые магазины/картриджи/клипсы для твоего оружия. Никогда не выбрасывай их!<br>"
 	if(chosen_gun == "Riot Shotgun")
 		greet_text += "В твоей кобуре спрятан [span_red("запасной дробовик")], чтобы у тебя всегда под рукой был План Б.<br>"
 	if(!isnull(chosen_high_gear))
@@ -301,11 +285,10 @@
 	listclearnulls(possible_spawns)
 	// Method 2 (if 1 failed): find the most optimal xeno maint spawn. Atmos problems are possible.
 	for(var/turf/X in GLOB.xeno_spawn) //Some xeno spawns are in some spots that will instantly kill human, like atmos
-		if(length(possible_spawns) < 6)
-			if(istype(X.loc, /area/maintenance))
-				possible_spawns += X
-		else
+		if(length(possible_spawns) >= 6)
 			break
+		if(istype(X.loc, /area/maintenance))
+			possible_spawns += X
 	listclearnulls(possible_spawns)
 	// Method 3 (if 1 and 2 failed): find ANY safe station turf
 	if(isemptylist(possible_spawns))
@@ -383,7 +366,7 @@
 		COOLDOWN_START(src, killing_speech_cd, 10 SECONDS)
 	var/time_to_kill = chosen_high_gear == "Faster executions" ? 4 SECONDS : 6 SECONDS
 	if(do_after(killer, time_to_kill, target))
-		target.visible_message(span_warning("[killer] перерезает горло [target]!"), span_userdanger("[killer] твое горло!"))
+		target.visible_message(span_warning("[killer] перерезает горло [target]!"), span_userdanger("[killer] перерезает твое горло!"))
 		knife.melee_attack_chain(killer, target, damage_multiplier = 100)
 		while(!QDELETED(target) && target.stat != DEAD && killer.CanReach(target, knife))
 			if(!do_after(killer, 0.5 SECONDS, target))
@@ -433,7 +416,7 @@
 		objective?.glory_kills++
 		var/obj/item/storage/belt/military/assault/hatred/B = user.get_item_by_slot(ITEM_SLOT_BELT)
 		if(istype(B))
-			to_chat(user, span_notice("[B.name] жадно урычит в предвкушении скорого жертвоприношения."))
+			to_chat(user, span_notice("[B.name] жадно урчит в предвкушении скорого жертвоприношения."))
 			B.glory_points++
 
 //////////////////////////////////////////////
@@ -570,7 +553,7 @@
 
 /obj/item/storage/belt/holster/hatred
 	name = "\proper Holster of Hatred"
-	desc = "Проклятая Кобура Ненависти воплощает смертоностные, но недолговечные пистолеты."
+	desc = "Кобура Ненависти воплощает смертоностные, но недолговечные пистолеты."
 	resistance_flags = FIRE_PROOF | ACID_PROOF
 
 /obj/item/storage/belt/holster/hatred/Initialize(mapload)
@@ -619,8 +602,8 @@
 	STR.max_combined_w_class = INFINITY // only for weight calculations. it still has type and slots limits
 	STR.max_w_class = WEIGHT_CLASS_NORMAL
 	STR.display_numerical_stacking = FALSE
-	STR.attack_hand_interact = FALSE // TRAIT_NODROP
-	STR.quickdraw = FALSE
+	STR.attack_hand_interact = TRUE // TRAIT_NODROP
+	STR.quickdraw = TRUE
 
 /obj/item/storage/bag/ammo/hatred/examine(mob/user)
 	. = ..()
@@ -787,6 +770,7 @@
 	U.has_sensor = NO_SENSORS
 	U.resistance_flags = FIRE_PROOF | ACID_PROOF
 	U.unique_reskin = null
+	U.max_restricted_accessories = 1
 	ADD_TRAIT(U, TRAIT_NODROP, "hatred")
 
 	var/obj/item/I = H.get_item_by_slot(ITEM_SLOT_FEET)
