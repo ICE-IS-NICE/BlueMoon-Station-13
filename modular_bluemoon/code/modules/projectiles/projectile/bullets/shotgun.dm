@@ -15,9 +15,7 @@
 	bare_wound_bonus = 10
 
 /obj/item/projectile/bullet/frangible_slug/on_hit(atom/target, blocked, pierce_hit)
-	if(isobj(target))
+	if(is_type_in_list(target, list(/obj/structure/window, /obj/machinery/door, /obj/structure/grille, /obj/structure/door_assembly)))
 		damage = 400 // airlock integrity is about 300, but on airlock destruction its assembly is spawned
 		armour_penetration = 100
-		if(ismecha(target))
-			damage /= 4
 	. = ..()

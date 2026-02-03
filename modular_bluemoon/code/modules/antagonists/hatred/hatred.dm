@@ -17,16 +17,11 @@
 
 /**
  * 		TODO
- * дробовик
- * патроны для дробовика
  * новое оружие - super shotgun двустволка
+ * !двустволка=револьвер не заряжается клипсами
  * ROLE_MASS_SHOOTER
- * проверка на спавнды в динамики
- * калибровка скорости, спросить у смайли конфиги?
  * есть ли у антагов свои тгуи окошки? Chetr nyy hagehguf naq ubabe Ratvar / open antag information: mafioso Цель Твоей Семьи | You have been provided with a standard uplink to accomplish your task.
  * Do not forget to prepare your spells
- * дубинка
- *
  *
  * 		DONE
  * +ak карман
@@ -36,6 +31,10 @@
  * +запреты на стрельбу с других оружий?
  * +русификация
  * +padding и плитники overcoat Rampart Armor Kit
+ * +дробовик
+ * +патроны для дробовика
+ * +дубинка
+ * +проверка на спавны в динамики
  *
  *
  */
@@ -155,6 +154,7 @@
 	// U.add_hud_to(src)
 	H.add_movespeed_modifier(/datum/movespeed_modifier/hatred)
 	// Unpredictable mood changes makes it diffcult to balance antag's speed.
+	H.add_movespeed_mod_immunities("hatred", MOVESPEED_ID_SANITY)
 	for(var/sanity_movespeed in typesof(/datum/movespeed_modifier/sanity))
 		H.add_movespeed_mod_immunities("hatred", sanity_movespeed)
 	// just to be sure
@@ -477,6 +477,7 @@
 	desc = "The scratches on this sawn-off double-barreled shotgun say: \"Plan B\"."
 	resistance_flags = FIRE_PROOF | ACID_PROOF
 	mag_type = /obj/item/ammo_box/magazine/internal/shot/hatred_dual
+	fire_sound = "sound/weapons/gunshotshotgunshot.ogg"
 	// copy-paste from proc/sawoff() since we don't have existing solutions.
 	// sawn_off = TRUE
 	// spread = -100 // will become ~0 during math things. we do it to reduce sawn_off spread.
@@ -505,7 +506,7 @@
 	STR.max_combined_w_class = INFINITY // only for weight calculations. it still has type and slots limits
 	STR.display_numerical_stacking = FALSE
 	STR.max_items = 1
-	STR.quickdraw = FALSE // иначе невозможно зарядить с nodrop
+	STR.quickdraw = FALSE // иначе заряжать излишне неудобно
 	STR.can_hold = typecacheof(list(/obj/item/gun/ballistic/revolver/doublebarrel/sawn/hatred))
 	new /obj/item/gun/ballistic/revolver/doublebarrel/sawn/hatred(src)
 
@@ -602,8 +603,8 @@
 	STR.max_combined_w_class = INFINITY // only for weight calculations. it still has type and slots limits
 	STR.max_w_class = WEIGHT_CLASS_NORMAL
 	STR.display_numerical_stacking = FALSE
-	STR.attack_hand_interact = TRUE // TRAIT_NODROP
-	STR.quickdraw = TRUE
+	STR.attack_hand_interact = FALSE // TRAIT_NODROP
+	STR.quickdraw = FALSE
 
 /obj/item/storage/bag/ammo/hatred/examine(mob/user)
 	. = ..()
@@ -773,7 +774,10 @@
 	U.max_restricted_accessories = 1
 	ADD_TRAIT(U, TRAIT_NODROP, "hatred")
 
-	var/obj/item/I = H.get_item_by_slot(ITEM_SLOT_FEET)
+	var/obj/item/I = H.get_item_by_slot(ITEM_SLOT_OCLOTHING)
+	ADD_TRAIT(I, TRAIT_NODROP, "hatred")
+
+	I = H.get_item_by_slot(ITEM_SLOT_FEET)
 	I.resistance_flags = FIRE_PROOF
 
 	I = H.get_item_by_slot(ITEM_SLOT_EYES)

@@ -173,6 +173,11 @@
 	var/pixeloffsetx = 4
 	start_empty = TRUE
 
+/obj/item/ammo_box/shotgun/Initialize(mapload)
+	. = ..()
+	if(!start_empty && stored_ammo[1])
+		name = "[stored_ammo[1]] " + name
+
 /obj/item/ammo_box/shotgun/update_overlays()
 	. = ..()
 	if(stored_ammo.len)
@@ -180,7 +185,7 @@
 		for(var/A in stored_ammo)
 			var/obj/item/ammo_casing/shotgun/C = A
 			offset += pixeloffsetx
-			var/mutable_appearance/shell_overlay = mutable_appearance(icon, "[initial(C.icon_state)]-clip")
+			var/mutable_appearance/shell_overlay = mutable_appearance(C.icon, "[initial(C.icon_state)]-clip")
 			shell_overlay.pixel_x += offset
 			shell_overlay.appearance_flags = RESET_COLOR
 			. += shell_overlay
