@@ -9,7 +9,7 @@
 	var/obj/structure/chair/pedalgen/Pedals = null
 	/**
 	 * apc may have constant powerload, so this way I ensure pedalgen won't get stuck in an endless cycle of only apc charging.
-	 * apc will be prioritized only when it's charge is dropped below certain amount and will be fully charged after that.
+	 * apc will be prioritized only when its charge is dropped below certain amount and will be fully charged after that.
 	*/
 	var/prioritise_apc = FALSE
 	var/direct_apc_charge_mult = 0.01 // 1%/sec on excessive_charge (raw_power>10)
