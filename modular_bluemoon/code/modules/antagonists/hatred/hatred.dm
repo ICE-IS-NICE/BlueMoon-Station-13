@@ -50,7 +50,7 @@
 	name = "Mass Shooter"
 	antagpanel_category = "Mass Shooter"
 	roundend_category = "Mass shooter"
-	job_rank = ROLE_OPERATIVE
+	job_rank = ROLE_MASS_SHOOTER
 	// antag_moodlet = /datum/mood_event/focused
 	suicide_cry = "I REGRET NOTHING."
 	show_to_ghosts = TRUE
@@ -194,7 +194,6 @@
 	allowed_z_levels += SSmapping.levels_by_trait(ZTRAIT_RESERVED)
 	allowed_z_levels += SSmapping.levels_by_trait(ZTRAIT_STATION)
 	RegisterSignal(H, COMSIG_MOVABLE_Z_CHANGED, PROC_REF(check_hatred_off_station)) // almost like anchor implant, but doesn't hurt
-	// RegisterSignal(H, COMSIG_MOB_TRYING_TO_FIRE_GUN, PROC_REF(check_used_gun))
 	playsound(H, pick('modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_1.ogg', \
 					'modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_2.ogg', \
 					'modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_3.ogg'), vol = 100, vary = FALSE, ignore_walls = FALSE)
@@ -215,16 +214,13 @@
 /datum/antagonist/hatred/proc/on_hatred_death()
 	SIGNAL_HANDLER
 	switch(chosen_gun)
-		// if("AK47", "Combat Shotgun")
-		// 	for(var/obj/item/I in items_with_hatred_traits)
-		// 		REMOVE_TRAIT(I, TRAIT_NODROP, "hatred")
 		if("Pistols")
 			var/obj/item/clothing/suit/jacket/leather/overcoat/hatred/I = new(get_turf(owner.current))
 			I.desc = "The blood stained shabby leather overcoat with decent armor paddings and special lightweight kevlar."
 			addtimer(CALLBACK(I, TYPE_PROC_REF(/obj/item/clothing, repair)), 3 SECONDS, TIMER_DELETE_ME)
 
 /datum/movespeed_modifier/hatred
-	multiplicative_slowdown = 0.5
+	multiplicative_slowdown = 0.25
 
 /datum/antagonist/hatred/proc/evaluate_security()
 	var/gear_points = length(SSjob.get_living_sec())
@@ -372,14 +368,6 @@
 			addtimer(CALLBACK(knife, TYPE_PROC_REF(/obj/item/kitchen/knife, check_glory_kill), killer, target), 1 SECONDS, TIMER_DELETE_ME)
 	else
 		killer.visible_message(span_notice("[killer] остановил свой нож."))
-
-// /datum/antagonist/hatred/proc/check_used_gun(mob/living/carbon/human/H, obj/item/gun/G, target, flag, params)
-// 	SIGNAL_HANDLER
-// 	if(is_type_in_list(G, allowed_guns))
-// 		return
-// 	else
-// 		to_chat(H, span_userdanger("You have no need for this. You have your own killing machines."))
-// 		return COMPONENT_CANCEL_GUN_FIRE
 
 /obj/item/gun/handle_suicide(mob/living/carbon/human/user, mob/living/carbon/human/target, params, bypass_timer, time_to_kill = 12 SECONDS)
 	var/datum/antagonist/hatred/Ha = user.mind?.has_antag_datum(/datum/antagonist/hatred)
@@ -541,7 +529,6 @@
 	// 100% = 30
 	// 90% = 27
 	// 80% = 24
-	projectile_damage_multiplier = 0.85
 	dual_wield_spread = 5
 	var/mob/living/carbon/human/original_owner = null
 
@@ -857,7 +844,7 @@
 	name = "Mass Shooter"
 	antag_datum = /datum/antagonist/hatred
 	antag_flag = "Mass Shooter"
-	antag_flag_override = ROLE_OPERATIVE
+	antag_flag_override = ROLE_MASS_SHOOTER
 	// enemy_roles = list("Blueshield", "Peacekeeper", "Brig Physician", "Security Officer", "Warden", "Detective", "Head of Security","Bridge Officer", "Captain")
 	// required_enemies = list(0,0,0,0,5,5,4,4,3,0)
 	required_round_type = list(ROUNDTYPE_DYNAMIC_HARD)
@@ -892,7 +879,7 @@
 	return body
 
 /datum/admins/proc/makeMassShooter()
-	var/list/mob/candidates = pollGhostCandidates("Do you wish to be considered for the position of a Mass Shooter?", ROLE_OPERATIVE)
+	var/list/mob/candidates = pollGhostCandidates("Do you wish to be considered for the position of a Mass Shooter?", ROLE_MASS_SHOOTER, null, ROLE_MASS_SHOOTER, 30 SECONDS)
 	var/mob/applicant = pick_n_take(candidates)
 	// var/turf/entry_spawn_loc
 	// if(length(GLOB.newplayer_start))
