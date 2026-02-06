@@ -17,11 +17,14 @@
 
 /**
  * 		TODO
- * новое оружие - super shotgun двустволка
+ * новое оружие - super shotgun двустволка  /obj/item/gun/ballistic/revolver/doublebarrel/super
  * !двустволка=револьвер не заряжается клипсами
  * ROLE_MASS_SHOOTER
  * есть ли у антагов свои тгуи окошки? Chetr nyy hagehguf naq ubabe Ratvar / open antag information: mafioso Цель Твоей Семьи | You have been provided with a standard uplink to accomplish your task.
  * Do not forget to prepare your spells
+ * hazard immune high gear
+ * реализовать attack hand WM на АК
+ *
  *
  * 		DONE
  * +ak карман
@@ -35,6 +38,7 @@
  * +патроны для дробовика
  * +дубинка
  * +проверка на спавны в динамики
+ * +no-drops у оружки?
  *
  *
  */
@@ -65,7 +69,7 @@
 	 * 2 = high gear
 	 */
 	var/gear_level = 1
-	var/list/classic_guns = list("AK47", "Riot Shotgun", "Pistols")
+	var/list/classic_guns = list("AK47", "Combat Shotgun", "Pistols")
 	// there won't be special level 2 guns, because I don't want antag to have cheat guns. Level 2 gear is always better stats/traits for level 1 gear.
 	var/list/high_gear = list(/*"Belt of Hatred", */"More armor", "Faster executions")
 	var/chosen_gun = null
@@ -86,15 +90,6 @@
 									'modular_bluemoon/code/modules/antagonists/hatred/killing_speech/hatred_speech_13.ogg',
 									'modular_bluemoon/code/modules/antagonists/hatred/killing_speech/hatred_speech_14.ogg'
 									)
-	// var/global/list/allowed_guns = list(/obj/item/gun/ballistic/automatic/ak47/hatred,
-	// 									/obj/item/gun/ballistic/shotgun/riot/hatred,
-	// 									/obj/item/gun/ballistic/automatic/pistol/m1911/hatred,
-	// 									/obj/item/gun/ballistic/shotgun/doublebarrel/hatred_sawn_off
-	// 									)
-	// var/global/list/nodrop_guns = list(/obj/item/gun/ballistic/automatic/ak47/hatred,
-	// 									/obj/item/gun/ballistic/shotgun/riot/hatred
-	// 									)
-	// var/list/items_with_hatred_traits = list() // for droppable items after killing mass shooter
 
 /datum/antagonist/hatred/proc/forge_objectives()
 	var/datum/objective/O = new /datum/objective/genocide()
@@ -128,7 +123,7 @@
 		greet_text += "[span_red("Кобура Ненависти")] всегда готова предоставить тебе особое парное оружие (стрелять с двух рук - в харме). После использования можешь просто выбросить их, ибо их цель была выполнена.<br>"
 	else
 		greet_text += "[span_red("Cумка для патронов")] сама пополняет пустые магазины/картриджи/клипсы для твоего оружия. Никогда не выбрасывай их!<br>"
-	if(chosen_gun == "Riot Shotgun")
+	if(chosen_gun == "Combat Shotgun")
 		greet_text += "В твоей кобуре спрятан [span_red("запасной дробовик")], чтобы у тебя всегда под рукой был План Б.<br>"
 	if(!isnull(chosen_high_gear))
 		greet_text += "[span_red("Пояс с гранатами")] пожирает сердца твоих жертв после их добивания и вознаграждает тебя новой взрывоопасной аммуницией.<br>"
@@ -155,12 +150,16 @@
 	H.add_movespeed_modifier(/datum/movespeed_modifier/hatred)
 	// Unpredictable mood changes makes it diffcult to balance antag's speed.
 	H.add_movespeed_mod_immunities("hatred", MOVESPEED_ID_SANITY)
-	for(var/sanity_movespeed in typesof(/datum/movespeed_modifier/sanity))
-		H.add_movespeed_mod_immunities("hatred", sanity_movespeed)
+	for(var/ms in typesof(/datum/movespeed_modifier/sanity))
+		H.add_movespeed_mod_immunities("hatred", ms)
 	// just to be sure
 	var/datum/component/mood/mood = H.GetComponent(/datum/component/mood)
 	mood?.mood_modifier = 0 //Basically nothing can change your mood
 	mood?.setSanity(SANITY_NEUTRAL)
+	// сверхскорость и неуловимость страшнее сверхброни и бесконечных патронов в совокупности
+	for(var/datum/movespeed_modifier/ms in typesof(/datum/movespeed_modifier/reagent))
+		if(ms.multiplicative_slowdown < 0)
+			H.add_movespeed_mod_immunities("hatred", ms)
 	// SPECIAL TRAITS
 	ADD_TRAIT(H, TRAIT_SLEEPIMMUNE, "hatred") // I challenge you to a glorious fight!
 	ADD_TRAIT(H, TRAIT_VIRUSIMMUNE, "hatred")
@@ -216,7 +215,7 @@
 /datum/antagonist/hatred/proc/on_hatred_death()
 	SIGNAL_HANDLER
 	switch(chosen_gun)
-		// if("AK47", "Riot Shotgun")
+		// if("AK47", "Combat Shotgun")
 		// 	for(var/obj/item/I in items_with_hatred_traits)
 		// 		REMOVE_TRAIT(I, TRAIT_NODROP, "hatred")
 		if("Pistols")
@@ -236,11 +235,10 @@
 		gear_points++
 	if(length(active_ais(check_mind = TRUE))) // вертолеты
 		gear_points++
-	switch(gear_points)
-		if(-INFINITY to 5) 	// 5
-			gear_level = 1
-		if(7 to INFINITY) 	// 7+
-			gear_level = 2
+	if(gear_points < 7)
+		gear_level = 1 // 5-6
+	else
+		gear_level = 2 // 7+
 
 /datum/antagonist/hatred/proc/make_authentic_body()
 	var/mob/living/carbon/human/H = owner.current
@@ -321,9 +319,6 @@
 		if(istype(I, /obj/item/kitchen/knife))
 			RegisterSignal(I, COMSIG_ITEM_DROPPED, PROC_REF(remove_knife_check_glory))
 			RegisterSignal(I, COMSIG_ITEM_ATTACK, PROC_REF(knife_check_glory))
-		// else if(istype(I, /obj/item/gun) && ispath_in_list(I.type, nodrop_guns) && !HAS_TRAIT(I, TRAIT_NODROP))
-		// 	ADD_TRAIT(I, TRAIT_NODROP, "hatred")
-		// 	items_with_hatred_traits += I
 
 /// once we don't hold a knife, we don't listen to it when it strikes.
 /datum/antagonist/hatred/proc/remove_knife_check_glory(obj/item/kitchen/knife/K, mob/user)
@@ -364,7 +359,7 @@
 	else if(COOLDOWN_FINISHED(src, killing_speech_cd))
 		playsound(owner.current, pick(killing_speech), vol = 100, vary = FALSE, ignore_walls = FALSE)
 		COOLDOWN_START(src, killing_speech_cd, 10 SECONDS)
-	var/time_to_kill = chosen_high_gear == "Faster executions" ? 4 SECONDS : 6 SECONDS
+	var/time_to_kill = chosen_high_gear == "Faster executions" ? 5 SECONDS : 7 SECONDS
 	if(do_after(killer, time_to_kill, target))
 		target.visible_message(span_warning("[killer] перерезает горло [target]!"), span_userdanger("[killer] перерезает твое горло!"))
 		knife.melee_attack_chain(killer, target, damage_multiplier = 100)
@@ -400,7 +395,7 @@
 	else if(COOLDOWN_FINISHED(Ha, killing_speech_cd))
 		playsound(user, pick(Ha.killing_speech), vol = 100, vary = FALSE, ignore_walls = FALSE)
 		COOLDOWN_START(Ha, killing_speech_cd, 10 SECONDS)
-	var/new_ttk = Ha.chosen_high_gear == "Faster executions" ? 6 SECONDS : 8 SECONDS
+	var/new_ttk = Ha.chosen_high_gear == "Faster executions" ? 8 SECONDS : 10 SECONDS
 	. = ..(user, target, params, bypass_timer, time_to_kill = new_ttk)
 	if(!. || user == target || !is_glory)
 		return
@@ -435,35 +430,59 @@
 	weapon_weight = WEAPON_HEAVY
 	// 100% = 28
 
-/obj/item/gun/ballistic/automatic/ak47/hatred/examine(mob/user)
+/obj/item/gun/ballistic/automatic/ak47/hatred/Initialize(mapload)
+	LAZYADD(actions_types, /datum/action/item_action/toggle_nodrop/inhand)
 	. = ..()
-	if(HAS_TRAIT(src, TRAIT_NODROP))
-		. += span_danger("You cannot make your fingers drop this weapon of Doom.")
+
+/obj/item/gun/ballistic/automatic/ak47/hatred/ui_action_click(mob/user, action)
+	if(istype(action, /datum/action/item_action/toggle_nodrop/inhand))
+		return
+	. = ..()
+
+/obj/item/gun/ballistic/automatic/ak47/hatred/dropped(mob/user, silent) // lost arm, etc...
+	. = ..()
+	REMOVE_TRAIT(src, TRAIT_NODROP, null)
 
 /// SHOTGUN GEAR ///
 
-/obj/item/gun/ballistic/shotgun/riot/hatred
-	name = "\improper Riot Shotgun of Hatred"
+/obj/item/gun/ballistic/shotgun/automatic/combat/hatred
+	name = "\improper Combat Shotgun of Hatred"
 	desc = "The scratches on this shotgun say: \"The Bringer of Doom\"."
-	icon_state = "wood_riotshotgun"
-	mag_type = /obj/item/ammo_box/magazine/internal/shot/hatred_riot
+	icon_state = "cshotgun_slick"
+	// icon_state = "wood_riotshotgun"
+	mag_type = /obj/item/ammo_box/magazine/internal/shot/com/hatred
 	resistance_flags = FIRE_PROOF | ACID_PROOF
 	max_integrity = 400 // will be damaged during antag's death implant detonation
-	fire_delay = 4
+	// fire_delay = 4
 	unique_reskin = null
 	var/quick_empty_flag = FALSE // is user quick emptying it right now
 
-/obj/item/ammo_box/magazine/internal/shot/hatred_riot
-	ammo_type = /obj/item/ammo_casing/shotgun/buckshot
+/obj/item/ammo_box/magazine/internal/shot/com/hatred
 	max_ammo = 7 // 7+1 = 2 clips
 
-/obj/item/gun/ballistic/shotgun/riot/hatred/examine(mob/user)
+/obj/item/gun/ballistic/shotgun/automatic/combat/hatred/Initialize(mapload)
+	LAZYADD(actions_types, /datum/action/item_action/toggle_nodrop/inhand)
+	. = ..()
+	toggle_stock()
+
+/obj/item/gun/ballistic/shotgun/automatic/combat/hatred/ui_action_click(mob/user, action)
+	if(istype(action, /datum/action/item_action/toggle_nodrop/inhand))
+		return
+	. = ..()
+
+/obj/item/gun/ballistic/shotgun/automatic/combat/hatred/examine(mob/user)
 	. = ..()
 	. += span_notice("[span_bold("Ctrl-Shift-Click")] - быстрая разрядка.")
-	if(HAS_TRAIT(src, TRAIT_NODROP))
-		. += span_danger("You cannot make your fingers drop this weapon of Doom.")
 
-/obj/item/gun/ballistic/shotgun/riot/hatred/CtrlShiftClick(mob/living/carbon/human/user)
+/obj/item/gun/ballistic/shotgun/automatic/combat/hatred/dropped(mob/user, silent) // lost arm, etc...
+	. = ..()
+	REMOVE_TRAIT(src, TRAIT_NODROP, null)
+
+/obj/item/gun/ballistic/shotgun/automatic/combat/hatred/attack_self(mob/living/user)
+	if(!quick_empty_flag)
+		. = ..()
+
+/obj/item/gun/ballistic/shotgun/automatic/combat/hatred/CtrlShiftClick(mob/living/carbon/human/user)
 	if(!quick_empty_flag)
 		quick_empty_flag = TRUE
 		pump(user, TRUE)
@@ -471,6 +490,9 @@
 			stoplag(3) // a bit slower than TRAIT_FAST_PUMP
 			pump(user, TRUE)
 		quick_empty_flag = FALSE
+
+/obj/item/gun/ballistic/shotgun/automatic/combat/hatred/AltClick(mob/living/user)
+	return
 
 /obj/item/gun/ballistic/revolver/doublebarrel/sawn/hatred
 	name = "\proper The \"Plan B\""
@@ -496,19 +518,19 @@
 	ammo_type = /obj/item/ammo_casing/shotgun/frangible
 	max_ammo = 2
 
-/obj/item/storage/belt/holster/hatred_sawn_off
-	name = "\proper The \"Plan B\" Holster"
-	resistance_flags = FIRE_PROOF | ACID_PROOF
+// /obj/item/storage/belt/holster/hatred_sawn_off
+// 	name = "\proper The \"Plan B\" Holster"
+// 	resistance_flags = FIRE_PROOF | ACID_PROOF
 
-/obj/item/storage/belt/holster/hatred_sawn_off/Initialize(mapload)
-	. = ..()
-	var/datum/component/storage/STR = GetComponent(/datum/component/storage)
-	STR.max_combined_w_class = INFINITY // only for weight calculations. it still has type and slots limits
-	STR.display_numerical_stacking = FALSE
-	STR.max_items = 1
-	STR.quickdraw = FALSE // иначе заряжать излишне неудобно
-	STR.can_hold = typecacheof(list(/obj/item/gun/ballistic/revolver/doublebarrel/sawn/hatred))
-	new /obj/item/gun/ballistic/revolver/doublebarrel/sawn/hatred(src)
+// /obj/item/storage/belt/holster/hatred_sawn_off/Initialize(mapload)
+// 	. = ..()
+// 	var/datum/component/storage/STR = GetComponent(/datum/component/storage)
+// 	STR.max_combined_w_class = INFINITY // only for weight calculations. it still has type and slots limits
+// 	STR.display_numerical_stacking = FALSE
+// 	STR.max_items = 1
+// 	STR.quickdraw = FALSE // иначе заряжать излишне неудобно
+// 	STR.can_hold = typecacheof(list(/obj/item/gun/ballistic/revolver/doublebarrel/sawn/hatred))
+// 	new /obj/item/gun/ballistic/revolver/doublebarrel/sawn/hatred(src)
 
 /// PISTOLS GEAR ///
 
@@ -674,16 +696,16 @@
 	desc = "The shabby leather overcoat with decent armor paddings. Once it has been splashed with blood you can't take it off anymore."
 	resistance_flags = FIRE_PROOF
 	// clueless armor stats.
-	armor = list(MELEE 	= 40, \
-				BULLET 	= 40, \
-				LASER 	= 40, \
-				ENERGY 	= 40, \
-				BOMB 	= 40, \
-				BIO 	= 40, \
+	armor = list(MELEE 	= 50, \
+				BULLET 	= 50, \
+				LASER 	= 50, \
+				ENERGY 	= 50, \
+				BOMB 	= 50, \
+				BIO 	= 50, \
 				RAD 	= 20, \
 				FIRE 	= 70, \
 				ACID 	= 70, \
-				WOUND 	= 40)
+				WOUND 	= 50)
 
 /obj/item/clothing/suit/jacket/leather/overcoat/hatred/Initialize(mapload)
 	. = ..()
@@ -694,16 +716,16 @@
 	desc = "Once you felt <b><i>that</i></b> urge to commit relentless genocide of civilians, you clearly understood you were cursed... blessed... and... protected by invisible Veil of Hatred."
 	resistance_flags = FIRE_PROOF | ACID_PROOF
 	// clueless armor stats.
-	armor = list(MELEE 	= 40, \
-				BULLET 	= 40, \
-				LASER 	= 40, \
-				ENERGY 	= 40, \
-				BOMB 	= 40, \
-				BIO 	= 40, \
+	armor = list(MELEE 	= 50, \
+				BULLET 	= 50, \
+				LASER 	= 50, \
+				ENERGY 	= 50, \
+				BOMB 	= 50, \
+				BIO 	= 50, \
 				RAD 	= 20, \
 				FIRE 	= 70, \
 				ACID 	= 70, \
-				WOUND 	= 40)
+				WOUND 	= 50)
 
 /obj/item/clothing/head/invisihat/hatred/equipped(mob/user, slot)
 	. = ..()
@@ -749,9 +771,9 @@
 		if("AK47")
 			r_hand = /obj/item/gun/ballistic/automatic/ak47/hatred
 			l_pocket = /obj/item/storage/bag/ammo/hatred
-		if("Riot Shotgun")
-			r_hand = /obj/item/gun/ballistic/shotgun/riot/hatred
-			suit_store = /obj/item/storage/belt/holster/hatred_sawn_off
+		if("Combat Shotgun")
+			r_hand = /obj/item/gun/ballistic/shotgun/automatic/combat/hatred
+			suit_store = /obj/item/gun/ballistic/revolver/doublebarrel/sawn/hatred
 			l_pocket = /obj/item/storage/bag/ammo/hatred
 		if("Pistols")
 			suit_store = /obj/item/storage/belt/holster/hatred
@@ -765,8 +787,8 @@
 /datum/outfit/hatred/post_equip(mob/living/carbon/human/H, visualsOnly, client/preference_source)
 	// var/obj/item/implant/explosive/E = new
 	// E.implant(H)
-	var/obj/item/organ/cyberimp/brain/anti_drop/ad = new
-	ad.Insert(H)
+	// var/obj/item/organ/cyberimp/brain/anti_drop/ad = new
+	// ad.Insert(H)
 	var/obj/item/clothing/under/U = H.get_item_by_slot(ITEM_SLOT_ICLOTHING)
 	U.has_sensor = NO_SENSORS
 	U.resistance_flags = FIRE_PROOF | ACID_PROOF
@@ -807,7 +829,7 @@
 			STR.max_items = 3
 			new /obj/item/ammo_box/magazine/ak47(P)
 			new /obj/item/ammo_box/magazine/ak47(P)
-		if("Riot Shotgun")
+		if("Combat Shotgun")
 			var/obj/item/storage/bag/ammo/hatred/P = H.get_item_by_slot(ITEM_SLOT_LPOCKET)
 			var/datum/component/storage/STR = P.GetComponent(/datum/component/storage)
 			STR.can_hold = typecacheof(list(/obj/item/ammo_box/shotgun/loaded))
