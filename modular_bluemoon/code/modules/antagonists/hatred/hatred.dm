@@ -19,11 +19,10 @@
  * 		TODO
  * новое оружие - super shotgun двустволка  /obj/item/gun/ballistic/revolver/doublebarrel/super
  * !двустволка=револьвер не заряжается клипсами
- * ROLE_MASS_SHOOTER
  * есть ли у антагов свои тгуи окошки? Chetr nyy hagehguf naq ubabe Ratvar / open antag information: mafioso Цель Твоей Семьи | You have been provided with a standard uplink to accomplish your task.
  * Do not forget to prepare your spells
  * hazard immune high gear
- * реализовать attack hand WM на АК
+ * что-то выбивающее для пистолетов
  *
  *
  * 		DONE
@@ -39,6 +38,8 @@
  * +дубинка
  * +проверка на спавны в динамики
  * +no-drops у оружки?
+ * +ROLE_MASS_SHOOTER
+ * +реализовать attack hand WM/TGMC на АК
  *
  *
  */
@@ -120,11 +121,11 @@
 	greet_text += "Твое проклятое снаряжение неразлучно с тобою и подстегивает тебя продолжать соврешать геноцид беззащитных гражданских.<br>"
 	greet_text += "Твоё [span_red("Оружие Ненависти")] и неутолимая жажда убивать вознаграждают тебя, ибо завершающий выстрел в упор в голову (рот) исцеляет твои раны, нож добивает быстрее и надежнее. [span_red("Обычная медицина бессильна")].<br>"
 	if(chosen_gun == "Pistols")
-		greet_text += "[span_red("Кобура Ненависти")] всегда готова предоставить тебе особое парное оружие (стрелять с двух рук - в харме). После использования можешь просто выбросить их, ибо их цель была выполнена.<br>"
+		greet_text += "[span_red("Кобура Ненависти")] всегда готова предоставить тебе особое парное оружие. [span_red("Стрелять с двух рук - в Харме")]. После использования можешь просто выбросить их, ибо их цель была выполнена.<br>"
 	else
 		greet_text += "[span_red("Cумка для патронов")] сама пополняет пустые магазины/картриджи/клипсы для твоего оружия. Никогда не выбрасывай их!<br>"
 	if(chosen_gun == "Combat Shotgun")
-		greet_text += "В твоей кобуре спрятан [span_red("запасной дробовик")], чтобы у тебя всегда под рукой был План Б.<br>"
+		greet_text += "Ты захватил с собой [span_red("запасной дробовик")], чтобы у тебя всегда под рукой был План Б.<br>"
 	if(!isnull(chosen_high_gear))
 		greet_text += "[span_red("Пояс с гранатами")] пожирает сердца твоих жертв после их добивания и вознаграждает тебя новой взрывоопасной аммуницией.<br>"
 	greet_text += "[span_red(span_bold("Убивай и будь убит!"))] Ибо никто сегодня не защищен от твоей Ненависти.<br>"
@@ -197,7 +198,7 @@
 	playsound(H, pick('modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_1.ogg', \
 					'modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_2.ogg', \
 					'modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_3.ogg'), vol = 100, vary = FALSE, ignore_walls = FALSE)
-	addtimer(CALLBACK(src, PROC_REF(alarm_station)), 10 SECONDS, TIMER_DELETE_ME) // Give a player a moment to understand what's going on.
+	addtimer(CALLBACK(src, PROC_REF(alarm_station)), 5 SECONDS, TIMER_DELETE_ME) // Give a player a moment to understand what's going on.
 
 /datum/antagonist/hatred/on_removal()
 	var/mob/living/L = owner.current
@@ -416,7 +417,14 @@
 	resistance_flags = FIRE_PROOF | ACID_PROOF
 	max_integrity = 400 // will be damaged during antag's death implant detonation
 	weapon_weight = WEAPON_HEAVY
+	can_suppress = FALSE
 	// 100% = 28
+
+/obj/item/gun/ballistic/automatic/ak47/hatred/on_attack_hand(mob/user, act_intent, unarmed_attack_flags)
+	if(loc == user && user.is_holding(src) && magazine)
+		attack_self(user)
+		return
+	. = ..()
 
 /obj/item/gun/ballistic/automatic/ak47/hatred/Initialize(mapload)
 	LAZYADD(actions_types, /datum/action/item_action/toggle_nodrop/inhand)
@@ -452,6 +460,7 @@
 	LAZYADD(actions_types, /datum/action/item_action/toggle_nodrop/inhand)
 	. = ..()
 	toggle_stock()
+	pump()
 
 /obj/item/gun/ballistic/shotgun/automatic/combat/hatred/ui_action_click(mob/user, action)
 	if(istype(action, /datum/action/item_action/toggle_nodrop/inhand))
@@ -473,10 +482,10 @@
 /obj/item/gun/ballistic/shotgun/automatic/combat/hatred/CtrlShiftClick(mob/living/carbon/human/user)
 	if(!quick_empty_flag)
 		quick_empty_flag = TRUE
-		pump(user, TRUE)
+		pump(user)
 		while(chambered)
 			stoplag(3) // a bit slower than TRAIT_FAST_PUMP
-			pump(user, TRUE)
+			pump(user)
 		quick_empty_flag = FALSE
 
 /obj/item/gun/ballistic/shotgun/automatic/combat/hatred/AltClick(mob/living/user)
@@ -505,20 +514,6 @@
 /obj/item/ammo_box/magazine/internal/shot/hatred_dual
 	ammo_type = /obj/item/ammo_casing/shotgun/frangible
 	max_ammo = 2
-
-// /obj/item/storage/belt/holster/hatred_sawn_off
-// 	name = "\proper The \"Plan B\" Holster"
-// 	resistance_flags = FIRE_PROOF | ACID_PROOF
-
-// /obj/item/storage/belt/holster/hatred_sawn_off/Initialize(mapload)
-// 	. = ..()
-// 	var/datum/component/storage/STR = GetComponent(/datum/component/storage)
-// 	STR.max_combined_w_class = INFINITY // only for weight calculations. it still has type and slots limits
-// 	STR.display_numerical_stacking = FALSE
-// 	STR.max_items = 1
-// 	STR.quickdraw = FALSE // иначе заряжать излишне неудобно
-// 	STR.can_hold = typecacheof(list(/obj/item/gun/ballistic/revolver/doublebarrel/sawn/hatred))
-// 	new /obj/item/gun/ballistic/revolver/doublebarrel/sawn/hatred(src)
 
 /// PISTOLS GEAR ///
 
@@ -555,7 +550,7 @@
 	if(ishuman(loc))
 		var/mob/living/carbon/human/H = loc
 		H.dropItemToGround(src, force = TRUE, silent = FALSE)
-		H.visible_message("[H] беззаботно бросает на землю пустой пистолет.")
+		H.visible_message("[H] с безразличием бросает на землю пустой пистолет.")
 	var/obj/item/gun/ballistic/automatic/pistol/m1911/hatred/second = user.get_inactive_held_item()
 	if(istype(second, type))
 		if(!second.can_shoot() || !second.chambered || !second.chambered.BB)
@@ -612,13 +607,12 @@
 	STR.max_combined_w_class = INFINITY // only for weight calculations. it still has type and slots limits
 	STR.max_w_class = WEIGHT_CLASS_NORMAL
 	STR.display_numerical_stacking = FALSE
-	STR.attack_hand_interact = FALSE // TRAIT_NODROP
-	STR.quickdraw = FALSE
+	STR.quickdraw = TRUE
 
 /obj/item/storage/bag/ammo/hatred/examine(mob/user)
 	. = ..()
 	. += "Положи пустой магазин/картридж/клипсу в этот проклятый подсумок и он наполнится патронами."
-	. += span_notice("[span_bold("Alt-Click")] - открыть.")
+	. += span_notice("[span_bold("Alt-Click")] - вытащить предмет.")
 
 /obj/item/storage/bag/ammo/hatred/Entered(atom/movable/AM, atom/oldLoc)
 	. = ..()
@@ -851,10 +845,8 @@
 	required_candidates = 1
 	weight = 9
 	cost = 10
-	// minimum_players = 50 // security alive check is more than enough, but there must be a bare minimum of players
 	// requirements = list(101,101,101,101,101,101,60,40,30,10) // I'm not sure how this works and I don't trust it.
 	repeatable = FALSE // one man is enough to shake this station.
-	// makeBody = FALSE
 	// var/list/spawn_locs = list()
 
 /datum/dynamic_ruleset/midround/from_ghosts/hatred/ready(forced = FALSE)
@@ -869,7 +861,7 @@
 	// 	entry_spawn_loc = pick(GLOB.newplayer_start)
 	// else
 	// 	entry_spawn_loc = get_safe_random_station_turf(typesof(/area/centcom/evac))
-	var/mob/living/carbon/human/body = new(GET_ERROR_ROOM)
+	var/mob/living/carbon/human/body = new(get_turf(GET_ERROR_ROOM))
 	body.dna.remove_all_mutations()
 	var/datum/mind/player_mind = new /datum/mind(applicant.key)
 	player_mind.active = TRUE
@@ -886,7 +878,7 @@
 	// 	entry_spawn_loc = pick(GLOB.newplayer_start)
 	// else
 	// 	entry_spawn_loc = get_safe_random_station_turf(typesof(/area/centcom/evac))
-	var/mob/living/carbon/human/body = new(GET_ERROR_ROOM)
+	var/mob/living/carbon/human/body = new(get_turf(GET_ERROR_ROOM))
 	body.dna.remove_all_mutations()
 	var/datum/mind/player_mind = new /datum/mind(applicant.key)
 	player_mind.active = TRUE
