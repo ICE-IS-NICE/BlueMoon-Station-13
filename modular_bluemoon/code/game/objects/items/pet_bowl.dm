@@ -130,7 +130,7 @@
 	. = ..()
 	if(!reagents?.total_volume)
 		eject_snacks(I, R)
-		qdel(R)
+	qdel(R)
 
 /// иначе еда просто испарится из миски при опрокидывании содержимого
 /obj/item/reagent_containers/food/snacks/customizable/pet_bowl/proc/eject_snacks(list/I = ingredients, datum/reagents/R = reagents, target = src)
