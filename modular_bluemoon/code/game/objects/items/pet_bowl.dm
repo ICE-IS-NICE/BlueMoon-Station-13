@@ -51,16 +51,15 @@
 /obj/item/reagent_containers/food/snacks/customizable/pet_bowl/MouseDrop(atom/over)
 	. = ..()
 	var/mob/living/M = usr
-	if(!istype(M) || usr.incapacitated() || usr.lying)
+	if(!istype(M) || M.incapacitated() || !Adjacent(M))
 		return
-	if(Adjacent(usr))
-		pixel_x = base_pixel_x
-		pixel_y = base_pixel_y
-		if(over == M && loc != M)
-			M.put_in_hands(src)
-		else if(istype(over, /atom/movable/screen/inventory/hand))
-			var/atom/movable/screen/inventory/hand/H = over
-			M.putItemFromInventoryInHandIfPossible(src, H.held_index)
+	pixel_x = base_pixel_x
+	pixel_y = base_pixel_y
+	if(over == M && loc != M)
+		M.put_in_hands(src)
+	else if(istype(over, /atom/movable/screen/inventory/hand))
+		var/atom/movable/screen/inventory/hand/H = over
+		M.putItemFromInventoryInHandIfPossible(src, H.held_index)
 
 /obj/item/reagent_containers/food/snacks/customizable/pet_bowl/afterattack(atom/target, mob/user, proximity_flag, click_parameters)
 	. = ..()
@@ -100,7 +99,7 @@
 				for(var/i in S.list_reagents)
 					var/datum/reagent/r = i
 					if(!reagents.has_reagent(r, S.list_reagents[r]))
-						snack_found = FALSE
+						snack_found = FALSE // уже кто-то пожрал и остались только крошки - пусть пропадает
 						break
 				if(snack_found)
 					for(var/i in S.list_reagents)
