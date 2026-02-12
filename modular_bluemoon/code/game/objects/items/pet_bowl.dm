@@ -105,18 +105,7 @@
 			user.visible_message("<span class='danger'>[user] опрокидывает содержимое [src] на [target]!</span>", \
 								"<span class='notice'>Вы опрокинули содержимое [src] на [target].</span>")
 			reagents.reaction(target, TOUCH)
-			for(var/obj/item/reagent_containers/food/snacks/S in ingredients) // иначе еда просто испарится из миски
-				var/snack_found = TRUE
-				for(var/i in S.list_reagents)
-					var/datum/reagent/r = i
-					if(!reagents.has_reagent(r, S.list_reagents[r]))
-						snack_found = FALSE // уже кто-то пожрал и остались только крошки - пусть пропадает
-						break
-				if(snack_found)
-					for(var/i in S.list_reagents)
-						var/datum/reagent/r = i
-						reagents.remove_reagent(r, S.list_reagents[r])
-					new S.type(get_turf(target))
+			eject_snacks(target = target)
 			reagents.clear_reagents()
 
 /obj/item/reagent_containers/food/snacks/customizable/pet_bowl/attempt_forcefeed(mob/living/M, mob/living/user)
@@ -130,6 +119,33 @@
 	. = ..()
 	if(isemptylist(ingredients))
 		bitecount = 0
+
+/obj/item/reagent_containers/food/snacks/customizable/pet_bowl/On_Consume(mob/living/eater)
+	return
+
+/obj/item/reagent_containers/food/snacks/customizable/pet_bowl/SplashReagents(atom/target, thrown)
+	var/list/I = ingredients.Copy()
+	var/datum/reagents/R = new
+	reagents.copy_to(R, reagents.total_volume)
+	. = ..()
+	if(!reagents?.total_volume)
+		eject_snacks(I, R)
+		qdel(R)
+
+/// иначе еда просто испарится из миски при опрокидывании содержимого
+/obj/item/reagent_containers/food/snacks/customizable/pet_bowl/proc/eject_snacks(list/I = ingredients, datum/reagents/R = reagents, target = src)
+	for(var/obj/item/reagent_containers/food/snacks/S in I)
+		var/snack_found = TRUE
+		for(var/i in S.list_reagents)
+			var/datum/reagent/r = i
+			if(!R.has_reagent(r, S.list_reagents[r]))
+				snack_found = FALSE // уже кто-то пожрал и остались только крошки - пусть пропадает
+				break
+		if(snack_found)
+			for(var/i in S.list_reagents)
+				var/datum/reagent/r = i
+				R.remove_reagent(r, S.list_reagents[r])
+			new S.type(get_turf(target))
 
 /obj/item/reagent_containers/food/snacks/customizable/pet_bowl/proc/empty_bowl()
 	name = initial(name)
@@ -157,6 +173,3 @@
 		var/mutable_appearance/filling = mutable_appearance('modular_bluemoon/icons/obj/food/pet_bowl.dmi', "fullbowl")
 		filling.color = mix_color_from_reagents(reagents.reagent_list)
 		. += filling
-
-/obj/item/reagent_containers/food/snacks/customizable/pet_bowl/On_Consume(mob/living/eater)
-	return
