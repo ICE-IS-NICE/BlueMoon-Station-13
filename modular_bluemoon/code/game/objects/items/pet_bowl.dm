@@ -164,7 +164,8 @@
 	else
 		if(!reagents?.has_reagent(/datum/reagent/consumable/nutriment))
 			cut_overlays()
-			name = "[initial(name)] of [lowertext(reagents.get_master_reagent_name())]"
+			var/datum/reagent/r = reagents.get_master_reagent()
+			name = "[initial(name)] of [replacetext(r.glass_name, "glass of ", "")]"
 	update_icon()
 
 /obj/item/reagent_containers/food/snacks/customizable/pet_bowl/update_overlays()
