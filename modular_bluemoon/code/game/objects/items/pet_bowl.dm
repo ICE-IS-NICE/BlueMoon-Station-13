@@ -118,6 +118,8 @@
 	else
 		consume_sound = 'sound/items/drink.ogg'
 	. = ..()
+	if(isemptylist(ingredients))
+		bitecount = 0
 
 /obj/item/reagent_containers/food/snacks/customizable/pet_bowl/proc/empty_bowl()
 	name = initial(name)
@@ -127,6 +129,7 @@
 	for(var/i in ingredients)
 		qdel(i)
 	ingredients.Cut()
+	bitecount = 0
 
 /obj/item/reagent_containers/food/snacks/customizable/pet_bowl/on_reagent_change(changetype)
 	. = ..()
@@ -135,9 +138,7 @@
 	else
 		if(!reagents?.has_reagent(/datum/reagent/consumable/nutriment))
 			cut_overlays()
-		if(name == initial(name))
-			if(reagents.reagent_list[1].glass_name != "glass of ...what?")
-				name = "[initial(name)] of [reagents.reagent_list[1].name]"
+			name = "[initial(name)] of [lowertext(reagents.get_master_reagent_name())]"
 	update_icon()
 
 /obj/item/reagent_containers/food/snacks/customizable/pet_bowl/update_overlays()
