@@ -5,6 +5,7 @@
 	icon_state = "pet_bowl"
 	// interaction_flags_item = NONE
 	resistance_flags = NONE
+	possible_transfer_amounts = list(5, 10, 15, 20, 25, 30, 40, 50, 80)
 	reagent_flags = OPENCONTAINER
 	spillable = TRUE
 	trash = /obj/item/reagent_containers/food/snacks/customizable/pet_bowl
@@ -29,6 +30,11 @@
 	. = ..()
 	. += span_notice("Поднять миску можно незеленым интентом или перетаскиванием на модельку персонажа.")
 
+/obj/item/reagent_containers/food/snacks/customizable/pet_bowl/equipped(mob/user, slot, initial)
+	. = ..()
+	pixel_x = base_pixel_x
+	pixel_y = base_pixel_y
+
 /obj/item/reagent_containers/food/snacks/customizable/pet_bowl/on_attack_hand(mob/user, act_intent = user.a_intent, unarmed_attack_flags)
 	if(isturf(loc) && iscarbon(user) && act_intent == INTENT_HELP) // временно убираем подбирание на клик
 		interaction_flags_item &= ~INTERACT_ITEM_ATTACK_HAND_PICKUP
@@ -41,11 +47,18 @@
 		var/eater_is_on_table = (locate(/obj/structure/table) in get_turf(C)) ? TRUE : FALSE
 		var/bowl_and_eater_on_same_lvl = bowl_is_on_table == eater_is_on_table
 		var/is_lying = C.lying != 0
-		if((!bowl_is_on_table && eater_is_on_table) || (bowl_and_eater_on_same_lvl != is_lying))
-			to_chat(C, "Тебе нужно быть ближе к миске, чтобы дотяуться до неё ртом.")
+		if((!bowl_is_on_table && eater_is_on_table) || \
+			(bowl_and_eater_on_same_lvl != is_lying) || \
+			(is_lying && \
+				(C.y != y || \
+				(C.x > x && C.lying == 90) || \
+				(C.x < x && C.lying == 270))))
+			to_chat(C, span_danger("Тебе нужно быть лицом ближе к миске, чтобы дотянуться до неё ртом."))
 		else
 			INVOKE_ASYNC(src, PROC_REF(attempt_forcefeed), C, C)
 			user.DelayNextAction(CLICK_CD_MELEE)
+			if(is_lying)
+				C.setDir(NORTH)
 		interaction_flags_item |= INTERACT_ITEM_ATTACK_HAND_PICKUP
 
 /obj/item/reagent_containers/food/snacks/customizable/pet_bowl/MouseDrop(atom/over)
@@ -53,8 +66,6 @@
 	var/mob/living/M = usr
 	if(!istype(M) || M.incapacitated() || !Adjacent(M))
 		return
-	pixel_x = base_pixel_x
-	pixel_y = base_pixel_y
 	if(over == M && loc != M)
 		M.put_in_hands(src)
 	else if(istype(over, /atom/movable/screen/inventory/hand))
