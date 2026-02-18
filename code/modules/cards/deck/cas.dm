@@ -63,7 +63,7 @@
 	if(S)
 		if(S.cardname == "Blank card")
 			S.blank = TRUE
-	update_icon()
+			S.update_icon()
 	return S
 
 /obj/item/toy/cards/deck/cas/attackby(obj/item/I, mob/living/user, params)

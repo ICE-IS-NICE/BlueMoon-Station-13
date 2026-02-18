@@ -40,6 +40,16 @@
 				return TRUE
 	. = ..()
 
+/// Picks what card the user draws from the deck
+/obj/item/toy/cards/proc/pick_card(mob/living/user, list/obj/item/toy/cards/singlecard/cards)
+	// By default just pick the top card
+	return cards[1]
+
+/// Returns the number of cards in the deck.
+/// Must be redefined.
+/obj/item/toy/cards/proc/count_cards()
+	return cards.len
+
 /**
  * Draws a card from the deck or hand of cards.
  *
@@ -49,7 +59,8 @@
  * specific cards out of the cardhand).
  * Arguments:
  * * mob/living/user - The user drawing the card.
- * * obj/item/toy/singlecard/card (optional) - The card drawn from the hand
+ * * obj/item/toy/singlecard/card (optional) - The card drawn from the hand.
+ * * card type - the type of singlecard, that will be created and returned.
 **/
 /obj/item/toy/cards/proc/draw(mob/living/user, card, card_type = /obj/item/toy/cards/singlecard)
 	if(!isliving(user) || !user.canUseTopic(src, TRUE, TRUE, TRUE))
@@ -67,16 +78,6 @@
 	playsound(src, 'sound/items/carddraw.ogg', 50, TRUE)
 	return S
 
-	/// Picks what card the user draws from the deck
-/obj/item/toy/cards/proc/pick_card(mob/living/user, list/obj/item/toy/cards/singlecard/cards)
-	// By default just pick the top card
-	return cards[1]
-
-/// Returns the number of cards in the deck.
-/// Must be redefined.
-/obj/item/toy/cards/proc/count_cards()
-	return cards.len
-
 /**
  * This is used to insert a list of cards into a deck or cardhand
  *
@@ -87,6 +88,7 @@
  *
  * Arguments:
  * * card_item - Either a singlecard or cardhand that gets inserted into the src
+ * * user - user
  */
 /obj/item/toy/cards/proc/insert(obj/item/toy/cards/card_item, mob/living/user)
 	if(isnull(parentdeck))

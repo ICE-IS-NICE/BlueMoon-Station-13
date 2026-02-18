@@ -13,7 +13,7 @@
 		S.name = "[deckstyle] card"
 		if(S.cardname == "Blank card")
 			S.blank = TRUE
-	update_icon()
+		S.update_icon()
 	return S
 
 /obj/item/toy/cards/deck/love_cards/truths
@@ -65,10 +65,6 @@
 		desc = cardname
 
 /obj/item/toy/cards/singlecard/love_card/attackby(obj/item/I, mob/living/user, params)
-	// Disable combining love cards into a hand or merging with other cards
-	// if(istype(I, /obj/item/toy/cards/singlecard) || istype(I, /obj/item/toy/cards/cardhand))
-	// 	to_chat(user, "<span class='warning'>These cards can't be combined into a hand.</span>")
-	// 	return
 	if(istype(I, /obj/item/pen))
 		if(!user.can_write(I))
 			to_chat(user, "<span class='notice'>You scribble illegibly on [src]!</span>")
