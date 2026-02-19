@@ -69,8 +69,11 @@
 		if(dealer_deck.count_cards())
 			user.balloon_alert_to_viewers("deals a card")
 		card = dealer_deck.draw(user)
-	if(card && insert(card, user))
-		user.visible_message("[user] adds a card to [src].")
+	if(card)
+		if(insert(card, user))
+			user.visible_message("[user] adds a card to [src].")
+		else if(!user.is_holding(card))
+			card.forceMove(drop_location())
 	if(istype(I, /obj/item/toy/cards/cardhand))
 		var/obj/item/toy/cards/cardhand/C = I
 		if(C.insert(src, user))

@@ -15,6 +15,7 @@
 	icon = 'icons/obj/toys/toy.dmi'
 	icon_state = "deck_caswhite_full"
 	deckstyle = "caswhite"
+	card_types = null
 	var/card_face = "cas_white"
 	var/blanks = 25
 	var/decksize = 150
