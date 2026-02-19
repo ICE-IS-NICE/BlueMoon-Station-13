@@ -133,7 +133,7 @@
 					return
 			travel_bonfires[src] = bonfire_name
 			playsound(user, 'modular_bluemoon/sound/effects/bonfire_lit.ogg', 100, FALSE)
-			to_chat(user, span_engradio("Отныне костер является точкой перемещения."))
+			balloon_alert_to_viewers(span_engradio("Отныне костер является точкой перемещения."))
 		return
 	/**
 	 * travel_bonfires[объект] = название
