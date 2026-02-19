@@ -91,7 +91,7 @@
  * * user - user
  */
 /obj/item/toy/cards/proc/insert(obj/item/toy/cards/card_item, mob/living/user)
-	if(!user.temporarilyRemoveItemFromInventory(card_item))
+	if(user.is_holding(card_item) && !user.temporarilyRemoveItemFromInventory(card_item))
 		to_chat(user, span_warning("The card is stuck to your hand, you can't add it to the deck!"))
 		return FALSE
 	if(isnull(parentdeck))
