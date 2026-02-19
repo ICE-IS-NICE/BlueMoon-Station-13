@@ -137,7 +137,7 @@
 		var/obj/item/toy/cards/singlecard/card = draw(user)
 		if(!card)
 			return
-		card.throw_at(target, get_dist(user, target), speed = card.throw_speed, thrower = user, spin = TRUE)
+		card.throw_at(target, range = card.throw_range, speed = card.throw_speed, thrower = user, spin = TRUE)
 		user.balloon_alert_to_viewers("throws a card")
 		if(card.throwforce)
 			log_combat(user, target, "threw the harmful playing card", src)

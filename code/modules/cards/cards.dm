@@ -91,13 +91,13 @@
  * * user - user
  */
 /obj/item/toy/cards/proc/insert(obj/item/toy/cards/card_item, mob/living/user)
+	if(!user.temporarilyRemoveItemFromInventory(card_item))
+		to_chat(user, span_warning("The card is stuck to your hand, you can't add it to the deck!"))
+		return FALSE
 	if(isnull(parentdeck))
 		parentdeck = card_item.parentdeck
 	if(parentdeck != card_item.parentdeck)
 		to_chat(user, span_warning("You can't mix cards from other decks!"))
-		return FALSE
-	if(!user.temporarilyRemoveItemFromInventory(card_item))
-		to_chat(user, span_warning("The card is stuck to your hand, you can't add it to the deck!"))
 		return FALSE
 	if(istype(card_item, /obj/item/toy/cards/singlecard))
 		var/obj/item/toy/cards/singlecard/S = card_item
