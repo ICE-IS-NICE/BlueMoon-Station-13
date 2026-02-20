@@ -4,6 +4,7 @@
 	icon = 'icons/obj/toys/toy.dmi'
 	icon_state = "nanotrasen_hand2"
 	w_class = WEIGHT_CLASS_TINY
+	/// is TRUE if you see contents
 	var/cards_flipped = FALSE
 
 /obj/item/toy/cards/cardhand/Initialize(mapload)
@@ -24,6 +25,8 @@
 
 /obj/item/toy/cards/cardhand/examine()
 	. = ..()
+	if(cards_flipped)
+		. += "It contains: <b>[dd_list2text(cards, ", ")]</b>."
 	. += span_notice("Alt-click to flip cards.")
 
 /obj/item/toy/cards/cardhand/attack_self(mob/user)
