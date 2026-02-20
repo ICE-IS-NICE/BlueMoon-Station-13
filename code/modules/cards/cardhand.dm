@@ -26,7 +26,7 @@
 /obj/item/toy/cards/cardhand/examine()
 	. = ..()
 	if(cards_flipped)
-		. += "It contains: <b>[dd_list2text(cards, ", ")]</b>."
+		. += "It contains: <b>[dd_list2text(cards, " | ")]</b>."
 	. += span_notice("Alt-click to flip cards.")
 
 /obj/item/toy/cards/cardhand/attack_self(mob/user)
