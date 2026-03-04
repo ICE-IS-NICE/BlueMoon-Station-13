@@ -28,6 +28,8 @@
 		return
 	if(!isliving(quirk_mob))
 		return
+	if(quirk_mob.stat >= UNCONSCIOUS)
+		return
 	var/list/viewlist = quirk_mob.client ? getviewsize(quirk_mob.client.view) : getviewsize(world.view)
 	var/mob_view_distance =  min(viewlist[1], viewlist[2]) / 2
 	if(!can_see(quirk_mob, user, mob_view_distance))
