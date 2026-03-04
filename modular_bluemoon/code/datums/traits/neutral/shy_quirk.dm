@@ -28,7 +28,10 @@
 		return
 	if(!isliving(quirk_mob))
 		return
-
+	var/list/viewlist = quirk_holder.client? getviewsize(user.client.view) : getviewsize(world.view)
+	var/mob_view_distance =  min(viewlist[1], viewlist[2]) / 2
+	if(!can_see(quirk_mob, user, mob_view_distance))
+		return
 	if(quirk_mob.is_chest_exposed() && quirk_mob.is_groin_exposed())
 		if(quirk_holder.restrained())
 			examine_list += span_lewd("[quirk_holder] заливается красными красками и трясётся!")
