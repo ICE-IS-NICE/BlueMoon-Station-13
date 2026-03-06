@@ -10,12 +10,15 @@
 	set category = "Object"
 	set src in view(0)
 
-	if(!(isliving(usr) || iscyborg(usr) || isanimal(usr)))
+	if(!isliving(usr))
 		return
 	if(item_flags & ABSTRACT)
 		return
 	var/usrinput = stripped_input(usr, "Какое у предмета будет дополнительное описание при осмотре? Cancel - очистить.", "Дополнительное описание", custom_examine_tooltip[1], MAX_NAME_LEN)
 	custom_examine_tooltip[1] = usrinput
+	if(!usrinput)
+		custom_examine_tooltip[2] = TRUE
+		return
 	usrinput = alert(usr, "Оставить описание даже после снятия предмета?", "Постоянное описание", "Да", "Нет")
 	custom_examine_tooltip[2] = (usrinput == "Да") ? FALSE : TRUE
 
