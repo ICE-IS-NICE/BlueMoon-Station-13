@@ -24,7 +24,7 @@
 /obj/item/clothing/get_examine_name(mob/user)
 	. = ..()
 	if(custom_examine_tooltip[1])
-		. += " <span class='chat-tooltip green bold'>\[+\]<span class='chat-tooltip__content'>[custom_examine_tooltip[1]]</span></span>"
+		. = " <span class='chat-tooltip green bold'; style='text-decoration: underline dashed green;'>[.]<span class='chat-tooltip__content'>[custom_examine_tooltip[1]]</span></span>"
 
 /obj/item/clothing/dropped(mob/user)
 	. = ..()
