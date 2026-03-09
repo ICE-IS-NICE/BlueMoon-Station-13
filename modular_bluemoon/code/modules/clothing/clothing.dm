@@ -14,11 +14,11 @@
 		return
 	if(item_flags & ABSTRACT)
 		return
-	var/usrinput = stripped_input(usr, "Какое у предмета будет дополнительное описание при осмотре? Cancel - очистить.", "Дополнительное описание", custom_examine_tooltip[1], MAX_NAME_LEN)
+	var/usrinput = stripped_input(usr, "Это описание предмета будет видно при осмотре персонажа, носящего предмет. Cancel - очистить.", "Дополнительное описание", custom_examine_tooltip[1], MAX_NAME_LEN)
 	custom_examine_tooltip[1] = usrinput
 	if(!usrinput)
 		return
-	usrinput = alert(usr, "Оставить описание даже после снятия предмета?", "Постоянное описание", "Да", "Нет")
+	usrinput = alert(usr, "Оставлять описание даже после снятия предмета с персонажа?", "Постоянное описание", "Да", "Нет")
 	custom_examine_tooltip[2] = (usrinput == "Да") ? FALSE : TRUE
 
 /obj/item/clothing/get_examine_name(mob/user)

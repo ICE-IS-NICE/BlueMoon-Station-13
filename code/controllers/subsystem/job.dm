@@ -812,8 +812,8 @@ SUBSYSTEM_DEF(job)
 			I.name = i[LOADOUT_CUSTOM_NAME]
 		if(i[LOADOUT_CUSTOM_DESCRIPTION])
 			I.desc = i[LOADOUT_CUSTOM_DESCRIPTION]
-			if(isclothing(I))
-				I:custom_examine_tooltip = list(i[LOADOUT_CUSTOM_DESCRIPTION], FALSE)
+		if(isclothing(I) && islist(i["loadout_examtooltip"]))
+			I:custom_examine_tooltip = list(i["loadout_examtooltip"][1], i["loadout_examtooltip"][2])
 		if(i["loadout_custom_tagname"]) //for collars with tagnames
 			var/obj/item/clothing/neck/petcollar/collar = I
 			if(istype(collar))
@@ -944,8 +944,8 @@ SUBSYSTEM_DEF(job)
 			I.name = i[LOADOUT_CUSTOM_NAME]
 		if(i[LOADOUT_CUSTOM_DESCRIPTION])
 			I.desc = i[LOADOUT_CUSTOM_DESCRIPTION]
-			if(isclothing(I))
-				I:custom_examine_tooltip = list(i[LOADOUT_CUSTOM_DESCRIPTION], FALSE)
+		if(isclothing(I) && islist(i["loadout_examtooltip"]))
+			I:custom_examine_tooltip = list(i["loadout_examtooltip"][1], i["loadout_examtooltip"][2])
 		if(i["loadout_custom_tagname"]) //for collars with tagnames
 			var/obj/item/clothing/neck/petcollar/collar = I
 			if(istype(collar))
