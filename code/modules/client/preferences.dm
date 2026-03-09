@@ -6469,7 +6469,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 					user_gear["loadout_custom_tagname"] = new_tagname
 			if(href_list["loadout_examtooltip"])
 				var/defaultinput = (islist(user_gear["loadout_examtooltip"])) ? user_gear["loadout_examtooltip"][1] : null
-				var/examtooltip_usrinput = stripped_input(user, "Это описание предмета будет видно при осмотре персонажа, носящего предмет. Cancel - очистить.", "Дополнительное описание", defaultinput, MAX_NAME_LEN)
+				var/examtooltip_usrinput = stripped_input(user, "Это описание предмета будет видно при осмотре персонажа, носящего предмет. Cancel - очистить.", "Дополнительное описание", defaultinput, MAX_MESSAGE_LEN)
 				if(examtooltip_usrinput)
 					user_gear["loadout_examtooltip"] = list(examtooltip_usrinput, TRUE)
 					examtooltip_usrinput = alert(usr, "Оставлять описание даже после снятия предмета с персонажа?", "Постоянное описание", "Да", "Нет")
