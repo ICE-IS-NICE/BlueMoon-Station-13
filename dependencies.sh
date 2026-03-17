@@ -21,7 +21,8 @@ export SPACEMAN_DMM_VERSION=suite-1.11
 export PYTHON_VERSION=3.11.0
 
 # Auxmos git tag
-export AUXMOS_VERSION=v2.5.1
+# v2.5.6: Sanity check for null air turfs trying to update visuals (fixes illegal operation crash)
+export AUXMOS_VERSION=v2.5.6
 
 # Extools git tag
 export EXTOOLS_VERSION=v0.0.7
