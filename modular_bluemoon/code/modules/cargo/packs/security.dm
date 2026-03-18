@@ -24,7 +24,7 @@
 /datum/supply_pack/security/helmets/special
 	name = "Special Helmet Crate"
 	desc = "Contains three Special Helmet Crate with NVG-device. Requires Security access to open."
-	cost = 24200
+	cost = 4000
 	contains = list(/obj/item/clothing/head/helmet/nvg,
 					/obj/item/clothing/head/helmet/nvg,
 					/obj/item/clothing/head/helmet/nvg,
