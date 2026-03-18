@@ -177,3 +177,7 @@
 /obj/item/broom/liquidator/ComponentInitialize()
 	. = ..()
 	AddComponent(/datum/component/two_handed, force_unwielded=11, force_wielded=22, icon_wielded="rake")
+
+/obj/item/broom/liquidator/update_icon_state()
+	icon_state = "rake"
+	return SEND_SIGNAL(src, COMSIG_ATOM_UPDATE_ICON_STATE)
