@@ -48,25 +48,13 @@ jobs:
       - name: Commit
         if: steps.value_holder.outputs.ACTIONS_ENABLED
         run: |
+          git config --local user.email "action@github.com"
           git config --local user.name "Changelogs"
-          git config --local user.email "actions@github.com"
           git pull origin master
           git add html/changelogs
-          git commit -m "SPLURT automatic changelog compile [ci skip]" -a || true
-
-      - name: Generate App Token
-        id: app-token-generation
-        uses: actions/create-github-app-token@v2
-        if: env.APP_PRIVATE_KEY != '' && env.APP_ID != ''
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-        env:
-          APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
-          APP_ID: ${{ secrets.APP_ID }}
-
+          git commit -m "Automatic changelog compile [ci skip]" -a || true
       - name: "Push"
         if: steps.value_holder.outputs.ACTIONS_ENABLED
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.BUBBERBOT_PAT || secrets.GITHUB_TOKEN}}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
