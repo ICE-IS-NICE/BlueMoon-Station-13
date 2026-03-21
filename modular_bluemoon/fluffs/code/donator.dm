@@ -1073,18 +1073,6 @@
 	ckeywhitelist = list("fedor1545")
 	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
-/datum/gear/donator/bm/razorsong
-	name = "Razorsong Kit"
-	slot = ITEM_SLOT_BACKPACK
-	path = /obj/item/modkit/razorsong_kit
-	ckeywhitelist = list("xaeshkavd")
-
-/datum/gear/donator/bm/noxscoutcoat
-	name = "Military-Civilian Scout Coat"
-	slot = ITEM_SLOT_BACKPACK
-	path = /obj/item/clothing/suit/donator/bm/noxscoutcoat
-	ckeywhitelist = list("xaeshkavd")
-
 /datum/gear/donator/bm/rsh_future
 	name = "Special .38 Mars Kit"
 	slot = ITEM_SLOT_BACKPACK
@@ -1116,10 +1104,16 @@
 	slot = ITEM_SLOT_BACKPACK
 	ckeywhitelist = list("xaeshkavd")
 
-/datum/gear/donator/bm/marisa_hat
-	name = "Witch Hat"
-	path = /obj/item/clothing/head/wizard/marisa/fake
-	slot = ITEM_SLOT_HEAD
+/datum/gear/donator/bm/razorsong
+	name = "Razorsong Kit"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/modkit/razorsong_kit
+	ckeywhitelist = list("xaeshkavd")
+
+/datum/gear/donator/bm/noxscoutcoat
+	name = "Military-Civilian Scout Coat"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/clothing/suit/donator/bm/noxscoutcoat
 	ckeywhitelist = list("xaeshkavd")
 
 /datum/gear/donator/bm/agentcape
