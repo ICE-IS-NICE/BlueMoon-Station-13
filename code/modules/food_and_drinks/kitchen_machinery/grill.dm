@@ -1,5 +1,5 @@
 /obj/machinery/grill
-	name = "grill"
+	name = "grillasdsad"
 	desc = "Just like the old days."
 	icon = 'icons/obj/machines/kitchen.dmi'
 	icon_state = "grill_open"
