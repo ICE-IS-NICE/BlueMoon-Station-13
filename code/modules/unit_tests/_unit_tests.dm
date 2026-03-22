@@ -95,6 +95,8 @@
 // #include "hydroponics_harvest.dm"
 // #include "keybinding_init.dm"
 // #include "language_transfer.dm"
+#include "lighting.dm"
+#include "lighting_performance.dm"
 #include "machine_disassembly.dm"
 #include "mapload_space_verification.dm"	// BLUEMOON EDIT: Invalid Space Turfs
 #include "mapping.dm"						// BLUEMOON EDIT: Invalid Space Turfs
@@ -102,6 +104,7 @@
 #include "merge_type.dm"
 // #include "metabolizing.dm"
 #include "modular_map_loader.dm" //SPLURT EDIT
+#include "nightshift.dm"
 // #include "ntnetwork_tests.dm"
 // #include "outfit_sanity.dm"
 // #include "pills.dm"
