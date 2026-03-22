@@ -143,8 +143,7 @@ GLOBAL_LIST_INIT(freqtospan, list(
 /atom/movable/proc/say_emphasis(input)
 	if(length_char(input) > MAX_SAY_EMPHASIS_LEN)
 		input = copytext_char(input, 1, MAX_SAY_EMPHASIS_LEN + 1)
-	// Skip regex for long messages - Replace_char can crash (illegal operation) on complex input
-	if(length_char(input) > 1024)
+	if(length_char(input) > 256)
 		return input
 	ENCODE_HTML_EMPHASIS(input, "\\|", "i", italics)
 	ENCODE_HTML_EMPHASIS(input, "\\+", "b", bold)
