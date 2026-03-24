@@ -1,6 +1,0 @@
-author: ICE-IS-NICE
-delete-after: true
-changes:
-  - bugfix: Застрявшие в стиралке не могут использовать Pixel Shift.
-  - code_imp: Хоткеи по умолчанию для Pixel Shift и Tilt изменены для устранения конфликта
-      с Resist.

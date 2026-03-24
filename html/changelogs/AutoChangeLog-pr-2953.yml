@@ -1,6 +1,0 @@
-author: Skilets
-delete-after: true
-changes:
-  - rscadd: Новые/цвета/чая
-  - rscadd: Новые/иконки/чая/покеболы
-  - bugfix: Удаление/лишних/Dmi/В/Code
