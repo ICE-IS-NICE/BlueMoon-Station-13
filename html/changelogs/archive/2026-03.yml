@@ -20,3 +20,6 @@
   - rscadd: Добавлена плюшка Vinc, Wolf, Ezuar
   Pe4henika:
   - rscadd: BOOT Menu для ИИ при первом запуске.
+2026-03-27:
+  ICE-IS-NICE:
+  - bugfix: Снятая плитка фейковых чазмов теперь не исчезает.
