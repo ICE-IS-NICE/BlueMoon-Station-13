@@ -41,3 +41,8 @@
   - qol: Оба Narrate получили облачко текста над персонажем.
   Lev1932:
   - bugfix: перенёс заказ столовых приборов и точильного камня из контрабанды
+  iamasay:
+  - bugfix: пофиксил игрушку из лодаута Hyper-Euclidean Reciprocating Trigonometrc
+      Zweihander(урезал силу блокирования урона)
+  - bugfix: Hyper-Euclidean Reciprocating Trigonometrc Zweihander(игрушка) больше
+      не отражает лазеры
