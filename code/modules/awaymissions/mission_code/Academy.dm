@@ -175,7 +175,7 @@
 	. = ..()
 	GLOB.poi_list |= src
 
-/obj/item/toy/eightball/haunted/Destroy()
+/obj/item/dice/d20/fate/Destroy()
 	GLOB.poi_list -= src
 	. = ..()
 
