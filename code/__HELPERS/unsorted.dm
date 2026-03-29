@@ -872,7 +872,7 @@ B --><-- A
 		return
 
 	if(!x_dimension || !y_dimension)
-		return
+		return I
 
 	if((x_dimension == world.icon_size) && (y_dimension == world.icon_size))
 		return I
