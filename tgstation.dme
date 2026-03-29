@@ -5278,6 +5278,7 @@
 #include "modular_sand\code\modules\mining\machine_bluespaceminer\_bsm_instability.dm"
 #include "modular_sand\code\modules\mining\machine_bluespaceminer\low_threat.dm"
 #include "modular_sand\code\modules\mining\machine_bluespaceminer\medium_threat.dm"
+#include "modular_sand\code\modules\mining\machine_bluespaceminer\meteor_bsm_tunguska.dm"
 #include "modular_sand\code\modules\mining\machine_bluespaceminer\high_threat.dm"
 #include "modular_sand\code\modules\mining\machine_bluespaceminer\machine_bluespaceminer.dm"
 #include "modular_sand\code\modules\mining\machine_vending.dm"
