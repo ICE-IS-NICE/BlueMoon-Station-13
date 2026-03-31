@@ -1,0 +1,7 @@
+author: Herobrine998
+delete-after: true
+changes:
+  - balance: В меню Orbit, в динамик, теперь госты не видят скрытых антагонистов
+  - balance: Кнопка Do Not Resuscitate теперь не запрещает респавн
+  - rscdel: Кнопка Game info удалена, ввиду ограничений и наличия меню Orbit
+  - bugfix: Фикс рантайма при выдаче антагониста
