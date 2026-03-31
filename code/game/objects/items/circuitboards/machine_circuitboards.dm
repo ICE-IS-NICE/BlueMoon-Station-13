@@ -604,7 +604,7 @@
 	build_path = /obj/machinery/rnd/production/techfab/department
 
 /obj/item/circuitboard/machine/vendor
-	name = "Custom Vendor (Machine Board)"
+	name = "Custom Vendor (Machine Board)!!"
 	desc = "You can turn the \"brand selection\" dial using a screwdriver."
 	custom_premium_price = PAYCHECK_ASSISTANT * 1.5
 	build_path = /obj/machinery/vending/custom
