@@ -46,6 +46,12 @@ jobs:
           fetch-depth: 25
           persist-credentials: false
 
+      - name: "Sync with latest master"
+        if: steps.value_holder.outputs.ACTIONS_ENABLED
+        run: |
+          git fetch origin master
+          git reset --hard origin/master
+
       - name: "Compile"
         if: steps.value_holder.outputs.ACTIONS_ENABLED
         run: |
@@ -56,9 +62,9 @@ jobs:
         run: |
           git config --local user.name "tgstation-ci[bot]"
           git config --local user.email "179393467+tgstation-ci[bot]@users.noreply.github.com"
-          git pull origin master
           git add html/changelogs
           git commit -m "Automatic changelog compile [ci skip]" -a || true
+
       - name: "Push"
         if: steps.value_holder.outputs.ACTIONS_ENABLED
         uses: ad-m/github-push-action@master
