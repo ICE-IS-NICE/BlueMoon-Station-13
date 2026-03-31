@@ -7,6 +7,10 @@ on:
       - completed
   workflow_dispatch:
 
+concurrency:
+  group: compile_changelogs
+  cancel-in-progress: false
+
 jobs:
   compile:
     name: "Compile changelogs"
