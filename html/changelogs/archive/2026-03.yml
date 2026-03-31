@@ -71,3 +71,10 @@
       md5, icon() конструктор, getFlatIcon)
   - bugfix: Исправлен баг в icon2base64html - icon2base64() вызывался дважды для oversized
       иконок
+  Herobrine998:
+  - balance: В меню Orbit, в динамик, теперь госты не видят скрытых антагонистов
+  - balance: Кнопка Do Not Resuscitate теперь не запрещает респавн
+  - rscdel: Кнопка Game info удалена, ввиду ограничений и наличия меню Orbit
+  - bugfix: Фикс рантайма при выдаче антагониста
+  ICE-IS-NICE:
+  - qol: LOOC получил рунчат.
