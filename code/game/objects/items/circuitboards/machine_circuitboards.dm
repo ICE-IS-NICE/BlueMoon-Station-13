@@ -600,7 +600,7 @@
 		/obj/item/reagent_containers/glass/beaker = 2)
 
 /obj/item/circuitboard/machine/techfab/department
-	name = "\improper Departmental Techfab (Machine Board)!!!"
+	name = "\improper Departmental Techfab (Machine Board)!!!!!!"
 	build_path = /obj/machinery/rnd/production/techfab/department
 
 /obj/item/circuitboard/machine/vendor
