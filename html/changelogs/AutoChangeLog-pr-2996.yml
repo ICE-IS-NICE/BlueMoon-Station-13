@@ -1,0 +1,4 @@
+author: Pingvas
+delete-after: true
+changes:
+  - bugfix: Лодаутные рюкзаки теперь не удаляют вещи внутри себя.
