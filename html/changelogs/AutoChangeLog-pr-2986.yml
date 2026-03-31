@@ -1,8 +1,0 @@
-author: DuLL-FoX
-delete-after: true
-changes:
-  - code_imp: Добавлено кэширование в icon2html, generate_asset_name, icon2base64html
-      и costly_icon2html - повторные вызовы теперь пропускают дорогие операции (fcopy_rsc,
-      md5, icon() конструктор, getFlatIcon)
-  - bugfix: Исправлен баг в icon2base64html - icon2base64() вызывался дважды для oversized
-      иконок
