@@ -6,6 +6,9 @@
   - code_imp: Storage wipe_ui_objects убирает из client.screen перед qdel
   - code_imp: Пулинг storage screens освобождает hud-ссылку
   - code_imp: QDEL_NULL(modeswitch_action) в storage/Destroy
+  Lev1932:
+  - rscadd: Личный ножик
+  - bugfix: фиксы и доработка Nebular-T и Stun-Katana
   Pingvas:
   - rscadd: Лидерборд для тетриса.
   Silver-Paws:
