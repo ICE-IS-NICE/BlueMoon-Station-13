@@ -1,0 +1,9 @@
+author: DuLL-FoX
+delete-after: true
+changes:
+  - bugfix: В теории исправлены утечки памяти screen-объектов (алерты, UI хранилища),
+      вызывавшие лаги из-за дорогих hard-delete
+  - code_imp: Alert таймеры теперь TIMER_STOPPABLE с отменой в Destroy
+  - code_imp: Storage wipe_ui_objects убирает из client.screen перед qdel
+  - code_imp: Пулинг storage screens освобождает hud-ссылку
+  - code_imp: QDEL_NULL(modeswitch_action) в storage/Destroy
