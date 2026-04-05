@@ -23,3 +23,5 @@
 2026-04-05:
   ICE-IS-NICE:
   - rscadd: Осмотр гениталий показывает предметы, находящиеся внутри и видные снаружи.
+  Pingvas:
+  - refactor: refactored Spawn menu
