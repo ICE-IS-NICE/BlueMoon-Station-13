@@ -536,7 +536,7 @@ export const StripMenu = (props, context) => {
                     tooltip = item.name;
                     if(item.interactable) {
                       interactable = item.interactable;
-                      tooltip = `${tooltip} (ITEMS INTERACTIONS)`;
+                      tooltip = `${tooltip} (CAN USE ITEMS ON IT)`;
                     }
                   } else if ("obscured" in item) {
                     content = (
