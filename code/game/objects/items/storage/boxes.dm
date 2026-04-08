@@ -224,7 +224,7 @@
 	..() // we want the regular stuff too
 	new /obj/item/crowbar/power(src)
 	new /obj/item/melee/classic_baton/telescopic/centcom(src)
-	new /obj/item/radio/off(src)
+	new /obj/item/inducer/syndicate(src)
 	new /obj/item/extinguisher/mini(src)
 	new /obj/item/flashlight/flare(src)
 	new /obj/item/hypospray/mkii/CMO/combat/synthflesh(src)
