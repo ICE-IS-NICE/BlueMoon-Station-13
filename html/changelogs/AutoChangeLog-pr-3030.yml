@@ -1,0 +1,10 @@
+author: DuLL-FoX
+delete-after: true
+changes:
+  - bugfix: Исправлена утечка ссылок screen-объектов в moused_over_objects клиентов
+  - bugfix: Исправлена утечка ссылок атомов в GLOB.lighting_deferred_atoms
+  - bugfix: Исправлена утечка ссылок через фильтры и callback таймеров
+  - code_imp: Убрана дублирующая очистка в Destroy() алертов, тестируется переход
+      на soft GC
+  - code_imp: disposalholder тестируется переход на soft GC (QDEL_HINT_QUEUE)
+  - code_imp: Синхронная очистка callback ссылок в timedevent/Destroy
