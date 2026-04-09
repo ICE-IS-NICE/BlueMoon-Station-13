@@ -1,0 +1,6 @@
+author: Pingvas
+delete-after: true
+changes:
+  - rscdel: Настройка тегов в библиотеке пресонажей. Остались только Erp, Gender,
+      Non-con и Vore.
+  - qol: Авто-детект гениталий, выставление пола.
