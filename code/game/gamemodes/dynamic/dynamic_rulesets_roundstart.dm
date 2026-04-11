@@ -1053,7 +1053,7 @@ BLUEMOON REMOVAL END*/
 	weight = 3
 	cost = 20
 	requirements = list(101,101,101,101,101,101,60,40,30,10)
-	required_round_type = list(ROUNDTYPE_DYNAMIC_TEAMBASED, ROUNDTYPE_DYNAMIC_HARD)
+	required_round_type = list(ROUNDTYPE_DYNAMIC_TEAMBASED, ROUNDTYPE_DYNAMIC_HARD, ROUNDTYPE_DYNAMIC_MEDIUM)
 	flags = HIGH_IMPACT_RULESET
 
 /datum/dynamic_ruleset/roundstart/malf/pre_execute(population)
