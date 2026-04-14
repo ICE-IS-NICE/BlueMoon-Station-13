@@ -1,0 +1,5 @@
+author: Herobrine998
+delete-after: true
+changes:
+  - balance: Посохом хила теперь нельзя стрелять в себя
+  - balance: На спелл клувнефикации добавлена проверка антимагии
