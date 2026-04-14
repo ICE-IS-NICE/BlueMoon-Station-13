@@ -150,10 +150,6 @@
 	cut_overlays()
 	. = ..()
 	if(dropped) //certain overlays only appear when the limb is being detached from its owner.
-		if(owner && ishuman(owner))
-			var/mob/living/carbon/human/H = owner
-			if(H.dna?.species)
-				. += H.dna.species.get_severed_head_mutant_overlays(H)
 
 		if(!is_robotic_limb(FALSE)) //having a robotic head hides certain features.
 			//facial hair

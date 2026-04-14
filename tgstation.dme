@@ -3120,7 +3120,6 @@
 #include "code\modules\mob\living\carbon\human\physiology.dm"
 #include "code\modules\mob\living\carbon\human\say.dm"
 #include "code\modules\mob\living\carbon\human\species.dm"
-#include "code\modules\mob\living\carbon\human\species_mutant_overlay_map.dm"
 #include "code\modules\mob\living\carbon\human\status_procs.dm"
 #include "code\modules\mob\living\carbon\human\typing_indicator.dm"
 #include "code\modules\mob\living\carbon\human\innate_abilities\blobform.dm"
