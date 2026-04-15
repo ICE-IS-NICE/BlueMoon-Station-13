@@ -1,0 +1,13 @@
+author: DuLL-FoX
+delete-after: true
+changes:
+  - bugfix: 'починена поломка освещения после Build Mode, Repair: Reload Block'
+  - bugfix: force-qdel плитки больше не оставляет соседей с мёртвой атмос-adjacency
+      (чинит периодический пустой uncaught runtime error в CI и потенциальные атмос-баги
+      в маппер-тулзах)
+  - admin: repair reload теперь выполняется последовательно, без гонки между delete,
+      load, init и relight
+  - code_imp: пересборка освещения в repair reload переразрешает турфы через locate()
+      после InitializeAtoms, чтобы не работать по gc-шнутым ссылкам
+  - code_imp: добавлены регрессионные тесты на порядок фаз, восстановление света и
+      безопасность force-destroy
