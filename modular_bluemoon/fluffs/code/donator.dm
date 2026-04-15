@@ -624,7 +624,7 @@
 	name = "Shotgun into Mossberg-590A Kit"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/modkit/mossberg_kit
-	ckeywhitelist = list("shizalrp", "krasler101")
+	ckeywhitelist = list("shizalrp", "krasler101", "kingdeaths")
 
 /datum/gear/donator/bm/g36_kit
 	name = "AK-12 into G36 Kit"
