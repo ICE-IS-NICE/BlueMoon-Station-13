@@ -27,6 +27,13 @@ GLOBAL_LIST_EMPTY(ashwalker_spawns)
 /datum/antagonist/ghost_role/get_team()
 	return ghost_team
 
+/datum/antagonist/ghost_role/is_banned(mob/M)
+	if(!M)
+		return FALSE
+	if(QDELETED(M))
+		return TRUE
+	return job_rank && jobban_isbanned(M, job_rank)
+
 //Objects that spawn ghosts in as a certain role when they click on it, i.e. away mission bartenders.
 #define spawnOverride TRUE
 //Preserved terrarium/seed vault: Spawns in seed vault structures in lavaland. Ghosts become plantpeople and are advised to begin growing plants in the room near them.
