@@ -53,7 +53,6 @@
 
 /obj/effect/mob_spawn/human/ash_walkers_slave/special_post_appearance(mob/living/new_spawn)
 	. = ..()
-	new_spawn.grant_language(/datum/language/draconic, source = LANGUAGE_MIND)
 	if(!HAS_TRAIT(new_spawn, TRAIT_ROBOTIC_ORGANISM))
 		var/obj/item/organ/lungs/ashwalker/lungs = new /obj/item/organ/lungs/ashwalker()
 		lungs.Insert(new_spawn, drop_if_replaced = FALSE)
@@ -63,6 +62,12 @@
 		if(!new_spawn.put_in_hands(new /obj/item/device/cooler/lavaland/charged(new_spawn)))
 			to_chat(new_spawn, span_reallybig("Не забудьте забрать охладитель под собой.")) // чтобы не упустили из виду при резком спавне
 		new_spawn.put_in_hands(new /obj/item/stock_parts/cell/bluespace(new_spawn))
+
+/obj/effect/mob_spawn/human/ash_walkers_slave/special(mob/living/carbon/human/spawned_mob, datum/team/ghost_role/ghostovich)
+	. = ..()
+	spawned_mob.remove_all_languages()
+	spawned_mob.grant_language(/datum/language/draconic, ALL, LANGUAGE_ATOM)
+	spawned_mob.set_active_language(/datum/language/draconic)
 
 //Portable dangerous-environment sleepers: Spawns in exposed to ash storms shelter.
 //Characters in this role could have been conscious for a long time, surviving on the planet. They may also know Draconic language by contacting with ashwalkers.
