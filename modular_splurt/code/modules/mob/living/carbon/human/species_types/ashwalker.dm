@@ -12,6 +12,12 @@
 	burnmod = 0.95
 	brutemod = 0.95
 
+/datum/species/lizard/ashwalker/western/on_species_gain(mob/living/carbon/human/C, datum/species/old_species)
+	C.gender = FEMALE
+	if(C.dna?.features)
+		C.dna.features["body_model"] = FEMALE
+	return ..()
+
 /datum/species/lizard/ashwalker/eastern/check_roundstart_eligible()
 	return FALSE
 
