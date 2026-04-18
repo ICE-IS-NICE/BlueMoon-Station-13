@@ -11,3 +11,15 @@
 	inherent_traits = list()
 	burnmod = 0.95
 	brutemod = 0.95
+
+/datum/species/lizard/ashwalker/eastern/check_roundstart_eligible()
+	return FALSE
+
+/datum/species/lizard/ashwalker/eastern/qualifies_for_rank(rank, list/features)
+	return FALSE
+
+/datum/species/lizard/ashwalker/western/check_roundstart_eligible()
+	return FALSE
+
+/datum/species/lizard/ashwalker/western/qualifies_for_rank(rank, list/features)
+	return FALSE
