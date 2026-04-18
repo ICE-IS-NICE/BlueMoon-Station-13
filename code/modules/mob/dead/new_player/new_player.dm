@@ -270,7 +270,7 @@
 		if(!length(spawner_list))
 			return
 		var/obj/effect/mob_spawn/MS = pick(spawner_list)
-		if(!MS)
+		if(!MS || !istype(MS, /obj/effect/mob_spawn))
 			return
 		if(MS.attack_ghost(src, latejoinercalling = TRUE))
 			SSticker.queued_players -= src
