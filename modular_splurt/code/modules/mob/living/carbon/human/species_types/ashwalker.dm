@@ -18,14 +18,15 @@
 		C.dna.features["body_model"] = FEMALE
 	return ..()
 
+/// Selectable in character prefs (generate_selectable_species); station jobs blocked via qualifies_for_rank.
 /datum/species/lizard/ashwalker/eastern/check_roundstart_eligible()
-	return FALSE
+	return TRUE
 
 /datum/species/lizard/ashwalker/eastern/qualifies_for_rank(rank, list/features)
 	return FALSE
 
 /datum/species/lizard/ashwalker/western/check_roundstart_eligible()
-	return FALSE
+	return TRUE
 
 /datum/species/lizard/ashwalker/western/qualifies_for_rank(rank, list/features)
 	return FALSE
