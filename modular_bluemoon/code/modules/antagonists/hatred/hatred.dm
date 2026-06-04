@@ -23,6 +23,7 @@
  * Do not forget to prepare your spells
  * hazard immune high gear
  * что-то выбивающее для пистолетов
+ * жига?
  *
  *
  * 		DONE
@@ -759,7 +760,7 @@
 		if("Pistols")
 			suit_store = /obj/item/storage/belt/holster/hatred
 			ADD_TRAIT(H, TRAIT_DOUBLE_TAP, "hatred")
-	if(Ha.gear_level == 2)
+	if(Ha.gear_level >= 2)
 		belt = /obj/item/storage/belt/military/assault/hatred
 		Ha.chosen_high_gear = tgui_input_list(H, "Выбери дополнительную экипировку и сделай это БЫСТРО!", "Выбери оружие геноцида", Ha.high_gear, Ha.high_gear[1], 10 SECONDS)
 		if(!Ha.chosen_high_gear)
