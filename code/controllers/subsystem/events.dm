@@ -59,7 +59,7 @@ SUBSYSTEM_DEF(events)
 	if(!CONFIG_GET(flag/allow_random_events))
 		return
 
-	var/gamemode = SSticker.mode.config_tag
+	var/gamemode = SSticker.mode.name
 	var/players_amt = get_active_player_count(alive_check = TRUE, afk_check = TRUE, human_check = TRUE)
 	// Only alive, non-AFK human players count towards this.
 
@@ -75,7 +75,12 @@ SUBSYSTEM_DEF(events)
 			if(res == EVENT_CANT_RUN)
 				return
 		else
-			event_roster[event_to_check] = event_to_check.weight
+			var/rolled_weight = event_to_check.weight
+			if(emergency_shuttle_in_transit())
+				var/mult = shuttle_transit_random_event_weight_mult(event_to_check)
+				if(mult < 1)
+					rolled_weight = max(1, round(rolled_weight * mult))
+			event_roster[event_to_check] = rolled_weight
 
 	var/datum/round_event_control/event_to_run = pickweight(event_roster)
 	if(event_to_run)

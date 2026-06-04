@@ -29,13 +29,15 @@
 	icon_state = "watermelon"
 	slice_path = /obj/item/reagent_containers/food/snacks/watermelonslice
 	slices_num = 5
-	dried_type = null
 	w_class = WEIGHT_CLASS_NORMAL
 	filling_color = "#008000"
 	bitesize_mod = 3
 	foodtype = FRUIT
 	juice_results = list(/datum/reagent/consumable/watermelonjuice = 0)
 	wine_power = 40
+
+/obj/item/reagent_containers/food/snacks/grown/watermelon/make_dryable()
+	return
 
 // Holymelon
 /obj/item/seeds/watermelon/holy
@@ -56,9 +58,11 @@
 	desc = "The water within this melon has been blessed by some deity that's particularly fond of watermelon."
 	icon_state = "holymelon"
 	filling_color = "#FFD700"
-	dried_type = null
 	wine_power = 70 //Water to wine, baby.
 	wine_flavor = "divinity"
+
+/obj/item/reagent_containers/food/snacks/grown/holymelon/make_dryable()
+	return
 
 /obj/item/reagent_containers/food/snacks/grown/holymelon/examine(user)
 	. = ..()
@@ -69,9 +73,8 @@
 	var/uses = 1
 	var/const/charges_expire_time = 2 MINUTES
 	if(seed)
-		uses = round(seed.potency / 20)
-	if(uses)
-		AddComponent(/datum/component/anti_magic, TRUE, TRUE, FALSE, ITEM_SLOT_HANDS, uses, TRUE, CALLBACK(src, PROC_REF(block_magic)), CALLBACK(src, PROC_REF(expire)), charges_expire_time, CALLBACK(src, PROC_REF(on_charges_change))) //deliver us from evil o melon god
+		uses = max(1, ceil(seed.potency / 20))
+	AddComponent(/datum/component/anti_magic, TRUE, TRUE, FALSE, ITEM_SLOT_HANDS, uses, TRUE, CALLBACK(src, PROC_REF(block_magic)), CALLBACK(src, PROC_REF(expire)), charges_expire_time, CALLBACK(src, PROC_REF(on_charges_change))) //deliver us from evil o melon god
 	icon_state = icon_state + "-[clamp(uses, 1, 5)]"
 
 /obj/item/reagent_containers/food/snacks/grown/holymelon/proc/block_magic(mob/user, major)
@@ -118,13 +121,15 @@
 	icon_state = "melon-1"
 	slice_path = /obj/item/reagent_containers/food/snacks/melonslice
 	slices_num = 5
-	dried_type = null
 	w_class = WEIGHT_CLASS_NORMAL
 	filling_color = "#FFCC00"
 	bitesize_mod = 3
 	foodtype = FRUIT
 	juice_results = list(/datum/reagent/consumable/melonjuice = 0)
 	wine_power = 40
+
+/obj/item/reagent_containers/food/snacks/grown/melon/make_dryable()
+	return
 
 /obj/item/reagent_containers/food/snacks/grown/melon/Initialize(mapload, obj/item/seeds/new_seed)
 	. = ..()

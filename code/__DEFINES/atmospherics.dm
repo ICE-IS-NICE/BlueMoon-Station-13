@@ -94,6 +94,10 @@
 #define BODYTEMP_HEAT_DAMAGE_LIMIT			(BODYTEMP_NORMAL + 20) // The limit the human body can take before it starts taking damage from heat. //CITADEL EDIT to 20
 #define BODYTEMP_COLD_DAMAGE_LIMIT			(BODYTEMP_NORMAL - 50) // The limit the human body can take before it starts taking damage from coldness.
 
+/// Passive heat exchange / temp HUD: standing under freezing spray behaves like icy water, not like the hallway's air temperature.
+#define SHOWER_FREEZING_LOCAL_TEMP (T0C - 10)
+/// Passive heat exchange / temp HUD under a boiling-water shower (steam dominates over cool air).
+#define SHOWER_BOILING_LOCAL_TEMP (T0C + 55)
 
 #define SPACE_HELM_MIN_TEMP_PROTECT			2.0		//what min_cold_protection_temperature is set to for space-helmet quality headwear. MUST NOT BE 0.
 #define SPACE_HELM_MAX_TEMP_PROTECT			1500	//Thermal insulation works both ways /Malkevin
@@ -291,7 +295,7 @@ GLOBAL_LIST_INIT(atmos_adjacent_savings, list(0,0))
 #define PIPING_LAYER_DEFAULT 2
 #define PIPING_LAYER_P_X 5
 #define PIPING_LAYER_P_Y 5
-#define PIPING_LAYER_LCHANGE 0.05
+#define PIPING_LAYER_LCHANGE 0.005
 
 #define PIPING_ALL_LAYER				(1<<0)	//intended to connect with all layers, check for all instead of just one.
 #define PIPING_ONE_PER_TURF				(1<<1) 	//can only be built if nothing else with this flag is on the tile already.

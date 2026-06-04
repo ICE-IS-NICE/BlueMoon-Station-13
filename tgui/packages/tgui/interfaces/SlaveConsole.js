@@ -1,9 +1,10 @@
 import { map, sortBy } from 'common/collections';
 import { flow } from 'common/fp';
 import { vecLength, vecSubtract } from 'common/vector';
+import { Fragment } from 'inferno';
 
 import { useBackend, useSharedState } from '../backend';
-import { Box, Button, Flex, Fragment, Icon, LabeledList, NoticeBox, Section, Tabs } from '../components';
+import { Box, Button, Flex, Icon, LabeledList, NoticeBox, Section, Tabs } from '../components';
 import { formatMoney } from '../format';
 import { Window } from '../layouts';
 import { GenericUplink } from './Uplink';
@@ -245,7 +246,7 @@ const SupplyPanel = (props, context) => {
 const RansomPanel = (props, context) => {
   const { data } = useBackend(context);
   const value_table = props.value_table || {};
-  const ransom_multiplayer = props.ransom_multiplayer || 1
+  const ransom_multiplayer = props.ransom_multiplayer || 1;
 
   const value_table_converted = Object.entries(value_table).map(
     ([rank, cfg]) => ({

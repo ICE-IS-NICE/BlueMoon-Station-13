@@ -235,7 +235,7 @@
 		return
 	if(!M.IsVocal())
 		return
-	if(language == /datum/language/signlanguage)
+	if(language && initial(language.visual_language))
 		return
 
 	if(use_command)
@@ -300,17 +300,18 @@
 
 	// Non-subspace radios will check in a couple of seconds, and if the signal
 	// was never received, send a mundane broadcast (no headsets).
-	addtimer(CALLBACK(src, PROC_REF(backup_transmission), signal), 20)
+	if(!QDELETED(src))
+		addtimer(CALLBACK(src, PROC_REF(backup_transmission), signal), 20)
 
 /obj/item/radio/proc/backup_transmission(datum/signal/subspace/vocal/signal)
 	var/turf/T = get_turf(src)
-	if (signal.data["done"] && (T.z in signal.levels))
+	if (signal.data["done"] && T && (T.z in signal.levels))
 		return
 
 	// Okay, the signal was never processed, send a mundane broadcast.
 	signal.data["compression"] = 0
 	signal.transmission_method = TRANSMISSION_RADIO
-	signal.levels = list(T.z)
+	signal.levels = T ? list(T.z) : list(0)
 	signal.broadcast()
 
 /obj/item/radio/Hear(message, atom/movable/speaker, message_language, raw_message, radio_freq, list/spans, message_mode, atom/movable/source)
@@ -359,10 +360,9 @@
 
 /obj/item/radio/examine(mob/user)
 	. = ..()
-	if (unscrewed)
-		. += "<span class='notice'>It can be attached and modified.</span>"
-	else
-		. += "<span class='notice'>It cannot be modified or attached.</span>"
+	. += span_notice("[unscrewed ? "" : "Не "]может быть модифицировано или подключено.")
+	. += span_info("<b>Alt-click</b> для [broadcasting ? "выключения" : "включения"] микрофона.")
+	. += span_info("<b>Crtk-click</b> для [listening ? "выключения" : "включения"] динамика.")
 
 /obj/item/radio/update_overlays()
 	. = ..()
@@ -383,6 +383,20 @@
 			to_chat(user, "<span class='notice'>The radio can no longer be modified or attached!</span>")
 	else
 		return ..()
+
+/obj/item/radio/AltClick(mob/user)
+	. = ..()
+	if(!user.canUseTopic(src, TRUE, TRUE, FALSE, TRUE))
+		return
+	broadcasting = !broadcasting
+	user.balloon_alert(user, "Микрофон [broadcasting ? "включен" : "выключен"]")
+
+/obj/item/radio/CtrlClick(mob/user)
+	. = ..()
+	if(!user.canUseTopic(src, TRUE, TRUE, FALSE, TRUE))
+		return
+	listening = !listening
+	user.balloon_alert(user, "Динамик [listening ? "включен" : "выключен"]")
 
 /obj/item/radio/emp_act(severity)
 	. = ..()

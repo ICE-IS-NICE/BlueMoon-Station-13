@@ -72,9 +72,6 @@
 	if(!skip_answer_check && threat_msg?.answered == 1)
 		return
 
-	var/list/candidates = pollGhostCandidates("Вы желаете стать пиратом?", ROLE_TRAITOR)
-	shuffle_inplace(candidates)
-
 	var/datum/map_template/shuttle/pirate/ship = new ship_template
 	var/x = rand(TRANSITIONEDGE, world.maxx - TRANSITIONEDGE - ship.width)
 	var/y = rand(TRANSITIONEDGE, world.maxy - TRANSITIONEDGE - ship.height)
@@ -86,15 +83,20 @@
 	if(!ship.load(T))
 		CRASH("Loading pirate ship failed!")
 
+	var/list/spawners_list = list()
 	for(var/turf/A in ship.get_affected_turfs(T))
 		for(var/obj/effect/mob_spawn/human/pirate/spawner in A)
-			if(candidates.len > 0)
-				var/mob/our_candidate = candidates[1]
-				spawner.create(our_candidate.ckey)
-				candidates -= our_candidate
-				notify_ghosts("The pirate ship has an object of interest: [our_candidate]!", source=our_candidate, action=NOTIFY_ORBIT, header="Something's Interesting!")
-			else
-				notify_ghosts("The pirate ship has an object of interest: [spawner]!", source=spawner, action=NOTIFY_ORBIT, header="Something's Interesting!")
+			spawners_list += spawner
+
+	var/list/candidates = pollGhostCandidates("Вы желаете стать пиратом?", ROLE_TRAITOR, minimum_required = spawners_list.len)
+
+	for(var/obj/effect/mob_spawn/human/spawner in spawners_list)
+		if(LAZYLEN(candidates))
+			var/mob/our_candidate = pick_n_take(candidates)
+			spawner.create(our_candidate.ckey)
+			notify_ghosts("The pirate ship has an object of interest: [our_candidate]!", source=our_candidate, action=NOTIFY_ORBIT, header="Something's Interesting!")
+		else
+			notify_ghosts("The pirate ship has an object of interest: [spawner]!", source=spawner, action=NOTIFY_ORBIT, header="Something's Interesting!")
 
 	priority_announce("В секторе обнаружен вооруженный корабль.", "Отдел ССО ПАКТа Синих Лун", 'modular_bluemoon/phenyamomota/sound/announcer/pirate_incoming.ogg')
 
@@ -386,9 +388,22 @@
 	var/datum/export_report/ex = new
 	var/obj/machinery/piratepad/pad = pad_ref?.resolve()
 
+	var/queued_pirate_ransom = 0
+	var/static/datum/export/pirate/ransom/pirate_ransom_datum
+	if(!pirate_ransom_datum)
+		pirate_ransom_datum = new
 	for(var/atom/movable/AM in get_turf(pad))
 		if(AM == pad)
 			continue
+		if(ishuman(AM))
+			var/mob/living/carbon/human/held = AM
+			var/earn = pirate_ransom_datum.get_cost(held)
+			if(earn)
+				// Same pipeline as /datum/syndicate_contract (extraction pod, station ransom, return) — not cargo qdel.
+				var/datum/ransom_extraction/sequence = new
+				sequence.start_for_pirate(held, get_turf(pad), 100 * rand(18, 45), earn, src)
+				queued_pirate_ransom += earn
+				continue
 		export_item_and_contents(AM, EXPORT_PIRATE | EXPORT_CARGO | EXPORT_CONTRABAND | EXPORT_EMAG, apply_elastic = FALSE, delete_unsold = FALSE, external_report = ex)
 
 	status_report = "Sold: "
@@ -402,6 +417,10 @@
 		status_report += " "
 		value += ex.total_value[E]
 
+	if(queued_pirate_ransom)
+		value += queued_pirate_ransom
+		status_report += " +[queued_pirate_ransom] credits: hostage (extraction) "
+
 	if(!total_report)
 		total_report = ex
 	else
@@ -411,7 +430,10 @@
 			total_report.total_value[E] += ex.total_value[E]
 		// playsound(loc, 'sound/machines/wewewew.ogg', 70, TRUE)
 
+	/// Ransom cr for pirates is applied in /datum/ransom_extraction/aftermath_capture; only ex items here.
 	points += value
+	if(queued_pirate_ransom)
+		points -= queued_pirate_ransom
 
 	if(!value)
 		status_report += "Nothing"
@@ -425,7 +447,7 @@
 	var/obj/machinery/piratepad/pad = pad_ref?.resolve()
 	if(!pad)
 		status_report = "No pad detected. Build or link a pad."
-		pad.audible_message(span_notice("[pad] beeps."))
+		audible_message(span_notice("[src] beeps."))
 		return
 	if(pad?.panel_open)
 		status_report = "Please screwdrive pad closed to send. "
@@ -532,7 +554,7 @@
 	desc = "A modified suit to allow space pirates to board shuttles and stations while avoiding the maw of the void. Comes with additional protection and is lighter to move in."
 	icon_state = "spacepirate"
 	w_class = WEIGHT_CLASS_NORMAL
-	allowed = list(/obj/item/gun, /obj/item/ammo_box, /obj/item/ammo_casing, /obj/item/melee/baton, /obj/item/restraints/handcuffs, /obj/item/tank/internals, /obj/item/melee/transforming/energy/sword/pirate, /obj/item/clothing/glasses/eyepatch, /obj/item/reagent_containers/food/drinks/bottle/rum)
+	allowed = list(/obj/item/gun, /obj/item/ammo_box, /obj/item/ammo_casing, /obj/item/melee/baton, /obj/item/restraints/handcuffs, /obj/item/tank/internals, /obj/item/melee/transforming/energy/sword/pirate, /obj/item/clothing/glasses/cover/eyepatch, /obj/item/reagent_containers/food/drinks/bottle/rum)
 	slowdown = 0
 	armor = list(MELEE = 20, BULLET = 40, LASER = 30,ENERGY = 25, BOMB = 50, BIO = 100, RAD = 50, FIRE = 80, ACID = 80, WOUND = 20)
 	strip_delay = 40

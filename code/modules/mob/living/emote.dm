@@ -98,7 +98,9 @@
 	. = ..()
 	var/mob/living/carbon/C = user
 	if(. && iscarbon(user))
-		if(user.gender == FEMALE || (user.gender == PLURAL && isfeminine(user)))
+		if(isvox(C))
+			playsound(C, 'modular_bluemoon/kovac_shitcode/sound/species/voxcough.ogg', 50, 1)
+		else if(user.gender == FEMALE || (user.gender == PLURAL && isfeminine(user)))
 			playsound(C, pick('sound/voice/female_cough1.ogg', 'sound/voice/female_cough2.ogg', 'sound/voice/female_cough3.ogg', 'sound/voice/female_cough4.ogg', 'sound/voice/female_cough5.ogg', 'sound/voice/female_cough6.ogg'), 50, 1)
 		else
 			playsound(C, pick('sound/voice/male_cough1.ogg', 'sound/voice/male_cough2.ogg', 'sound/voice/male_cough3.ogg', 'sound/voice/male_cough4.ogg'), 50, 1)
@@ -321,6 +323,32 @@
 
 	if(HAS_TRAIT(user, TRAIT_KISS_OF_DEATH))
 		kiss_type = /obj/item/hand_item/kisser/death
+	else if(HAS_TRAIT(user, TRAIT_KISS_CROCIN))
+		kiss_type = /obj/item/hand_item/kisser/crocin
+	else if(HAS_TRAIT(user, TRAIT_KISS_SPACE_DRUGS))
+		kiss_type = /obj/item/hand_item/kisser/space_drugs
+		user.nextsoundemote = world.time + 3 SECONDS
+		if(ishuman(user))
+			var/mob/living/carbon/human/H = user
+			H.use_kiss()
+	else if(HAS_TRAIT(user, TRAIT_KISS_HONK))
+		kiss_type = /obj/item/hand_item/kisser/honk
+	else if(HAS_TRAIT(user, TRAIT_KISS_BLOODSUCKER))
+		kiss_type = /obj/item/hand_item/kisser/bloodsucker
+		user.nextsoundemote = world.time + 3 SECONDS
+		if(ishuman(user))
+			var/mob/living/carbon/human/H = user
+			H.use_kiss()
+	else if(HAS_TRAIT(user, TRAIT_KISS_MIME))
+		kiss_type = /obj/item/hand_item/kisser/mime
+	else if(HAS_TRAIT(user, TRAIT_KISS_DRAGQUEEN))
+		kiss_type = /obj/item/hand_item/kisser/dragqueen
+		user.nextsoundemote = world.time + 3 SECONDS
+		if(ishuman(user))
+			var/mob/living/carbon/human/H = user
+			H.use_kiss()
+	else if(HAS_TRAIT(user, TRAIT_KISS_HEARTBOOM))
+		kiss_type = /obj/item/hand_item/kisser/heartboom
 
 	var/obj/item/kiss_blower = new kiss_type(user)
 	if(user.put_in_hands(kiss_blower))
@@ -540,7 +568,9 @@
 	if(!isliving(user) || !.)
 		return
 	var/mob/living/carbon/C = user
-	if(user.gender == FEMALE || (user.gender == PLURAL && isfeminine(user)))
+	if(isvox(C))
+		playsound(C, 'modular_bluemoon/kovac_shitcode/sound/species/voxsneeze.ogg', 50, 1)
+	else if(user.gender == FEMALE || (user.gender == PLURAL && isfeminine(user)))
 		playsound(C, pick('sound/voice/sneezef1.ogg', 'sound/voice/sneezef2.ogg'), 50, 1)
 	else
 		playsound(C, pick('sound/voice/sneezem1.ogg', 'sound/voice/sneezem2.ogg'), 50, 1)
@@ -705,7 +735,12 @@
 		to_chat(user, "You cannot send IC messages (muted).")
 		return FALSE
 	else if(!params)
-		var/custom_emote = stripped_multiline_input_or_reflect(user, "Choose an emote to display.", "Custom Emote", null, MAX_MESSAGE_LEN)
+		var/custom_emote = ""
+		if(user.client?.prefs.tgui_input_verbs)
+			custom_emote = tgui_input_text(user, "Choose an emote to display.", "Custom Emote", null, MAX_MESSAGE_LEN, TRUE, TRUE)
+		else
+			custom_emote = stripped_multiline_input_or_reflect(user, "Choose an emote to display.", "Custom Emote")
+
 		if(custom_emote && !check_invalid(user, custom_emote))
 			message = custom_emote
 	else
@@ -831,3 +866,33 @@
 	key = "exhale"
 	key_third_person = "exhales"
 	message = "выдыхает."
+
+
+/datum/emote/sound/human/bubble
+	name = "Буббл"
+	key = "bubble"
+	key_third_person = "bubbles"
+	message = "буббл"
+	emote_type = EMOTE_AUDIBLE
+	muzzle_ignore = FALSE
+	restraint_check = FALSE
+
+/datum/emote/sound/human/bubble/run_emote(mob/user, params)
+	sound = pick('sound/voice/bubble1.ogg', 'sound/voice/bubble2.ogg', 'sound/voice/bubble3.ogg')
+	. = ..()
+
+
+/datum/emote/sound/human/blubbr
+
+	name = "Блурбл"
+	key = "blubbr"
+	key_third_person = "blubbrs"
+	message = "блурбл"
+	emote_type = EMOTE_AUDIBLE
+	muzzle_ignore = FALSE
+	restraint_check = FALSE
+
+/datum/emote/sound/human/blubbr/run_emote(mob/user, params)
+	sound = pick('sound/voice/blubbr1.ogg', 'sound/voice/blubbr2.ogg', 'sound/voice/blubbr3.ogg')
+	. = ..()
+

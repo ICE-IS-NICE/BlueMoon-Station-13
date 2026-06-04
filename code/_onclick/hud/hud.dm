@@ -65,6 +65,13 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 	///UI for screentips that appear when you mouse over things
 	var/atom/movable/screen/screentip/screentip_text
 
+	/// Last atom we built a screentip for. Used by /atom/MouseEntered to skip the
+	/// rebuild (8 build_context calls + signal sends + maptext write) when the
+	/// hover is on the same atom with the same held item — perf log shows ~142k
+	/// MouseEntered/session, the dedup makes the repeat-hover case a no-op.
+	var/atom/last_screentip_atom
+	var/obj/item/last_screentip_held
+
 	/// Whether or not screentips are enabled.
 	/// This is updated by the preference for cheaper reads than would be
 	/// had with a proc call, especially on one of the hottest procs in the
@@ -128,6 +135,10 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 	if(mymob.hud_used == src)
 		mymob.hud_used = null
 
+	if(mymob?.observers?.len)
+		for(var/mob/dead/observer/observe in mymob.observers)
+			observe.reset_perspective(null)
+
 	QDEL_NULL(toggle_palette)
 	QDEL_NULL(palette_down)
 	QDEL_NULL(palette_up)
@@ -136,6 +147,17 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 	QDEL_LIST(floating_actions)
 
 	QDEL_NULL(module_store_icon)
+
+	// Remove screen objects from client.screen before qdeling them
+	// to prevent stale references in BYOND's internal screen list causing GC failures
+	if(mymob?.client)
+		var/client/C = mymob.client
+		C.screen -= static_inventory
+		C.screen -= toggleable_inventory
+		C.screen -= extra_inventory
+		C.screen -= hotkeybuttons
+		C.screen -= infodisplay
+		C.screen -= screenoverlays
 	QDEL_LIST(static_inventory)
 
 	inv_slots.Cut()
@@ -166,12 +188,20 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 	alien_queen_finder = null
 	combo_display = null
 
+	for(var/key in plane_masters)
+		var/atom/movable/screen/P = plane_masters[key]
+		P.screen_loc = null
+	if(mymob?.client)
+		for(var/key in plane_masters)
+			mymob.client.screen -= plane_masters[key]
 	QDEL_LIST_ASSOC_VAL(plane_masters)
 	QDEL_LIST_ASSOC_VAL(plane_master_controllers)
 	QDEL_LIST(screenoverlays)
 	mymob = null
 
 	QDEL_NULL(screentip_text)
+	last_screentip_atom = null
+	last_screentip_held = null
 
 	return ..()
 
@@ -450,6 +480,8 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 	listed_actions.check_against_view()
 	palette_actions.check_against_view()
 	for(var/atom/movable/screen/movable/action_button/floating_button as anything in floating_actions)
+		if(isnull(floating_button))
+			continue
 		var/list/current_offsets = screen_loc_to_offset(floating_button.screen_loc)
 		// We set the view arg here, so the output will be properly hemm'd in by our new view
 		floating_button.screen_loc = offset_to_screen_loc(current_offsets[1], current_offsets[2], view = our_view)

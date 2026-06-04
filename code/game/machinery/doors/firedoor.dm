@@ -112,10 +112,12 @@
 		for(var/I in affecting_areas)
 			var/area/A = I
 			LAZYREMOVE(A.firedoors, src)
-
+// обнуление affecting_areas в firedoor для надёжности. тк возможная утечка
 /obj/machinery/door/firedoor/Destroy()
 	remove_from_areas()
-	affecting_areas.Cut()
+	if(affecting_areas)
+		affecting_areas.Cut()
+		affecting_areas = null
 	return ..()
 
 /obj/machinery/door/firedoor/Bumped(atom/movable/AM)
@@ -125,10 +127,10 @@
 
 /obj/machinery/door/firedoor/power_change()
 	if(powered(power_channel))
-		machine_stat &= ~NOPOWER
+		set_machine_stat(machine_stat & ~NOPOWER)
 		INVOKE_ASYNC(src, PROC_REF(latetoggle))
 	else
-		machine_stat |= NOPOWER
+		set_machine_stat(machine_stat | NOPOWER)
 
 /obj/machinery/door/firedoor/on_attack_hand(mob/user, act_intent = user.a_intent, unarmed_attack_flags)
 	if(operating || !density)
@@ -668,9 +670,9 @@
 /obj/machinery/door/firedoor
 	name = "Emergency Shutter"
 	desc = "Emergency air-tight shutter, capable of sealing off breached areas. This one has a glass panel. It has a mechanism to open it with crowbar."
-	icon = 'modular_bluemoon/SmiLeY/aesthetics/firedoor/icons/firedoor_glass.dmi'
-	var/door_open_sound = 'modular_bluemoon/SmiLeY/aesthetics/firedoor/sound/firedoor_open.ogg'
-	var/door_close_sound = 'modular_bluemoon/SmiLeY/aesthetics/firedoor/sound/firedoor_open.ogg'
+	icon = 'modular_bluemoon/icons/obj/aesthetics/firedoor/firedoor_glass.dmi'
+	var/door_open_sound = 'modular_bluemoon/sound/machines/firedoor_open.ogg'
+	var/door_close_sound = 'modular_bluemoon/sound/machines/firedoor_open.ogg'
 
 /obj/machinery/door/firedoor/open()
 	playsound(loc, door_open_sound, 100, TRUE)
@@ -683,7 +685,7 @@
 /obj/machinery/door/firedoor/heavy
 	name = "Heavy Emergency Shutter"
 	desc = "Emergency air-tight shutter, capable of sealing off breached areas. It has a mechanism to open it with just your hands."
-	icon = 'modular_bluemoon/SmiLeY/aesthetics/firedoor/icons/firedoor.dmi'
+	icon = 'modular_bluemoon/icons/obj/aesthetics/firedoor/firedoor.dmi'
 
 /obj/effect/spawner/structure/window/reinforced/no_firelock
 	spawn_list = list(/obj/structure/grille, /obj/structure/window/reinforced/fulltile)
@@ -695,7 +697,7 @@
 /obj/machinery/door/firedoor/solid
 	name = "Solid Emergency Shutter"
 	desc = "Emergency air-tight shutter, capable of sealing off breached areas. It has a mechanism to open it with just your hands."
-	icon = 'modular_bluemoon/SmiLeY/aesthetics/firedoor/icons/firedoor.dmi'
+	icon = 'modular_bluemoon/icons/obj/aesthetics/firedoor/firedoor.dmi'
 	glass = FALSE
 
 /obj/machinery/door/firedoor/solid/closed

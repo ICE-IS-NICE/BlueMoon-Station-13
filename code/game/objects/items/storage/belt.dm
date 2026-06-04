@@ -235,6 +235,8 @@
 	new /obj/item/scalpel/advanced(src)
 	new /obj/item/retractor/advanced(src)
 	new /obj/item/surgicaldrill/advanced(src)
+	new /obj/item/bonesetter(src)
+	new /obj/item/reagent_containers/medspray/sterilizine(src)
 	if(advanced_drapes)
 		new /obj/item/surgical_drapes/advanced(src)
 	else
@@ -552,7 +554,8 @@
 		/obj/item/stack/rods,
 		/obj/item/stack/tile/plasteel,
 		/obj/item/grenade/chem_grenade/metalfoam,
-		/obj/item/grenade/chem_grenade/smart_metal_foam
+		/obj/item/grenade/chem_grenade/smart_metal_foam,
+		/obj/item/inducer
 		))
 
 /obj/item/storage/belt/grenade
@@ -681,7 +684,7 @@
 	new /obj/item/grenade/chem_grenade/cleaner(src)
 	new /obj/item/grenade/chem_grenade/cleaner(src)
 	new /obj/item/grenade/chem_grenade/cleaner(src)
-	new /obj/item/soap(src)
+	new /obj/item/soap/syndie(src)
 
 /obj/item/storage/belt/bandolier
 	name = "bandolier"

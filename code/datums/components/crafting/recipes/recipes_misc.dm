@@ -167,6 +167,48 @@
 	tools = list(TOOL_CROWBAR)
 	subcategory = CAT_MISCELLANEOUS
 	category = CAT_MISCELLANEOUS
+
+// Pandemic replication modules - tier N upgrade uses tier N components (2 manipulator + 2 capacitor)
+/datum/crafting_recipe/pandemic_upgrade_tier2
+	name = "Pandemic replication module (Tier 2)"
+	result = /obj/item/pandemic_upgrade
+	time = 40
+	reqs = list(/obj/item/stock_parts/manipulator = 2,
+				/obj/item/stock_parts/capacitor = 2)
+	tools = list(TOOL_SCREWDRIVER)
+	category = CAT_MISCELLANEOUS
+	subcategory = CAT_TOOL
+
+/datum/crafting_recipe/pandemic_upgrade_tier3
+	name = "Pandemic replication module (Tier 3)"
+	result = /obj/item/pandemic_upgrade/tier3
+	time = 40
+	reqs = list(/obj/item/stock_parts/manipulator/nano = 2,
+				/obj/item/stock_parts/capacitor/adv = 2)
+	tools = list(TOOL_SCREWDRIVER)
+	category = CAT_MISCELLANEOUS
+	subcategory = CAT_TOOL
+
+/datum/crafting_recipe/pandemic_upgrade_tier4
+	name = "Pandemic replication module (Tier 4)"
+	result = /obj/item/pandemic_upgrade/tier4
+	time = 40
+	reqs = list(/obj/item/stock_parts/manipulator/pico = 2,
+				/obj/item/stock_parts/capacitor/super = 2)
+	tools = list(TOOL_SCREWDRIVER)
+	category = CAT_MISCELLANEOUS
+	subcategory = CAT_TOOL
+
+/datum/crafting_recipe/pandemic_upgrade_tier5
+	name = "Pandemic replication module (Tier 5)"
+	result = /obj/item/pandemic_upgrade/tier5
+	time = 40
+	reqs = list(/obj/item/stock_parts/manipulator/femto = 2,
+				/obj/item/stock_parts/capacitor/quadratic = 2)
+	tools = list(TOOL_SCREWDRIVER)
+	category = CAT_MISCELLANEOUS
+	subcategory = CAT_TOOL
+
 ///////////////////
 //Tools & Storage//
 ///////////////////
@@ -642,4 +684,22 @@
 	reqs = list(/obj/item/stack/rods = 2,
 				/obj/item/clothing/under/rank/security/officer = 1)
 	subcategory = CAT_FURNITURE
+	category = CAT_MISCELLANEOUS
+
+/datum/crafting_recipe/lipstick_space_drugs
+	name = "Space Drugs Lipstick"
+	result = /obj/item/lipstick/space_drugs
+	time = 30
+	reqs = list(/obj/item/lipstick = 1,
+				/datum/reagent/drug/space_drugs = 30)
+	subcategory = CAT_MISCELLANEOUS
+	category = CAT_MISCELLANEOUS
+
+/datum/crafting_recipe/lipstick_bloodsucker
+	name = "Bloodsucker Lipstick"
+	result = /obj/item/lipstick/bloodsucker
+	time = 30
+	reqs = list(/obj/item/lipstick = 1,
+				/datum/reagent/blood = 30)
+	subcategory = CAT_MISCELLANEOUS
 	category = CAT_MISCELLANEOUS

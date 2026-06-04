@@ -51,7 +51,11 @@
 	cam_background.del_on_map_removal = FALSE
 
 /obj/machinery/computer/security/Destroy()
-	qdel(cam_screen)
+	if(cam_screen)
+		cam_screen.screen_loc = null
+		qdel(cam_screen)
+	for(var/atom/movable/screen/P in cam_plane_masters)
+		P.screen_loc = null
 	QDEL_LIST(cam_plane_masters)
 	qdel(cam_background)
 	return ..()
@@ -160,7 +164,16 @@
 	for(var/turf/visible_turf in visible_things)
 		visible_turfs += visible_turf
 
+	// Guard: if no turfs are visible (camera in nullspace, just deleted, etc.) – show static
+	if(!length(visible_turfs))
+		show_camera_static()
+		return
+
 	var/list/bbox = get_bbox_of_atoms(visible_turfs)
+	// Guard: bbox can be null if the list is empty or contains no atoms with valid coords
+	if(!bbox)
+		show_camera_static()
+		return
 	var/size_x = bbox[3] - bbox[1] + 1
 	var/size_y = bbox[4] - bbox[2] + 1
 
@@ -174,7 +187,7 @@
 	// Living creature or not, we remove you anyway.
 	concurrent_users -= user_ref
 	// Unregister map objects
-	user.client.clear_map(map_name)
+	user?.client?.clear_map(map_name)
 	// Turn off the console
 	if(length(concurrent_users) == 0 && is_living)
 		active_camera = null

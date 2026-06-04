@@ -29,12 +29,13 @@
 	faction = list("malf_drone")
 	deathmessage = "suddenly breaks apart."
 	del_on_death = 1
+	var/emp_damage_modifier = 1
 
 /mob/living/simple_animal/hostile/malf_drone/Initialize(mapload)
 	. = ..()
 	update_icons()
 
-/mob/living/simple_animal/hostile/malf_drone/Process_Spacemove(check_drift = 0)
+/mob/living/simple_animal/hostile/malf_drone/Process_Spacemove(movement_dir = 0, continuous_move = FALSE)
 	return 1
 
 /mob/living/simple_animal/hostile/malf_drone/AttackingTarget()
@@ -74,7 +75,10 @@
 		update_icons()
 
 /mob/living/simple_animal/hostile/malf_drone/emp_act(severity)
-	adjustHealth(100 / severity) // takes the same damage as a mining drone from emp
+	. = ..()
+	if(. & EMP_PROTECT_SELF)
+		return
+	adjustHealth((100 * emp_damage_modifier) / severity) // takes the same damage as a mining drone from emp
 
 /mob/living/simple_animal/hostile/malf_drone/drop_loot()
 	do_sparks(3, 1, src)

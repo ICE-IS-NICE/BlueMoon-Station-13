@@ -3,7 +3,7 @@
 	desc = "You are a firestarter!"
 	icon = 'icons/obj/flamethrower.dmi'
 	icon_state = "flamethrowerbase"
-	item_state = "flamethrower_0"
+	item_state = "flamethrower"
 	lefthand_file = 'icons/mob/inhands/weapons/flamethrower_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/weapons/flamethrower_righthand.dmi'
 	flags_1 = CONDUCT_1
@@ -54,7 +54,7 @@
 		igniter.flamethrower_process(location)
 
 /obj/item/flamethrower/update_icon_state()
-	item_state = "flamethrower_[lit]"
+	item_state = "[initial(item_state)]_[lit]"
 
 /obj/item/flamethrower/update_overlays()
 	. = ..()
@@ -214,6 +214,7 @@
 	var/datum/gas_mixture/air_transfer = ptank.air_contents.remove_ratio(release_amount)
 	air_transfer.set_moles(GAS_PLASMA, air_transfer.get_moles(GAS_PLASMA) * 5)
 	target.assume_air(air_transfer)
+	qdel(air_transfer)
 	//Burn it based on transfered gas
 	target.hotspot_expose((ptank.air_contents.return_temperature()*2) + 380,500)
 	//location.hotspot_expose(1000,500,1)

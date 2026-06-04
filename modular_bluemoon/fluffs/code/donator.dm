@@ -1,21 +1,20 @@
 //Файл для выдачи предметов донатерам по сикею
 // Сикеи необходимо указывать, аналогично их файлу сохрания лодаута, пример "AA-BB-ab..." нужно записывать как "aabbab"
 
-/*
+
 /datum/gear/donator/bm
-	name = "Видишь это - пингуй Feenie#1815" //Название предмета
+	name = null //name = "Видишь это - пингуй Feenie#1815" //Название предмета
 	slot = ITEM_SLOT_BACKPACK //Место, в который будет выдаваться предмет, конкретно тут - кладётся в рюкзак
 	path = /obj/item/bikehorn/golden //Ссылка на датум объекта
 	category = LOADOUT_CATEGORY_DONATOR //Категория, в которой будет содержаться предмет - собственно во вкладке лодаута донатерских
-	ckeywhitelist = list("Сикей получателя") //Если вы видите этот текст ингейм, значит кто-то ебанулся с кодом - пингуйте всё того же
-*/
+	subcategory = LOADOUT_SUBCATEGORIES_DON03
+	ckeywhitelist = list() //list("Сикей получателя") //Если вы видите этот текст ингейм, значит кто-то ебанулся с кодом - пингуйте всё того же
 
-/datum/gear/donator/bm
+/datum/gear/donator/bm/tyranny_crown
 	name = "Crown of Pure Tyranny"
 	slot = ITEM_SLOT_HEAD
 	path = /obj/item/clothing/head/donator/bm/pt_crown
 	ckeywhitelist = list("snacksman")
-	subcategory = LOADOUT_SUBCATEGORIES_DON03
 	donator_group_id = DONATOR_GROUP_TIER_3
 
 /datum/gear/donator/bm/bishop_mitre
@@ -32,7 +31,7 @@
 
 /datum/gear/donator/bm/reaper_helmet
 	name = "Reaper Helmet"
-	slot = ITEM_SLOT_OCLOTHING
+	slot = ITEM_SLOT_HEAD
 	path = /obj/item/clothing/head/helmet/space/plasmaman/security/reaper
 	ckeywhitelist = list("reaperdb")
 
@@ -47,14 +46,12 @@
 	slot = ITEM_SLOT_ICLOTHING
 	path = /obj/item/clothing/under/donator/bm/ellys_suit
 	ckeywhitelist = list("chowny")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
 /datum/gear/donator/bm/ellys_hoodie
 	name = "Ellys Hoodie"
 	slot = ITEM_SLOT_OCLOTHING
 	path = /obj/item/clothing/suit/donator/bm/ellys_hoodie
 	ckeywhitelist = list("chowny")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
 /datum/gear/donator/bm/modern_watch
 	name = "modern watch"
@@ -114,7 +111,7 @@
 	name = "Kukri Kit"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/modkit/kukri_kit
-	ckeywhitelist = list("hateredsoul", "ggishka", "arion1234", "swgitty", "sw00ty", "kingdeaths", "sierraiv", "ordinarylife", "milidead", "blatoff")
+	ckeywhitelist = list("hateredsoul", "ggishka", "arion1234", "swgitty", "sw00ty", "kingdeaths", "sierraiv", "ordinarylife", "milidead", "blatoff", "angelnedemon", "foxrtotlimda")
 
 /datum/gear/donator/bm/Advanced_Tracksuit
 	name = "Advanced Tracksuit"
@@ -126,19 +123,19 @@
 	name = "cerberus helmet"
 	slot = ITEM_SLOT_HEAD
 	path = /obj/item/clothing/head/donator/bm/cerberus_helmet
-	ckeywhitelist = list("krashly", "stgs", "hazzi", "dolbajob")
+	ckeywhitelist = list("krashly", "stgs", "hazzi", "dolbajob", "ordinarylife")
 
 /datum/gear/donator/bm/cerberus_suit
 	name = "cerberus suit"
 	slot = ITEM_SLOT_OCLOTHING
 	path = /obj/item/clothing/suit/donator/bm/cerberus_suit
-	ckeywhitelist = list("krashly", "stgs", "hazzi", "dolbajob")
+	ckeywhitelist = list("krashly", "stgs", "hazzi", "dolbajob", "ordinarylife")
 
 /datum/gear/donator/bm/censor_fem_suit
 	name = "censor suit"
 	slot = ITEM_SLOT_OCLOTHING
 	path = /obj/item/clothing/suit/donator/bm/censor_fem_suit
-	ckeywhitelist = list("krashly", "stgs", "hazzi", "dolbajob")
+	ckeywhitelist = list("krashly", "stgs", "hazzi", "dolbajob", "ordinarylife")
 
 /datum/gear/donator/bm/belinsky_plushie
 	name = "Belinsky plushie"
@@ -224,18 +221,11 @@
 	path = /obj/item/clothing/neck/cloak/sencloak
 	ckeywhitelist = list("romontesque")
 
-/datum/gear/donator/bm/ftucloak
-	name = "FTU Cape"
-	slot = ITEM_SLOT_NECK
-	path = /obj/item/clothing/neck/cloak/ftu
-	ckeywhitelist = list("fanlexa", "kosep", "dragoncora")
-
 /datum/gear/donator/bm/angelo
 	name = "Angelo's Coat"
 	slot = ITEM_SLOT_OCLOTHING
 	path = /obj/item/clothing/suit/donator/bm/angelo
 	ckeywhitelist = list("axidant")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
 /datum/gear/donator/bm/malorian_mag
 	name = "Malorian Mag Kit"
@@ -271,13 +261,13 @@
 	name = "PMC Skull Patch"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/clothing/accessory/skull_patch
-	ckeywhitelist = list("krashly", "stgs", "hazzi", "dolbajob", "leony24", "snacksman", "sodastrike", "vulpshiro", "lonofera", "hellsinggc", "mihana964", "devildeadspace", "enigma418")
+	ckeywhitelist = list("krashly", "stgs", "hazzi", "dolbajob", "leony24", "snacksman", "sodastrike", "vulpshiro", "lonofera", "hellsinggc", "mihana964", "devildeadspace", "enigma418", "ordinarylife")
 
 /datum/gear/donator/bm/monolith_patch
 	name = "Monolith Patch"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/clothing/accessory/monolith_patch
-	ckeywhitelist = list("irfish", "devildeadspace", "mikolaostavkin", "allazarius", "definitelynotnesuby", "hazzi")
+	ckeywhitelist = list("irfish", "devildeadspace", "mikolaostavkin", "allazarius", "definitelynotnesuby", "hazzi", "dimofon", "mihana964", "angelnedemon", "hateredsoul", "ordinarylife")
 
 /datum/gear/donator/bm/tratch_patch
 	name = "Tratch Patch"
@@ -320,7 +310,6 @@
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/toy/plush/bm/who
 	ckeywhitelist = list("stgs")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
 /datum/gear/donator/bm/noonar
 	name = "Syndicate jacket"
@@ -338,30 +327,26 @@
 /datum/gear/donator/bm/pchelik
 	name = "GFYS"
 	slot = ITEM_SLOT_BACKPACK
-	path = /obj/item/gun/ballistic/automatic/AM4B_pchelik
+	path = /obj/item/gun/ballistic/automatic/AM4B/pchelik
 	ckeywhitelist = list("pchelik")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
 /datum/gear/donator/bm/pchelik_cloak
 	name = "Coopie's Cloak"
 	slot = ITEM_SLOT_NECK
 	path = /obj/item/clothing/neck/cloak/coopie_cloak
 	ckeywhitelist = list("pchelik")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
 /datum/gear/donator/bm/battle_coat
 	name = "Battle Coat"
 	slot = ITEM_SLOT_ICLOTHING
 	path = /obj/item/clothing/under/donator/bm/battle_coat
 	ckeywhitelist = list("ghoststalin", "g3234")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
 /datum/gear/donator/bm/sports_jacket
 	name = "Sports Jacket"
 	slot = ITEM_SLOT_OCLOTHING
 	path = /obj/item/clothing/suit/donator/bm/sports_jacket
 	ckeywhitelist = list("ghoststalin", "g3234")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
 /datum/gear/donator/bm/cross_shielded
 	name = "Shielded Cross"
@@ -374,28 +359,24 @@
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/toy/plush/miner
 	ckeywhitelist = list("cheburek228")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
 /datum/gear/donator/bm/omega_plushie
 	name = "Omega Plushie"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/toy/plush/bm/omega
 	ckeywhitelist = list("malopharan")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
 /datum/gear/donator/bm/nri_drg
 	name = "Covert Ops Tactical Uniform"
 	slot = ITEM_SLOT_ICLOTHING
 	path = /obj/item/clothing/under/donator/bm/nri_drg
 	ckeywhitelist = list("vulpshiro", "dolbajob", "stgs", "leony24", "krashly", "sodastrike", "devildeadspace", "enigma418")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
 /datum/gear/donator/bm/nri_drg_head
 	name = "Covert Ops Headgear"
 	slot = ITEM_SLOT_HEAD
 	path = /obj/item/clothing/head/donator/bm/nri_drg_head
 	ckeywhitelist = list("vulpshiro", "dolbajob", "stgs", "leony24", "krashly", "sodastrike", "devildeadspace", "enigma418")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
 /datum/gear/donator/bm/booma_patch
 	name = "Boomah Patch"
@@ -407,7 +388,7 @@
 	name = "Boomah Turtleneck"
 	slot = ITEM_SLOT_ICLOTHING
 	path = /obj/item/clothing/under/donator/bm/booma
-	ckeywhitelist = list("vulpshiro", "dolbajob", "ordinarylife")
+	ckeywhitelist = list("vulpshiro", "dolbajob", "ordinarylife", "architect0r")
 
 /datum/gear/donator/bm/silky_body
 	name = "Silky Body"
@@ -415,12 +396,17 @@
 	path = /obj/item/clothing/under/donator/bm/silky_body
 	ckeywhitelist = list("architect0r", "trora")
 
+/datum/gear/donator/bm/silky_body_alt
+	name = "V-shaped Body"
+	slot = ITEM_SLOT_ICLOTHING
+	path = /obj/item/clothing/under/donator/bm/silky_body_alt
+	ckeywhitelist = list("architect0r", "trora", "hihitect")
+
 /datum/gear/donator/bm/vance_plush
 	name = "Vance Plush"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/toy/plush/bm/judas/vance
 	ckeywhitelist = list("littlemouse2729")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
 /datum/gear/donator/bm/pet
 	name = "Pet Beacon"
@@ -438,29 +424,25 @@
 	name = "Kovac Gun"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/modkit/Kovac_Kit
-	ckeywhitelist = list("stgs", "krashly", "dolbajob", "hazzi", "devildeadspace", "enigma418", "mihana964")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
+	ckeywhitelist = list("stgs", "krashly", "dolbajob", "hazzi", "devildeadspace", "enigma418", "mihana964", "ordinarylife")
 
 /datum/gear/donator/bm/auto9_gun
 	name = "Auto 9 Kit"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/modkit/auto9_kit
-	ckeywhitelist = list("stgs", "sodastrike", "dolbajob", "hazzi", "krashly", "devildeadspace", "enigma418")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
+	ckeywhitelist = list("stgs", "sodastrike", "dolbajob", "hazzi", "krashly", "devildeadspace", "enigma418","ordinarylife")
 
 /datum/gear/donator/bm/m240_gun
 	name = "M240 Kit"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/modkit/m240_kit
-	ckeywhitelist = list("stgs", "sodastrike", "dolbajob", "hazzi", "krashly", "devildeadspace", "enigma418")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
+	ckeywhitelist = list("stgs", "sodastrike", "dolbajob", "hazzi", "krashly", "devildeadspace", "enigma418", "ordinarylife")
 
 /datum/gear/donator/bm/luftkuss_gun
 	name = "Luftkuss Kit"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/modkit/old_kit
-	ckeywhitelist = list("stgs", "sodastrike", "dolbajob", "hazzi", "krashly", "fiaskin", "devildeadspace", "enigma418")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
+	ckeywhitelist = list("stgs", "sodastrike", "dolbajob", "hazzi", "krashly", "fiaskin", "devildeadspace", "enigma418", "ordinarylife")
 
 /datum/gear/donator/bm/dominator
 	name = "Dominator Kit"
@@ -485,7 +467,6 @@
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/modkit/pomogator_kit
 	ckeywhitelist = list("danik10p")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
 /datum/gear/donator/bm/martian
 	name = "Martian Backpack"
@@ -504,7 +485,6 @@
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/modkit/sponge_kit
 	ckeywhitelist = list("danik10p")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
 /datum/gear/donator/bm/stunblade
 	name = "Stunblade Kit"
@@ -555,22 +535,22 @@
 	ckeywhitelist = list("n1ght1ngale")
 
 /datum/gear/donator/bm/monolith_gloves
-	name = "Monolith Gloves"
+	name = "Granite M1 Gloves"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/clothing/gloves/fingerless/monolith_gloves
-	ckeywhitelist = list("irfish", "devildeadspace", "mikolaostavkin", "allazarius", "definitelynotnesuby", "hazzi")
+	ckeywhitelist = list("irfish", "devildeadspace", "mikolaostavkin", "allazarius", "definitelynotnesuby", "hazzi", "dimofon", "mihana964", "angelnedemon", "hateredsoul", "ordinarylife")
 
 /datum/gear/donator/bm/monolith_armor
 	name = "Granite M1 Vest"
 	slot = ITEM_SLOT_OCLOTHING
 	path = /obj/item/clothing/suit/bm/monolith_armor
-	ckeywhitelist = list("irfish", "devildeadspace", "mikolaostavkin", "allazarius", "definitelynotnesuby", "hazzi")
+	ckeywhitelist = list("irfish", "devildeadspace", "mikolaostavkin", "allazarius", "definitelynotnesuby", "hazzi", "dimofon", "mihana964", "angelnedemon", "hateredsoul", "ordinarylife")
 
 /datum/gear/donator/bm/monolith_uniform
 	name = " Granite M1 ''Monolith'' Uniform"
 	slot = ITEM_SLOT_ICLOTHING
 	path = /obj/item/clothing/under/donator/bm/monolith_uniform
-	ckeywhitelist = list("irfish", "devildeadspace", "mikolaostavkin", "allazarius", "definitelynotnesuby", "hazzi")
+	ckeywhitelist = list("irfish", "devildeadspace", "mikolaostavkin", "allazarius", "definitelynotnesuby", "hazzi", "dimofon", "mihana964", "angelnedemon", "hateredsoul", "ordinarylife")
 
 /datum/gear/donator/bm/commissar_hat
 	name = "Commissar Hat"
@@ -614,11 +594,17 @@
 	path = /obj/item/modkit/pf940_kit_g22
 	ckeywhitelist = list("leony24")
 
-/datum/gear/donator/bm/p940_g22
-	name = "Shotgun into KS-23M Kit"
+/datum/gear/donator/bm/shotgun_ks22
+	name = "Shotgun into KS-22M Kit"
 	slot = ITEM_SLOT_BACKPACK
-	path = /obj/item/modkit/ks23_kit
+	path = /obj/item/modkit/ks22_kit
 	ckeywhitelist = list("lodagn")
+
+/datum/gear/donator/bm/shotgun_mossberg
+	name = "Shotgun into Mossberg-590A Kit"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/modkit/mossberg_kit
+	ckeywhitelist = list("shizalrp", "krasler101", "kingdeaths")
 
 /datum/gear/donator/bm/g36_kit
 	name = "AK-12 into G36 Kit"
@@ -671,44 +657,38 @@
 /datum/gear/donator/bm/dogtag
 	name = "Alta's dogtag"
 	slot = ITEM_SLOT_NECK
-	path = /obj/item/clothing/neck/tie/dogtag
-	ckeywhitelist = list("oni3288", "ghos7ik", "discord980", "mihana964", "romontesque", "enigma418", "smol42", "notlikeluls",  "kladmenuwu", "alexsandoor", "scramblescream", "nai1ten", "devildeadspace", "zetneskov", "hazzi", "definitelynotnesuby", "silverfoxpaws", "pr1zrak", "earthphobia", "wafflemeow", "trora", "kosep", "urfdrf", "mikolaostavkin", "xaeshkavd", "deltarayx", "korinfellori", "troubleneko17th", "dimofon", "lichfail", "gisya", "dimakr", "cupteazee", "nopeingeneer", "silyamg", "lomodno", "valsons", "nyctealust", "abrikos", "spoopyman228", "stasdvrz", "shizalrp", "tblkba", "dragon9090", "avtobuspng", "ninjapikachushka", "ailhate", "kingdeaths", "mentaleater")
+	path = /obj/item/clothing/accessory/dogtag
+	ckeywhitelist = list("oni3288", "ghos7ik", "discord980", "mihana964", "romontesque", "enigma418", "smol42", "notlikeluls",  "kladmenuwu", "alexsandoor", "scramblescream", "nai1ten", "devildeadspace", "zetneskov", "hazzi", "definitelynotnesuby", "silverfoxpaws", "pr1zrak", "earthphobia", "wafflemeow", "trora", "kosep", "urfdrf", "mikolaostavkin", "xaeshkavd", "deltarayx", "korinfellori", "troubleneko17th", "dimofon", "lichfail", "gisya", "dimakr", "cupteazee", "nopeingeneer", "silyamg", "lomodno", "valsons", "nyctealust", "abrikos", "spoopyman228", "stasdvrz", "shizalrp", "tblkba", "dragon9090", "avtobuspng", "ninjapikachushka", "ailhate", "kingdeaths", "mentaleater", "lindaastereih", "gevaitrouble", "ivanokio", "blatoff", "regiska")
 
 /datum/gear/donator/bm/hateredsoul_dogtag
 	name = "Combat Dogtag"
 	slot = ITEM_SLOT_NECK
 	path = /obj/item/clothing/accessory/hateredsoul_dogtag
-	ckeywhitelist = list("hateredsoul", "ggishka", "arion1234", "swgitty", "sw00ty", "kingdeaths", "sierraiv", "ordinarylife", "milidead", "blatoff")
+	ckeywhitelist = list("hateredsoul", "ggishka", "arion1234", "swgitty", "sw00ty", "sierraiv", "ordinarylife", "milidead", "blatoff", "angelnedemon", "foxrtotlimda", "devildeadspace")
 
 /datum/gear/donator/bm/hateredsoul_dogtag_nt
 	name = "NT Combat Dogtag"
 	slot = ITEM_SLOT_NECK
 	path = /obj/item/clothing/accessory/hateredsoul_dogtag/nt
-	ckeywhitelist = list("hateredsoul", "ggishka", "arion1234", "swgitty", "sw00ty", "kingdeaths", "sierraiv", "ordinarylife", "milidead", "blatoff")
+	ckeywhitelist = list("hateredsoul", "ggishka", "arion1234", "swgitty", "sw00ty", "sierraiv", "ordinarylife", "milidead", "blatoff", "angelnedemon", "foxrtotlimda", "devildeadspace")
 
 /datum/gear/donator/bm/hateredsoul_dogtag_syndie
 	name = "Syndie Combat Dogtag"
 	slot = ITEM_SLOT_NECK
 	path = /obj/item/clothing/accessory/hateredsoul_dogtag/syndie
-	ckeywhitelist = list("hateredsoul", "ggishka", "arion1234", "swgitty", "sw00ty", "kingdeaths", "sierraiv", "ordinarylife", "milidead", "blatoff")
+	ckeywhitelist = list("hateredsoul", "ggishka", "arion1234", "swgitty", "sw00ty", "sierraiv", "ordinarylife", "milidead", "blatoff", "angelnedemon", "foxrtotlimda", "devildeadspace")
 
 /datum/gear/donator/bm/paws_patch
 	name = "PAWS Patch"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/clothing/accessory/paws_patch
-	ckeywhitelist = list("devildeadspace", "mikolaostavkin", "cupteazee", "dimofon", "dimakr", "definitelynotnesuby", "scramblescream", "tblkba", "hellsinggc", "aurses")
+	ckeywhitelist = list("devildeadspace", "mikolaostavkin", "cupteazee", "dimofon", "dimakr", "definitelynotnesuby", "scramblescream", "tblkba", "hellsinggc", "aurses", "mihana964", "angelnedemon", "ordinarylife", "hateredsoul")
 
 /datum/gear/donator/bm/h_soul_coat
 	name = "Black coat"
 	slot = ITEM_SLOT_NECK
 	path = /obj/item/clothing/neck/tie/h_soul_coat
-	ckeywhitelist = list("hateredsoul", "ggishka", "arion1234", "swgitty", "sw00ty", "kingdeaths", "sierraiv", "ordinarylife", "milidead", "blatoff")
-
-/datum/gear/donator/bm/pedantcape
-	name = "Corvus Pendant"
-	slot = ITEM_SLOT_BACKPACK
-	path = /obj/item/clothing/neck/tie/pendantcape
-	ckeywhitelist = list("smol42", "weirdbutton", "sage4or")
+	ckeywhitelist = list("hateredsoul", "ggishka", "arion1234", "swgitty", "sw00ty", "sierraiv", "ordinarylife", "milidead", "blatoff", "angelnedemon", "moun4l", "foxrtotlimda")
 
 /datum/gear/donator/bm/tricorne
 	name = "Tricorne"
@@ -727,14 +707,12 @@
 	slot = ITEM_SLOT_ICLOTHING
 	path = /obj/item/clothing/under/donator/bm/Frieren_skirt
 	ckeywhitelist = list("fedor1545")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
 /datum/gear/donator/bm/Prosecutor
 	name = "Prosecutor suit"
 	slot = ITEM_SLOT_ICLOTHING
 	path = /obj/item/clothing/under/donator/bm/Prosecutor_suit
 	ckeywhitelist = list("fedor1545", "berly12")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
 /datum/gear/donator/bm/a46_kit
 	name = "A46 Kit"
@@ -753,7 +731,6 @@
 	slot = ITEM_SLOT_OCLOTHING
 	path = /obj/item/clothing/suit/donator/bm/rune_jacket
 	ckeywhitelist = list("d0nald")
-	subcategory = LOADOUT_SUBCATEGORIES_DON03
 
 /datum/gear/donator/bm/acrador_kit
 	name = "Acrador kit"
@@ -951,10 +928,10 @@
 	path = /obj/item/modkit/dreadmk3_kit
 	ckeywhitelist = list("stasdvrz", "mrsko", "akinight", "vovakr", "roninqwerty","pingvas","lev1932","dragon9090","cnaperdodo")
 
-/datum/gear/donator/bm/old_laser_kit
+/datum/gear/donator/bm/aer9
 	name = "AER9 Kit"
 	slot = ITEM_SLOT_ICLOTHING
-	path = /obj/item/modkit/old_laser_kit
+	path = /obj/item/modkit/aer9
 	ckeywhitelist = list("stasdvrz", "vlonger", "vidl")
 
 /datum/gear/donator/bm/institute_kit
@@ -967,7 +944,13 @@
 	name = "P320 kit"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/modkit/p320_kit
-	ckeywhitelist = list("pingvas", "ty4kahahebe", "scorpionch")
+	ckeywhitelist = list("ty4kahahebe", "pingvas", "xaeshkavd")
+
+/datum/gear/donator/bm/M9_tempest_kit
+	name = "M-9 Tempest kit"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/modkit/M9tempest_kit
+	ckeywhitelist = list("pingvas", "ty4kahahebe")
 
 /datum/gear/donator/bm/dedication_kit
 	name = "Dedication kit"
@@ -1046,7 +1029,6 @@
 	slot = ITEM_SLOT_OCLOTHING
 	path = /obj/item/clothing/suit/donator/bm/soviet_coat
 	ckeywhitelist = list("fedor1545")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
 /datum/gear/donator/bm/poster_box
 	name = "Box with posters"
@@ -1059,12 +1041,23 @@
 	slot = ITEM_SLOT_HEAD
 	path = /obj/item/clothing/head/donator/bm/ushankich
 	ckeywhitelist = list("fedor1545")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
-/datum/gear/donator/bm/razorsong
-	name = "Razorsong Kit"
+/datum/gear/donator/bm/echoes_jacket
+	name = "Technical Jacket"
 	slot = ITEM_SLOT_BACKPACK
-	path = /obj/item/modkit/razorsong_kit
+	path = /obj/item/clothing/suit/donator/bm/echoes_jacket
+	ckeywhitelist = list("xaeshkavd", "scramblescream", "illa_3000", "discord980", "heathkit1", "sosnovskii", "trora")
+
+/datum/gear/donator/bm/oftok
+	name = "Officer token"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/clothing/neck/tie/oftok
+	ckeywhitelist = list("xaeshkavd", "akinight", "heathkit1", "scramblescream", "definitelynotnesuby", "sosnovskii","hellsinggc")
+
+/datum/gear/donator/bm/hecu_black
+	name = "Black HECU Backpack"
+	path = /obj/item/storage/backpack/hecu/black
+	slot = ITEM_SLOT_BACK
 	ckeywhitelist = list("xaeshkavd")
 
 /datum/gear/donator/bm/noxscoutcoat
@@ -1073,72 +1066,35 @@
 	path = /obj/item/clothing/suit/donator/bm/noxscoutcoat
 	ckeywhitelist = list("xaeshkavd")
 
-/datum/gear/donator/bm/rsh_future
-	name = "Special .38 Mars Kit"
-	slot = ITEM_SLOT_BACKPACK
-	path = /obj/item/modkit/rsh_future
-	ckeywhitelist = list("xaeshkavd", "sosnovskii","hellsinggc")
-
-/datum/gear/donator/bm/rawk_sat
-	name = "Rawk Satchel"
-	slot = ITEM_SLOT_BACK
-	path = /obj/item/storage/backpack/satchel/rawk_sat
-	ckeywhitelist = list("xaeshkavd","silverfoxpaws", "heathkit1", "sosnovskii")
-
-/datum/gear/donator/bm/echoes_jacket
-	name = "Technical Jacket"
-	slot = ITEM_SLOT_BACKPACK
-	path = /obj/item/clothing/suit/donator/bm/echoes_jacket
-	ckeywhitelist = list("xaeshkavd", "scramblescream", "illa_3000", "discord980", "heathkit1", "sosnovskii", "trora")
-	subcategory = LOADOUT_SUBCATEGORIES_DON03
-
-/datum/gear/donator/bm/oftok
-	name = "Officer token"
-	slot = ITEM_SLOT_BACKPACK
-	path = /obj/item/clothing/neck/tie/oftok
-	ckeywhitelist = list("xaeshkavd", "akinight", "heathkit1", "scramblescream", "definitelynotnesuby", "sosnovskii","hellsinggc")
-
-/datum/gear/donator/bm/agentcape
-	name = "Marketing agent's cape"
-	slot = ITEM_SLOT_OCLOTHING
-	path = /obj/item/clothing/suit/donator/bm/agentcape
-	ckeywhitelist = list("sosnovskii")
-	subcategory = LOADOUT_SUBCATEGORIES_DON03
-
 /datum/gear/donator/bm/kladmen_panties
 	name = "Panties"
 	slot = ITEM_SLOT_OCLOTHING
 	path = /obj/item/clothing/underwear/briefs/kladmen_panties
 	ckeywhitelist = list("kladmenuwu", "scramblescream")
-	subcategory = LOADOUT_SUBCATEGORIES_DON03
 
 /datum/gear/donator/bm/kladmen_bra
 	name = "Bra - A bra"
 	slot = ITEM_SLOT_OCLOTHING
 	path = /obj/item/clothing/underwear/shirt/bra/kladmen_bra
 	ckeywhitelist = list("kladmenuwu", "scramblescream")
-	subcategory = LOADOUT_SUBCATEGORIES_DON03
 
 /datum/gear/donator/bm/troubleneko_bra
 	name = "Laced lingerie bra"
 	slot = ITEM_SLOT_OCLOTHING
 	path = /obj/item/clothing/underwear/shirt/bra/troubleneko_bra
 	ckeywhitelist = list("troubleneko17th", "tblkba")
-	subcategory = LOADOUT_SUBCATEGORIES_DON03
 
 /datum/gear/donator/bm/troubleneko_panties
 	name = "Panties"
 	slot = ITEM_SLOT_OCLOTHING
 	path = /obj/item/clothing/underwear/briefs/troubleneko_panties
 	ckeywhitelist = list("troubleneko17th", "tblkba")
-	subcategory = LOADOUT_SUBCATEGORIES_DON03
 
 /datum/gear/donator/bm/troubleneko_socks
 	name = "Socks"
 	slot = ITEM_SLOT_OCLOTHING
 	path = /obj/item/clothing/underwear/socks/thigh/troubleneko_socks
 	ckeywhitelist = list("troubleneko17th", "tblkba")
-	subcategory = LOADOUT_SUBCATEGORIES_DON03
 
 /datum/gear/donator/bm/f_haori
 	name = "Flaming Haori"
@@ -1277,13 +1233,11 @@
 	slot = ITEM_SLOT_ICLOTHING
 	path = /obj/item/clothing/under/donator/bm/tavern_skirt
 	ckeywhitelist = list("fedor1545")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
 /datum/gear/donator/bm/elf_bottle
 	name = "Potion bottle"
 	path = /obj/item/reagent_containers/glass/beaker/elf_bottle
 	ckeywhitelist = list("fedor1545")
-	subcategory = LOADOUT_SUBCATEGORIES_DON04
 
 /datum/gear/donator/bm/wh_kit
 	name = "A box of Unholy Armor"
@@ -1296,21 +1250,18 @@
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/clothing/under/donator/bm/lotos_skirt
 	ckeywhitelist = list("angrylaska")
-	loadout_flags = LOADOUT_CAN_NAME | LOADOUT_CAN_DESCRIPTION
 
 /datum/gear/donator/bm/copium
 	name = "Copium Bottle"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/reagent_containers/glass/bottle/copium
 	ckeywhitelist = list("angrylaska")
-	loadout_flags = LOADOUT_CAN_NAME | LOADOUT_CAN_DESCRIPTION
 
 /datum/gear/donator/bm/moniq
 	name = "Muz-TV"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/sign/moniq
 	ckeywhitelist = list("finkrld")
-	loadout_flags = LOADOUT_CAN_NAME | LOADOUT_CAN_DESCRIPTION
 
 /////////////////////////////////////
 
@@ -1367,7 +1318,6 @@
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/storage/box/hahun_eidolon
 	ckeywhitelist = list("dolbajob", "enigma418")
-	cost = 0
 
 /datum/gear/donator/bm/hahun_medvest
 	name = "Rescue task force vest"
@@ -1380,7 +1330,7 @@
 
 /datum/gear/donator/bm/hahun_bag
 	name = "Unloading bag"
-	slot = ITEM_SLOT_BACKPACK
+	slot = ITEM_SLOT_BACK
 	path = /obj/item/storage/backpack/satchel/hahun_bag
 	ckeywhitelist = list("dolbajob", "enigma418")
 
@@ -1407,12 +1357,6 @@
 	name = "EIDOVOX Type-3 mask"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/clothing/mask/gas/syndicate/hahun_mask/eidovox
-	ckeywhitelist = list("dolbajob", "enigma418")
-
-/datum/gear/donator/bm/hahun_cape
-	name = "MI13 cape"
-	slot = ITEM_SLOT_BACKPACK
-	path = /obj/item/clothing/neck/tie/hahun_cape
 	ckeywhitelist = list("dolbajob", "enigma418")
 
 /datum/gear/donator/bm/hahun_jukebox
@@ -1475,39 +1419,30 @@
 	name = "Millie plush"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/toy/plush/bm/millie
-	ckeywhitelist = list("pingvas", "ty4kahahebe", "scorpionch")
+	ckeywhitelist = list("pingvas", "ty4kahahebe", "scorpionch", "blatoff")
 
 /datum/gear/donator/bm/praxil_seven
 	name = "Praxil-7 Mark II Kit"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/modkit/fluff_praxil_seven_kit
 	ckeywhitelist = list("enigma418", "dolbajob")
-	cost = 0
 
 /datum/gear/donator/bm/m_9922
 	name = "M-9922 Kit"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/storage/box/fluff_m_9922_kit
 	ckeywhitelist = list("enigma418", "dolbajob")
-	cost = 0
 
 /datum/gear/donator/bm/dark_montur
 	name = "Dark Montur"
 	slot = ITEM_SLOT_OCLOTHING
 	path = /obj/item/clothing/suit/donator/bm/dark_montur
 	ckeywhitelist = list("enigma418", "dolbajob")
-	subcategory = LOADOUT_SUBCATEGORIES_DON03
 
 /datum/gear/donator/bm/MI13_uniform
 	name = "MI13 combat uniform"
 	slot = ITEM_SLOT_ICLOTHING
 	path = /obj/item/clothing/under/donator/bm/MI13_uniform
-	ckeywhitelist = list("enigma418", "dolbajob")
-
-/datum/gear/donator/bm/eidolon_cape
-	name = "Eidolon officer cape"
-	slot = ITEM_SLOT_NECK
-	path = /obj/item/clothing/neck/eidolon_cape
 	ckeywhitelist = list("enigma418", "dolbajob")
 
 /datum/gear/donator/bm/eo95_mask
@@ -1530,7 +1465,7 @@
 
 /datum/gear/donator/bm/dilivery_bag
 	name = "Delivery Bag"
-	slot = ITEM_SLOT_BACKPACK
+	slot = ITEM_SLOT_BACK
 	path = /obj/item/storage/backpack/satchel/dilivery_bag
 	ckeywhitelist = list("troubleneko17th", "dimofon", "hazzi", "cupteazee", "kolhozniik", "dimakr")
 
@@ -1538,39 +1473,39 @@
 	name = "Dar Jr beacon"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/choice_beacon/pet/dar
-	ckeywhitelist = list("avtobuspng", "dimofon", "definitelynotnesuby")
+	ckeywhitelist = list("avtobuspng", "dimofon", "definitelynotnesuby", "angelnedemon", "deltarayx")
 
 /datum/gear/donator/bm/pawpack
 	name = "Paw Backpack"
-	slot = ITEM_SLOT_BACKPACK
+	slot = ITEM_SLOT_BACK
 	path = /obj/item/storage/backpack/satchel/pawpack
-	ckeywhitelist = list("deltarayx")
+	ckeywhitelist = list("deltarayx", "pingvas")
 
 /datum/gear/donator/bm/coffin
 	name = "Black Rose atelier worker coffin."
-	slot = ITEM_SLOT_BACKPACK
+	slot = ITEM_SLOT_BACK
 	path = /obj/item/storage/backpack/coffin
 	ckeywhitelist = list("hateredsoul", "ggishka")
 
 /datum/gear/donator/bm/coffinb2
 	name = "Black Rose atelier worker cofin"
-	slot = ITEM_SLOT_BACKPACK
+	slot = ITEM_SLOT_BACK
 	path = /obj/item/storage/backpack/coffin/b2
 	ckeywhitelist = list("hateredsoul", "ggishka")
 
 /datum/gear/donator/bm/coffinw
 	name = "Black Rose atelier worker. Coffin"
-	slot = ITEM_SLOT_BACKPACK
+	slot = ITEM_SLOT_BACK
 	path = /obj/item/storage/backpack/coffin/w
 	ckeywhitelist = list("hateredsoul", "ggishka")
 
 /datum/gear/donator/bm/coffinw2
 	name = "Black Rose Atelier worker coffin"
-	slot = ITEM_SLOT_BACKPACK
+	slot = ITEM_SLOT_BACK
 	path = /obj/item/storage/backpack/coffin/w2
 	ckeywhitelist = list("hateredsoul", "ggishka")
 
-/datum/gear/donator/bm/bishop_mitre
+/datum/gear/donator/bm/steal_book
 	name = "Book of stealing"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/storage/book_of_stealing
@@ -1624,7 +1559,7 @@
 /datum/gear/donator/bm/cybercoat
 	name = "Cybercoat"
 	slot = ITEM_SLOT_OCLOTHING
-	path = /obj/item/clothing/suit/hooded/bm/cybercoat
+	path = /obj/item/clothing/suit/hooded/bm/donator/cybercoat
 	ckeywhitelist = list("cnaperdodo")
 
 /datum/gear/donator/bm/diamond_ring
@@ -1655,7 +1590,7 @@
 	name = "Polychromic evening gloves"
 	path = /obj/item/clothing/gloves/toggled/hug/poly_evening
 	slot = ITEM_SLOT_GLOVES
-	loadout_flags = LOADOUT_CAN_NAME | LOADOUT_CAN_DESCRIPTION | LOADOUT_CAN_COLOR_POLYCHROMIC
+	loadout_flags = LOADOUT_CAN_NAME_DESC_POLY
 	loadout_initial_colors = list("#FEFEFE")
 	ckeywhitelist = list("herobrine998")
 
@@ -1724,12 +1659,6 @@
 	path = /obj/item/modkit/portalabomination_kit
 	ckeywhitelist = list("architect0r")
 
-/datum/gear/donator/bm/hecu_black
-	name = "Black HECU Backpack"
-	path = /obj/item/storage/backpack/hecu/black
-	slot = ITEM_SLOT_BACKPACK
-	ckeywhitelist = list("xaeshkavd")
-
 /datum/gear/donator/bm/legion_mask_frank
 	name = "Frank mask"
 	slot = ITEM_SLOT_MASK
@@ -1786,13 +1715,13 @@
 	name = "Ranger Coat"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/storage/box/fall_out_kit
-	ckeywhitelist = list("dimofon", "devildeadspace")
+	ckeywhitelist = list("dimofon", "devildeadspace", "mihana964")
 
 /datum/gear/donator/bm/player_zippo
 	name = "Player Zippo"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/lighter/plighter
-	ckeywhitelist = list("stasdvrz", "dimofon")
+	ckeywhitelist = list("stasdvrz", "dimofon", "devildeadspace")
 
 /datum/gear/donator/bm/horror_mask
 	name = "Horror_mask"
@@ -1827,38 +1756,32 @@
 /datum/gear/donator/bm/mu88
 	name = "M.U. 88 New hope coat"
 	slot = ITEM_SLOT_OCLOTHING
-	path = /obj/item/clothing/suit/armor/vest/bluesheid/mu88
-	ckeywhitelist = list("milidead", "hateredsoul")
-	restricted_desc = "Brig Physician, Blueshield."
-	restricted_roles = list("Brig Physician, Blueshield.")
+	path = /obj/item/clothing/suit/donator/bm/mu88
+	ckeywhitelist = list("hateredsoul", "milidead")
 
 /datum/gear/donator/bm/mu88_swimsuit
-	name = "M.U. 88 New hope swimcoat"
+	name = "M.U. 88 New hope swimsuit"
 	slot = ITEM_SLOT_ICLOTHING
-	path = /obj/item/clothing/under/rank/brigdoc/mu88_swimsuit
-	ckeywhitelist = list("milidead", "hateredsoul")
-	restricted_desc = "Brig Physician, Blueshield."
-	restricted_roles = list("Brig Physician, Blueshield.")
+	path = /obj/item/clothing/under/donator/bm/mu88_swimsuit
+	ckeywhitelist = list("hateredsoul", "milidead")
 
 /datum/gear/donator/bm/mu88_boots
 	name = "M.U. 88 New hope boots"
 	slot = ITEM_SLOT_ICLOTHING
 	path = /obj/item/clothing/shoes/jackboots/tall/mu88_boots
-	ckeywhitelist = list("milidead", "hateredsoul")
+	ckeywhitelist = list("hateredsoul", "milidead")
 
 /datum/gear/donator/bm/mu88_horns
 	name = "M.U. 88 New hope horns"
 	slot = ITEM_SLOT_ICLOTHING
-	path = /obj/item/clothing/head/blueshield/mu88_horns
-	ckeywhitelist = list("milidead", "hateredsoul")
-	restricted_desc = "Brig Physician, Blueshield."
-	restricted_roles = list("Brig Physician, Blueshield.")
+	path = /obj/item/clothing/head/donator/bm/mu88_horns
+	ckeywhitelist = list("hateredsoul", "milidead")
 
 /datum/gear/donator/bm/mu88_tie
 	name = "M.U. 88 New hope tie"
 	slot = ITEM_SLOT_ICLOTHING
 	path = /obj/item/clothing/neck/tie/mu88_tie
-	ckeywhitelist = list("milidead", "hateredsoul")
+	ckeywhitelist = list("hateredsoul", "milidead")
 
 /datum/gear/donator/bm/cesar_tunic
 	name = "Fancy tunic"
@@ -1902,38 +1825,50 @@
 	path = /obj/item/toy/plush/bm/belfor
 	ckeywhitelist = list("belf0r")
 
+/datum/gear/donator/bm/nova_plush
+	name = "Nova plushie"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/toy/plush/bm/nova
+	ckeywhitelist = list("architect0r")
+
+/datum/gear/donator/bm/zetta_plush
+	name = "Zetta plushie"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/toy/plush/bm/zetta
+	ckeywhitelist = list("hellsinggc", "tblkba")
+
 ///////////////////////////////////////////////
 
 /datum/gear/donator/bm/dm_pzuniform
 	name = "Grenadier uniform"
 	slot = ITEM_SLOT_ICLOTHING
 	path = /obj/item/clothing/under/donator/bm/dm_pzgrnd_uniform
-	ckeywhitelist = list("dimofon", "devildeadspace", "silverfoxpaws", "oni3288", "definitelynotnesuby")
+	ckeywhitelist = list("dimofon", "devildeadspace", "silverfoxpaws", "oni3288", "definitelynotnesuby", "fryktik", "deltarayx")
 
 /datum/gear/donator/bm/dm_pzsuit
 	name = "Grenadier jacket"
 	slot = ITEM_SLOT_OCLOTHING
 	path = /obj/item/clothing/suit/donator/bm/dm_pzgrnd_suit
-	ckeywhitelist = list("dimofon", "devildeadspace", "silverfoxpaws", "oni3288", "definitelynotnesuby")
+	ckeywhitelist = list("dimofon", "devildeadspace", "silverfoxpaws", "oni3288", "definitelynotnesuby", "fryktik", "deltarayx")
 
 /datum/gear/donator/bm/dm_pzhelmet
 	name = "Pionier helmet"
 	slot = ITEM_SLOT_HEAD
 	path = /obj/item/clothing/head/donator/bm/dm_pzgrnd_helmet
-	ckeywhitelist = list("dimofon", "devildeadspace", "silverfoxpaws", "oni3288", "definitelynotnesuby")
+	ckeywhitelist = list("dimofon", "devildeadspace", "silverfoxpaws", "oni3288", "definitelynotnesuby", "fryktik", "deltarayx")
 
 /datum/gear/donator/bm/dm_case
 	name = "Infantry clothing case"
 	slot = ITEM_SLOT_HANDS
 	path = /obj/item/storage/backpack/case/dm_staff
-	ckeywhitelist = list("dimofon", "devildeadspace", "silverfoxpaws", "oni3288", "definitelynotnesuby")
+	ckeywhitelist = list("dimofon", "devildeadspace", "silverfoxpaws", "oni3288", "definitelynotnesuby", "fryktik", "deltarayx")
 	cost = 2
 
 /datum/gear/donator/bm/dm_stg56
 	name = "StG-56"
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/modkit/stg56
-	ckeywhitelist = list("dimofon", "devildeadspace", "silverfoxpaws", "oni3288", "definitelynotnesuby")
+	ckeywhitelist = list("dimofon", "devildeadspace", "silverfoxpaws", "oni3288", "definitelynotnesuby", "fryktik")
 
 ///////////////////////////////////////////////
 
@@ -1982,7 +1917,6 @@
 	slot = ITEM_SLOT_BACKPACK
 	path = /obj/item/modkit/invis_belt
 	ckeywhitelist = list("herobrine998", "nyaaaa")
-	cost = 0
 
 /datum/gear/donator/bm/verdant_suit
 	name = "Verdant Tactical Suit"
@@ -2024,7 +1958,7 @@
 	name = "Aged Robe"
 	slot = ITEM_SLOT_OCLOTHING
 	path = /obj/item/clothing/suit/donator/bm/cultist_poly
-	loadout_flags = LOADOUT_CAN_NAME | LOADOUT_CAN_DESCRIPTION | LOADOUT_CAN_COLOR_POLYCHROMIC
+	loadout_flags = LOADOUT_CAN_NAME_DESC_POLY
 	loadout_initial_colors = list("#202020", "#C5302D")
 	ckeywhitelist = list("monolithxxv")
 
@@ -2032,7 +1966,7 @@
 	name = "Exo Legs"
 	slot = ITEM_SLOT_FEET
 	path = /obj/item/clothing/shoes/exo_legs
-	loadout_flags = LOADOUT_CAN_NAME | LOADOUT_CAN_DESCRIPTION | LOADOUT_CAN_COLOR_POLYCHROMIC
+	loadout_flags = LOADOUT_CAN_NAME_DESC_POLY
 	loadout_initial_colors = list("#202020", "#C5302D")
 	ckeywhitelist = list("monolithxxv")
 
@@ -2046,5 +1980,440 @@
 	name = "Gosei.H.mk27"
 	slot = ITEM_SLOT_HEAD
 	path = /obj/item/clothing/head/helmet/sec/gosei
-	loadout_flags = LOADOUT_CAN_NAME | LOADOUT_CAN_DESCRIPTION
 	ckeywhitelist = list("monolithxxv")
+
+/datum/gear/donator/bm/chetky_cap
+	name = "Chetky Cap"
+	slot = ITEM_SLOT_HEAD
+	path = /obj/item/clothing/head/donator/bm/chetky_cap
+	ckeywhitelist = list("ordinarylife", "pingvas", "leony24", "kennedykiller", "theatlasplay", "theatlasgaming", "ninjapikachushka", "devildeadspace", "trustmeimengineer", "izakfromrus", "hateredsoul", "vulpshiro", "dolbajob", "stgs")
+
+/datum/gear/donator/bm/chetky_g3jacket
+	name = "Chetky G3 Jacket"
+	slot = ITEM_SLOT_OCLOTHING
+	path = /obj/item/clothing/suit/donator/bm/chetky_g3jacket
+	ckeywhitelist = list("ordinarylife", "pingvas", "leony24", "kennedykiller", "theatlasplay", "theatlasgaming", "ninjapikachushka", "devildeadspace", "trustmeimengineer", "izakfromrus", "hateredsoul", "vulpshiro", "dolbajob", "stgs")
+
+/datum/gear/donator/bm/lizared_exposed
+	name = "LIZARED Open Panties"
+	slot = ITEM_SLOT_UNDERWEAR
+	path = /obj/item/clothing/underwear/briefs/panties/lizared/exposed
+	ckeywhitelist = list("pingvas", "ty4kahahebe", "blatoff")
+
+/datum/gear/donator/bm/custom_vape
+	name = "Custom E-Cigarette"
+	slot = ITEM_SLOT_MASK
+	path = /obj/item/clothing/mask/vape/custom
+	ckeywhitelist = list("ordinarylife", "pingvas", "leony24", "kennedykiller", "theatlasplay", "theatlasgaming", "ninjapikachushka", "devildeadspace", "trustmeimengineer", "izakfromrus", "hateredsoul", "vulpshiro", "dolbajob", "stgs", "silyamg", "tblkba", "dimofon")
+
+/datum/gear/donator/bm/crocinsmoke
+	name = "Crocin smoke"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/book/granter/spell/smoke/crocin
+	ckeywhitelist = list("deadlizard")
+	cost = 2
+
+/datum/gear/donator/bm/crocinsmoke/on_spawn(mob/living/carbon/human/user, obj/item/book/granter/spell/smoke/crocin/I)
+	if(!istype(user))
+		return
+	I.on_reading_finished(user)
+	qdel(I)
+
+/datum/gear/donator/bm/twilight_spike
+	name = "Twilight Spike"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/storage/box/donator/bm/twilight_spike
+	ckeywhitelist = list("dragon9090", "hellsinggc", "pingvas")
+
+/datum/gear/donator/bm/sf_coat
+	name = "S.F. Coat"
+	slot = ITEM_SLOT_OCLOTHING
+	path = /obj/item/clothing/suit/donator/bm/sf_coat
+	ckeywhitelist = list("hihitect", "xaeshkavd")
+
+/datum/gear/donator/bm/freak_case
+	name = "Cool Case With Presents"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/storage/backpack/case/command/freak
+	ckeywhitelist = list("freakowo")
+
+/datum/gear/donator/bm/fire_blossom
+	name = "Fire blossom"
+	slot = ITEM_SLOT_HEAD
+	path = /obj/item/clothing/head/donator/bm/fire_blossom
+	ckeywhitelist = list("sheya", "dagran")
+
+/datum/gear/donator/bm/desert_nanosuit
+	name = "Desert Nanosuit"
+	slot = ITEM_SLOT_UNDERWEAR
+	path = /obj/item/clothing/underwear/briefs/nano_suit
+	ckeywhitelist = list("lindaastereih", "kingdeaths", "heathkit1", "dimofon", "tblkba")
+
+/datum/gear/donator/bm/bear_patch
+	name = "BEAR Patch"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/clothing/accessory/bear_patch
+	ckeywhitelist = list("hihitect", "hateredsoul", "hellsinggc", "silyamg", "dimofon", "xaeshkavd")
+
+/datum/gear/donator/bm/usec_patch
+	name = "USEC Patch"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/clothing/accessory/usec_patch
+	ckeywhitelist = list("hihitect", "hateredsoul", "hellsinggc", "silyamg", "dimofon", "xaeshkavd")
+
+/datum/gear/donator/bm/transparent_gloves
+	name = "Transparent Gloves"
+	path = /obj/item/clothing/gloves/color/black/transparent
+	slot = ITEM_SLOT_GLOVES
+	ckeywhitelist = list("lindaastereih")
+
+/datum/gear/donator/bm/winter_mask
+	name = "Ami's Winter Mask"
+	slot = ITEM_SLOT_MASK
+	path = /obj/item/clothing/mask/gas/syndicate/cool_version/winter_mask
+	ckeywhitelist = list("lindaastereih")
+
+/datum/gear/donator/bm/p226_syndicate
+	name = "P226 'Syndicate' Kit"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/modkit/p226_syndicate
+	ckeywhitelist = list("vladtv05")
+
+/datum/gear/donator/bm/toy_plasma_scythe
+	name = "Toy Plasma Scythe"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/plasmascythe/toy
+	ckeywhitelist = list("freakowo")
+
+/datum/gear/donator/bm/toy_sledgehammer
+	name = "Toy Sledgehammer"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/inteq_sledgehammer/toy
+	ckeywhitelist = list("freakowo", "belf0r")
+
+/datum/gear/donator/bm/invisible_ac
+	name = "Invisible Armored Coat"
+	path = /obj/item/clothing/suit/toggle/captains_parade/hos_formal/ac/invisible
+	slot = ITEM_SLOT_OCLOTHING
+	restricted_desc = "Head of Security, Warden, Blueshield."
+	restricted_roles = list("Head of Security", "Warden", "Blueshield")
+	ckeywhitelist = list("lapkee")
+
+/datum/gear/donator/bm/kladmenuwu_sweater
+	name = "Worm Sweater"
+	path = /obj/item/clothing/suit/donator/bm/kladmenuwu_sweater
+	slot = ITEM_SLOT_OCLOTHING
+	ckeywhitelist = list("kladmenuwu")
+
+/datum/gear/donator/bm/cybersun_kit
+	name = "Cybersun kit"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/storage/box/cybersun_kit
+	ckeywhitelist = list("sheya")
+
+/datum/gear/donator/bm/sheya_dress
+	name = "Gothic dress"
+	slot = ITEM_SLOT_ICLOTHING
+	path = /obj/item/clothing/under/donator/bm/sheya
+	ckeywhitelist = list("sheya")
+
+/datum/gear/donator/bm/nul_kit
+	name = "Sword of Nul Kit"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/modkit/nul_kit
+	ckeywhitelist = list("lev1932")
+
+/datum/gear/donator/bm/casull_kit
+	name = "Casull Kit"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/modkit/casull_kit
+	ckeywhitelist = list("lev1932")
+
+/datum/gear/donator/bm/bwal_special_kit
+	name = "B-Wal-Special Kit"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/modkit/bwal_special_kit
+	ckeywhitelist = list("lindaastereih")
+
+/datum/gear/donator/bm/captain_rifle_kit
+	name = "Antique Laser Rifle Kit"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/modkit/captain_rifle_kit
+	ckeywhitelist = list("lindaastereih")
+
+/datum/gear/donator/bm/ftucloak
+	name = "FTU Cape"
+	slot = ITEM_SLOT_NECK
+	path = /obj/item/clothing/neck/cloak/ftu
+	ckeywhitelist = list("fanlexa", "kosep", "dragoncora")
+
+/datum/gear/donator/bm/binary_cloak
+	name = "Binary Cloak"
+	slot = ITEM_SLOT_NECK
+	path = /obj/item/clothing/neck/cloak/binary/alt
+	ckeywhitelist = list("homandos")
+
+/datum/gear/donator/bm/pedantcape
+	name = "Corvus Pendant"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/clothing/neck/tie/pendantcape
+	ckeywhitelist = list("smol42", "weirdbutton", "sage4or")
+
+/datum/gear/donator/bm/agentcape
+	name = "Marketing agent's cape"
+	slot = ITEM_SLOT_OCLOTHING
+	path = /obj/item/clothing/suit/donator/bm/agentcape
+	ckeywhitelist = list("sosnovskii")
+
+/datum/gear/donator/bm/hahun_cape
+	name = "MI13 cape"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/clothing/neck/tie/hahun_cape
+	ckeywhitelist = list("dolbajob", "enigma418")
+
+/datum/gear/donator/bm/eidolon_cape
+	name = "Eidolon officer cape"
+	slot = ITEM_SLOT_NECK
+	path = /obj/item/clothing/neck/eidolon_cape
+	ckeywhitelist = list("enigma418", "dolbajob")
+
+/datum/gear/donator/bm/winter_cape
+	name = "Winter Cape"
+	slot = ITEM_SLOT_NECK
+	path = /obj/item/clothing/neck/cloak/wintercape
+	ckeywhitelist = list("lindaastereih")
+
+/datum/gear/donator/bm/eclipse_cape
+	name = "Eclipse cape"
+	slot = ITEM_SLOT_NECK
+	path = /obj/item/clothing/neck/tie/eclipse_cape
+	ckeywhitelist = list("shizalrp", "krasler101")
+
+/datum/gear/donator/bm/Gelriter_kit
+	name = "Gelriter-22 kit"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/modkit/Gelriter_22
+	ckeywhitelist = list("tblkba","lindaastereih")
+
+/datum/gear/donator/bm/fancy_laser_kit
+	name = "Fancy Laser Rifle Kit"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/modkit/fancy_rifle_kit
+	ckeywhitelist = list("tblkba")
+
+/datum/gear/donator/bm/blood_suit
+	name = "crimson aristocracy suit"
+	slot = ITEM_SLOT_ICLOTHING
+	path = /obj/item/clothing/under/donator/bm/blood_suit
+	ckeywhitelist = list("tblkba")
+
+/datum/gear/donator/bm/blood_shinel
+	name = "crimson aristocracy shinel"
+	slot = ITEM_SLOT_OCLOTHING
+	path = /obj/item/clothing/suit/toggle/captains_parade/blood_shinel
+	ckeywhitelist = list("tblkba")
+	restricted_desc = "Captain."
+	restricted_roles = list("Captain")
+
+/datum/gear/donator/bm/blood_boots
+	name = "crimson aristocracy boots"
+	slot = ITEM_SLOT_FEET
+	path = /obj/item/clothing/shoes/blood_boots
+	ckeywhitelist = list("tblkba")
+
+/datum/gear/donator/bm/armolex_box
+	name = "Armolex Box"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/storage/box/donator/bm/armolex_box
+	ckeywhitelist = list("xaeshkavd", "sosnovskii", "hellsinggc", "ty4kahahebe", "herobrine998")
+
+/datum/gear/donator/bm/jason_mask
+	name = "Jason Mask"
+	slot = ITEM_SLOT_MASK
+	path = /obj/item/clothing/mask/gas/plaguedoctor/jason
+	ckeywhitelist = list("goblin335", "mixalic")
+
+/datum/gear/donator/bm/skull_flag
+	name = "PMC Skull flag"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/sign/flag/skull
+	ckeywhitelist = list("krashly", "stgs", "hazzi", "dolbajob", "vulpshiro", "sodastrike", "lonofera", "mihana964", "hellsinggc")
+
+/datum/gear/donator/bm/vape
+	name = "Vape"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/clothing/mask/vape
+	ckeywhitelist = list("trollandrew")
+
+/datum/gear/donator/bm/electropack
+	name = "Electropack"
+	slot = ITEM_SLOT_HANDS
+	path = /obj/item/electropack
+	ckeywhitelist = list("trollandrew")
+
+/datum/gear/donator/bm/straight_jacket
+	name = "Straight Jacket"
+	slot = ITEM_SLOT_OCLOTHING
+	path = /obj/item/clothing/suit/straight_jacket
+	ckeywhitelist = list("trollandrew")
+
+/datum/gear/donator/bm/boxing
+	name = "Boxing Gloves"
+	slot = ITEM_SLOT_GLOVES
+	path = /obj/item/clothing/gloves/boxing
+	ckeywhitelist = list("trollandrew")
+
+/datum/gear/donator/bm/dc_helmet
+	name = "Agent Headgear"
+	slot = ITEM_SLOT_HEAD
+	path = /obj/item/clothing/head/helmet/dragoncora
+	ckeywhitelist = list("dragoncora")
+
+/datum/gear/donator/bm/dc_suit
+	name = "Agent Suit"
+	slot = ITEM_SLOT_OCLOTHING
+	path = /obj/item/clothing/suit/armor/dragoncora
+	ckeywhitelist = list("dragoncora")
+
+/datum/gear/donator/bm/dc_helmet2
+	name = "FTU Combat Skull"
+	slot = ITEM_SLOT_HEAD
+	path = /obj/item/clothing/head/helmet/skull/ftu
+	ckeywhitelist = list("dragoncora")
+
+/datum/gear/donator/bm/dc_suit2
+	name = "FTU Security Armor"
+	slot = ITEM_SLOT_OCLOTHING
+	path = /obj/item/clothing/suit/armor/vest/dragoncora
+	ckeywhitelist = list("dragoncora")
+
+/datum/gear/donator/bm/dc_gloves
+	name = "SpecOps Guerrilla Gloves"
+	slot = ITEM_SLOT_GLOVES
+	path = /obj/item/clothing/gloves/color/black/dragoncora
+	ckeywhitelist = list("dragoncora")
+
+/datum/gear/donator/bm/dc_gorka
+	name = "SpecOps Gorka"
+	slot = ITEM_SLOT_ICLOTHING
+	path = /obj/item/clothing/under/inteq/tactical_gorka
+	ckeywhitelist = list("dragoncora")
+
+/datum/gear/donator/bm/dc_boots
+	name = "Combat Boots"
+	slot = ITEM_SLOT_FEET
+	path = /obj/item/clothing/shoes/dragoncora
+	ckeywhitelist = list("dragoncora")
+
+/datum/gear/donator/bm/dc_backpack
+	name = "Tactical Backpack"
+	slot = ITEM_SLOT_BACK
+	path = /obj/item/storage/backpack/dragoncora
+	ckeywhitelist = list("dragoncora")
+
+/datum/gear/donator/bm/dc_suit3
+	name = "Trench Coat"
+	slot = ITEM_SLOT_OCLOTHING
+	path = /obj/item/clothing/suit/det_suit/lanyard/dragoncora
+	ckeywhitelist = list("dragoncora")
+
+/datum/gear/donator/bm/dc_headset
+	name = "Alien Headset"
+	slot = ITEM_SLOT_EARS
+	path = /obj/item/radio/headset/dragoncora
+	ckeywhitelist = list("dragoncora")
+
+/datum/gear/donator/bm/dc_mask
+	name = "Russian Balaclava"
+	slot = ITEM_SLOT_MASK
+	path = /obj/item/clothing/mask/russian_balaclava
+	ckeywhitelist = list("dragoncora")
+
+/datum/gear/donator/bm/anti_armor
+	name = "Armor Softening Nanites Kit"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/modkit/anti_armor
+	ckeywhitelist = list("angrylaska")
+
+/datum/gear/donator/bm/lapkee_kit
+	name = "Nebula Box"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/storage/box/lapkee_kit
+	ckeywhitelist = list("lapkee")
+
+/datum/gear/donator/bm/oldtunic
+	name = "Old Tunic"
+	slot = ITEM_SLOT_ICLOTHING
+	path = /obj/item/clothing/under/donator/bm/oldtunic
+	ckeywhitelist = list("lindaastereih")
+
+/datum/gear/donator/bm/oldwraps
+	name = "Old Wrappings"
+	slot = ITEM_SLOT_SOCKS
+	path = /obj/item/clothing/underwear/socks/thigh/oldwraps
+	ckeywhitelist = list("lindaastereih")
+
+/datum/gear/donator/backpack/lipstick/heartboom
+	name = "Heartboom Lipstick"
+	path = /obj/item/lipstick/heartboom
+	ckeywhitelist = list("liesbee")
+
+/datum/gear/donator/bm/cz_75_kit
+	name = "CZ-75 kit"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/modkit/cz_75
+	ckeywhitelist = list("shizalrp", "krasler101", "kingdeaths", "vlonger")
+
+/datum/gear/donator/bm/kila_mask
+	name = "Mask-1Щ 'Killa edition'"
+	slot = ITEM_SLOT_HEAD
+	path = /obj/item/clothing/head/donator/bm/kila_mask
+	ckeywhitelist = list("vlonger")
+
+/datum/gear/donator/bm/h_pmc_jeans
+	name = "PMC jeans"
+	slot = ITEM_SLOT_ICLOTHING
+	path = /obj/item/clothing/under/donator/bm/h_pmc_jeans
+	ckeywhitelist = list("hateredsoul")
+
+/datum/gear/donator/bm/h_thin_tshirt
+	name = "Thin T-shirt"
+	slot = ITEM_SLOT_OCLOTHING
+	path = /obj/item/clothing/underwear/shirt/h_thin_tshirt
+	ckeywhitelist = list("hateredsoul")
+
+/datum/gear/donator/bm/h_slim_tshirt
+	name = "Slim T-shirt"
+	slot = ITEM_SLOT_OCLOTHING
+	path = /obj/item/clothing/underwear/briefs/h_thin_slim_tshirt
+	ckeywhitelist = list("hateredsoul")
+
+/datum/gear/donator/bm/h_eslim_tshirt
+	name = "EXTRA slim T-shirt"
+	slot = ITEM_SLOT_OCLOTHING
+	path = /obj/item/clothing/underwear/briefs/h_thin_eslim_tshirt
+	ckeywhitelist = list("hateredsoul")
+
+/datum/gear/donator/bm/scream_knife_kit
+	name = "Scream Knife Kit"
+	slot = ITEM_SLOT_BACKPACK
+	path = /obj/item/modkit/scream_knife_kit
+	ckeywhitelist = list("dimofon", "pingvas", "devildeadspace", "dimakr")
+
+/datum/gear/donator/bm/sport_abibas_bag
+	name = "Sport 'ABIBAS' satchel"
+	slot = ITEM_SLOT_BACK
+	path = /obj/item/storage/backpack/satchel/sport_abibas_bag
+	ckeywhitelist = list("ty4kahahebe", "pingvas")
+
+/datum/gear/donator/bm/renory_jumpsuit
+	name = "Leather Jumpsuit"
+	slot = ITEM_SLOT_ICLOTHING
+	path = /obj/item/clothing/under/donator/bm/renory_jumpsuit
+	ckeywhitelist = list("kumikoshouko")
+
+/datum/gear/donator/bm/renory_helmet
+	name = "Motorcycle Helmet"
+	slot = ITEM_SLOT_HEAD
+	path = /obj/item/clothing/head/donator/bm/renory_helmet
+	ckeywhitelist = list("kumikoshouko")

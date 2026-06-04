@@ -5,7 +5,12 @@
 //	You do not need to raise this if you are adding new values that have sane defaults.
 //	Only raise this value when changing the meaning/format/name/layout of an existing value
 //	where you would want the updater procs below to run
-#define SAVEFILE_VERSION_MAX	63
+#define SAVEFILE_VERSION_MAX	69
+
+/// Upper bound for character slot indices during savefile migration (loop over S.dir).
+/// Prevents corrupted or garbage directory names (e.g. huge slot numbers) from inflating max_save_slots
+/// and running thousands of load_character/save_character pairs (OOM / DD hangs).
+#define SAVEFILE_MIGRATION_MAX_CHARACTER_SLOT	128
 
 /*
 SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Carn
@@ -82,6 +87,36 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 		new_character_creator = TRUE
 		if(!istext(charcreation_theme) || !findtext(charcreation_theme, "modern"))
 			charcreation_theme = "modern"
+
+	// BLUEMOON ADD - принудительный FPS 120 для фикса лага движения в BYOND 516
+	if(current_version < 64)
+		clientfps = 120
+
+	// Возможность выключения кастомного цвета для педалей
+	if(current_version < 65)
+		custom_colors = TOGGLES_DEFAULT_CUSTOM_COLORS
+
+	//Возвращение тильтинга по пикселям
+	if(current_version < 66)
+		var/static/list/dat_to_check = list("pixel_tilt_east", "pixel_tilt_west")
+		for(var/dat_key in dat_to_check)
+			var/datum/keybinding/mob/key_dat = GLOB.keybindings_by_name[dat_key]
+			if(!key_dat)
+				continue
+			for(var/button in key_dat.hotkey_keys)
+				var/list/hotkey_list = key_bindings[button]
+				if(!hotkey_list)
+					var/list/temp = list()
+					key_bindings[button] = temp
+					hotkey_list = temp
+				hotkey_list |= dat_key
+
+	// Преф на старый вариант say, OOC, me и прочих окон ввода, которые часто используются
+	if(current_version < 67)
+		tgui_input_verbs = tgui_input_mode
+
+	if(current_version < 69)
+		chat_on_map_looc = TRUE
 
 /datum/preferences/proc/update_character(current_version, savefile/S)
 	if(current_version < 19)
@@ -475,13 +510,18 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["screentip_images"] 		>> screentip_images
 	S["hotkeys"] 				>> hotkeys
 	S["chat_on_map"] 			>> chat_on_map
+	S["chat_on_map_looc"] 		>> chat_on_map_looc
 	S["max_chat_length"] 		>> max_chat_length
 	S["see_chat_non_mob"] 		>> see_chat_non_mob
 	S["tgui_fancy"] 			>> tgui_fancy
 	S["tgui_lock"] 				>> tgui_lock
 	S["tgui_input_mode"]		>> tgui_input_mode
+	S["tgui_input_verbs"]		>> tgui_input_verbs
 	S["tgui_large_buttons"]		>> tgui_large_buttons
 	S["tgui_swapped_buttons"]	>> tgui_swapped_buttons
+	S["tgui_panel_theme"]		>> tgui_panel_theme
+	S["tgui_panel_state"]		>> tgui_panel_state
+	S["ui_zoom_preferences"]	>> ui_zoom_preferences
 	S["windowflash"] 			>> windowflashing
 	S["windownoise"] 			>> windownoise
 	S["be_special"] 			>> be_special
@@ -493,6 +533,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["default_slot"] >> default_slot
 	S["chat_toggles"] >> chat_toggles
 	S["toggles"] >> toggles
+	S["custom_colors"] >> custom_colors
 	S["deadmin"] >> deadmin
 	S["ghost_form"] >> ghost_form
 	S["ghost_orbit"] >> ghost_orbit
@@ -505,12 +546,18 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["uses_glasses_colour"]>> uses_glasses_colour
 	S["auto_capitalize_enabled"]>> auto_capitalize_enabled
 	S["surgical_disable_radial"]>> surgical_disable_radial // BLUEMOON ADD
+	S["chem_dispenser_classic_view"]>> chem_dispenser_classic_view // BLUEMOON ADD
+	S["chem_dispenser_use_reagent_color"]>> chem_dispenser_use_reagent_color // BLUEMOON ADD
+	S["chem_dispenser_show_icons"]>> chem_dispenser_show_icons // BLUEMOON ADD
+	S["chem_dispenser_alphabetical_sort"]>> chem_dispenser_alphabetical_sort // BLUEMOON ADD
+	S["ie_classic_circuit_ui"]>> ie_classic_circuit_ui // BLUEMOON ADD
 	S["color_presets_tint"]>> color_presets_tint // BLUEMOON ADD
 	S["color_presets_hsv"]>> color_presets_hsv // BLUEMOON ADD
 	S["color_presets_matrix"]>> color_presets_matrix // BLUEMOON ADD
 	S["clientfps"] >> clientfps
 	S["parallax"] >> parallax
 	S["ambientocclusion"] >> ambientocclusion
+	S["lighting_blur"] >> lighting_blur
 	S["auto_fit_viewport"] >> auto_fit_viewport
 	S["widescreenpref"] >> widescreenpref
 	S["fullscreen"] >> fullscreen
@@ -542,7 +589,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	// Splurt
 	S["be_victim"]				>> be_victim
 	S["disable_combat_cursor"]	>> disable_combat_cursor
-	S["use_new_playerpanel"]	>> use_new_playerpanel
+	S["disable_combat_mouse_lock"]	>> disable_combat_mouse_lock
 	S["gfluid_blacklist"]		>> gfluid_blacklist
 	S["new_character_creator"]	>> new_character_creator
 	S["charcreation_theme"]		>> charcreation_theme
@@ -587,22 +634,49 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	UI_style = sanitize_inlist(UI_style, GLOB.available_ui_styles, GLOB.available_ui_styles[1])
 	hotkeys = sanitize_integer(hotkeys, 0, 1, initial(hotkeys))
 	chat_on_map = sanitize_integer(chat_on_map, 0, 1, initial(chat_on_map))
+	chat_on_map_looc = sanitize_integer(chat_on_map_looc, 0, 1, initial(chat_on_map_looc))
 	max_chat_length = sanitize_integer(max_chat_length, 1, CHAT_MESSAGE_MAX_LENGTH, initial(max_chat_length))
 	see_chat_non_mob = sanitize_integer(see_chat_non_mob, 0, 1, initial(see_chat_non_mob))
 	tgui_fancy = sanitize_integer(tgui_fancy, 0, 1, initial(tgui_fancy))
 	tgui_lock = sanitize_integer(tgui_lock, 0, 1, initial(tgui_lock))
 	tgui_input_mode	= sanitize_integer(tgui_input_mode, 0, 1, initial(tgui_input_mode))
+	tgui_input_verbs	= sanitize_integer(tgui_input_verbs, 0, 1, initial(tgui_input_verbs))
 	tgui_large_buttons	= sanitize_integer(tgui_large_buttons, 0, 1, initial(tgui_large_buttons))
 	tgui_swapped_buttons	= sanitize_integer(tgui_swapped_buttons, 0, 1, initial(tgui_swapped_buttons))
+	tgui_panel_theme = sanitize_inlist(tgui_panel_theme, list("default", "light", "dark"), initial(tgui_panel_theme))
+	tgui_panel_state = sanitize_text(tgui_panel_state, initial(tgui_panel_state))
+	if(length(tgui_panel_state) > 16384)
+		tgui_panel_state = initial(tgui_panel_state)
+	if(!islist(ui_zoom_preferences))
+		ui_zoom_preferences = list()
+	else
+		var/list/sanitized_ui_zoom_preferences = list()
+		var/ui_zoom_count = 0
+		for(var/ui_zoom_key in ui_zoom_preferences)
+			if(ui_zoom_count >= 64)
+				break
+			if(!istext(ui_zoom_key))
+				continue
+			var/safe_ui_zoom_key = copytext(ui_zoom_key, 1, 65)
+			if(!length(safe_ui_zoom_key))
+				continue
+			var/safe_ui_zoom_value = ui_zoom_preferences[ui_zoom_key]
+			if(isnum(safe_ui_zoom_value))
+				safe_ui_zoom_value = round(clamp(safe_ui_zoom_value, 0.5, 2.0), 0.01)
+				sanitized_ui_zoom_preferences[safe_ui_zoom_key] = safe_ui_zoom_value
+				ui_zoom_count++
+		ui_zoom_preferences = sanitized_ui_zoom_preferences
 	windowflashing = sanitize_integer(windowflashing, 0, 1, initial(windowflashing))
 	windownoise = sanitize_integer(windownoise, 0, 1, initial(windownoise))
 	default_slot = sanitize_integer(default_slot, 1, max_save_slots, initial(default_slot))
 	toggles = sanitize_integer(toggles, 0, 16777215, initial(toggles))
+	custom_colors = sanitize_integer(custom_colors, 0, 16777215, initial(custom_colors))
 	deadmin = sanitize_integer(deadmin, 0, 16777215, initial(deadmin))
-	clientfps = sanitize_integer(clientfps, 0, 1000, 0)
+	clientfps = sanitize_clientfps(clientfps)
 	preferred_chaos_level = sanitize_integer(preferred_chaos_level, 0, 3, 2)
 	parallax = sanitize_integer(parallax, PARALLAX_DISABLE, PARALLAX_INSANE, null)
 	ambientocclusion = sanitize_integer(ambientocclusion, 0, 1, initial(ambientocclusion))
+	lighting_blur = sanitize_integer(lighting_blur, LIGHTING_BLUR_MIN, LIGHTING_BLUR_MAX, LIGHTING_BLUR_DEFAULT)
 	auto_fit_viewport = sanitize_integer(auto_fit_viewport, 0, 1, initial(auto_fit_viewport))
 	widescreenpref = sanitize_integer(widescreenpref, 0, 1, initial(widescreenpref))
 	fullscreen = sanitize_integer(fullscreen, 0, 1, initial(fullscreen))
@@ -674,6 +748,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 			var/slotnum = text2num(copytext(slot, 10))
 			if (!slotnum)
 				continue
+			if (slotnum > SAVEFILE_MIGRATION_MAX_CHARACTER_SLOT)
+				continue
 			max_save_slots = max(max_save_slots, slotnum) //so we can still update byond member slots after they lose memeber status
 			default_slot = slotnum
 			if (load_character(null, TRUE)) // this updtates char slots
@@ -701,6 +777,43 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 		var/bindname = modless_key_bindings[key]
 		if(!GLOB.keybindings_by_name[bindname])
 			modless_key_bindings -= key
+	ensure_default_keybindings_present()
+
+/datum/preferences/proc/ensure_default_keybindings_present()
+	var/list/default_keybindings = hotkeys ? GLOB.hotkey_keybinding_list_by_key : GLOB.classic_keybinding_list_by_key
+	if(!islist(default_keybindings))
+		return
+
+	var/list/present_keybindings = list()
+	for(var/key in key_bindings)
+		if(!islist(key_bindings[key]))
+			continue
+		for(var/bindname in key_bindings[key])
+			present_keybindings[bindname] = TRUE
+
+	for(var/key in modless_key_bindings)
+		var/bindname = modless_key_bindings[key]
+		present_keybindings[bindname] = TRUE
+
+	var/list/missing_keybindings = list()
+	for(var/key in default_keybindings)
+		var/list/default_binds = default_keybindings[key]
+		if(!islist(default_binds))
+			continue
+		for(var/bindname in default_binds)
+			if(present_keybindings[bindname])
+				continue
+			if(!islist(missing_keybindings[bindname]))
+				missing_keybindings[bindname] = list()
+			missing_keybindings[bindname] += key
+
+	for(var/bindname in missing_keybindings)
+		var/list/default_keys = missing_keybindings[bindname]
+		for(var/key in default_keys)
+			if(!islist(key_bindings[key]))
+				key_bindings[key] = list()
+			LAZYADD(key_bindings[key], bindname)
+		present_keybindings[bindname] = TRUE
 
 
 /datum/preferences/proc/save_preferences(bypass_cooldown = FALSE, silent = FALSE)
@@ -732,18 +845,24 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["screentip_images"], screentip_images)
 	WRITE_FILE(S["hotkeys"], hotkeys)
 	WRITE_FILE(S["chat_on_map"], chat_on_map)
+	WRITE_FILE(S["chat_on_map_looc"], chat_on_map_looc)
 	WRITE_FILE(S["max_chat_length"], max_chat_length)
 	WRITE_FILE(S["see_chat_non_mob"], see_chat_non_mob)
 	WRITE_FILE(S["tgui_fancy"], tgui_fancy)
 	WRITE_FILE(S["tgui_lock"], tgui_lock)
 	WRITE_FILE(S["tgui_input_mode"], tgui_input_mode)
+	WRITE_FILE(S["tgui_input_verbs"], tgui_input_verbs)
 	WRITE_FILE(S["tgui_large_buttons"], tgui_large_buttons)
 	WRITE_FILE(S["tgui_swapped_buttons"], tgui_swapped_buttons)
+	WRITE_FILE(S["tgui_panel_theme"], tgui_panel_theme)
+	WRITE_FILE(S["tgui_panel_state"], tgui_panel_state)
+	WRITE_FILE(S["ui_zoom_preferences"], ui_zoom_preferences)
 	WRITE_FILE(S["windowflash"], windowflashing)
 	WRITE_FILE(S["windownoise"], windownoise)
 	WRITE_FILE(S["be_special"], be_special)
 	WRITE_FILE(S["default_slot"], default_slot)
 	WRITE_FILE(S["toggles"], toggles)
+	WRITE_FILE(S["custom_colors"], custom_colors)
 	WRITE_FILE(S["deadmin"], deadmin)
 	WRITE_FILE(S["chat_toggles"], chat_toggles)
 	WRITE_FILE(S["ghost_form"], ghost_form)
@@ -757,12 +876,18 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["uses_glasses_colour"], uses_glasses_colour)
 	WRITE_FILE(S["auto_capitalize_enabled"], auto_capitalize_enabled)
 	WRITE_FILE(S["surgical_disable_radial"], surgical_disable_radial) // BLUEMOON ADD
+	WRITE_FILE(S["chem_dispenser_classic_view"], chem_dispenser_classic_view) // BLUEMOON ADD
+	WRITE_FILE(S["chem_dispenser_use_reagent_color"], chem_dispenser_use_reagent_color) // BLUEMOON ADD
+	WRITE_FILE(S["chem_dispenser_show_icons"], chem_dispenser_show_icons) // BLUEMOON ADD
+	WRITE_FILE(S["chem_dispenser_alphabetical_sort"], chem_dispenser_alphabetical_sort) // BLUEMOON ADD
+	WRITE_FILE(S["ie_classic_circuit_ui"], ie_classic_circuit_ui) // BLUEMOON ADD
 	WRITE_FILE(S["color_presets_tint"], color_presets_tint) // BLUEMOON ADD
 	WRITE_FILE(S["color_presets_hsv"], color_presets_hsv) // BLUEMOON ADD
 	WRITE_FILE(S["color_presets_matrix"], color_presets_matrix) // BLUEMOON ADD
 	WRITE_FILE(S["clientfps"], clientfps)
 	WRITE_FILE(S["parallax"], parallax)
 	WRITE_FILE(S["ambientocclusion"], ambientocclusion)
+	WRITE_FILE(S["lighting_blur"], lighting_blur)
 	WRITE_FILE(S["auto_fit_viewport"], auto_fit_viewport)
 	WRITE_FILE(S["hud_toggle_flash"], hud_toggle_flash)
 	WRITE_FILE(S["hud_toggle_color"], hud_toggle_color)
@@ -792,7 +917,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	// Splurt
 	WRITE_FILE(S["be_victim"], be_victim)
 	WRITE_FILE(S["disable_combat_cursor"], disable_combat_cursor)
-	WRITE_FILE(S["use_new_playerpanel"], use_new_playerpanel)
+	WRITE_FILE(S["disable_combat_mouse_lock"], disable_combat_mouse_lock)
 	WRITE_FILE(S["gfluid_blacklist"], gfluid_blacklist)
 	WRITE_FILE(S["new_character_creator"], new_character_creator)
 	WRITE_FILE(S["charcreation_theme"], charcreation_theme)
@@ -1103,6 +1228,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 
 	//Load prefs
 	S["job_preferences"] >> job_preferences
+	S["pda_theme"] >> pda_theme
 
 	//Custom emote panel
 	S["custom_emote_panel"] >> custom_emote_panel
@@ -1290,6 +1416,9 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 
 	//let's remember their last used slot, i'm sure "oops i brought the wrong stuff" will be an issue now
 	S["loadout_slot"] >> loadout_slot
+	// BLUEMOON ADD - загрузка переключателя лодаута
+	S["loadout_enabled"] >> loadout_enabled
+	// BLUEMOON ADD END
 
 	//try to fix any outdated data if necessary
 	//preference updating will handle saving the updated data for us.
@@ -1533,6 +1662,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	//SPLURT EDIT END
 
 	loadout_slot = sanitize_num_clamp(loadout_slot, 1, MAXIMUM_LOADOUT_SAVES, 1, TRUE)
+	loadout_enabled = sanitize_integer(loadout_enabled, FALSE, TRUE, TRUE) // BLUEMOON ADD
 
 	alt_titles_preferences = SANITIZE_LIST(alt_titles_preferences)
 	if(SSjob)
@@ -1550,6 +1680,49 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	load_tattoo_prefs(S) // BLUEMOON ADD - загрузка татуировок
 
 	return S
+
+/// Удаляет слот персонажа из сейвфайла. Очищает директорию /character[slot].
+/// Если удаляется текущий слот — переключается на ближайший непустой, или на слот 1.
+/datum/preferences/proc/delete_character(slot)
+	if(!path)
+		return FALSE
+	slot = sanitize_integer(slot, 1, max_save_slots, 1)
+	var/savefile/S = new /savefile(path)
+	if(!S)
+		return FALSE
+
+	// Проверяем, что в слоте действительно есть персонаж
+	S.cd = "/character[slot]"
+	var/check_name
+	S["real_name"] >> check_name
+	if(!check_name)
+		return FALSE // слот уже пуст
+
+	// Удаляем директорию персонажа из сейвфайла
+	S.cd = "/"
+	S.dir.Remove("character[slot]")
+
+	// Если удалили текущий слот — нужно переключиться на другой
+	if(slot == default_slot)
+		var/new_slot = 0
+		// Ищем ближайший непустой слот
+		for(var/i in 1 to max_save_slots)
+			if(i == slot)
+				continue
+			S.cd = "/character[i]"
+			var/name
+			S["real_name"] >> name
+			if(name)
+				new_slot = i
+				break
+		// Если не нашли непустой — просто переключаемся на слот 1
+		if(!new_slot)
+			new_slot = 1
+		default_slot = new_slot
+		load_character(new_slot)
+
+	save_preferences(bypass_cooldown = TRUE, silent = TRUE)
+	return TRUE
 
 /datum/preferences/proc/save_character(bypass_cooldown = FALSE, silent = FALSE, export = FALSE)
 	if(!path)
@@ -1590,6 +1763,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["left_eye_color"]						, left_eye_color)
 	WRITE_FILE(S["right_eye_color"]						, right_eye_color)
 	WRITE_FILE(S["use_custom_skin_tone"]				, use_custom_skin_tone)
+	WRITE_FILE(S["pda_ringtone"]						, pda_ringtone)
+	WRITE_FILE(S["pda_theme"]							, pda_theme)
 	WRITE_FILE(S["skin_tone"]							, skin_tone)
 	WRITE_FILE(S["hair_style_name"]						, hair_style)
 	WRITE_FILE(S["facial_style_name"]					, facial_hair_style)
@@ -1818,6 +1993,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	else
 		S["loadout"] << safe_json_encode(list())
 	WRITE_FILE(S["loadout_slot"], loadout_slot)
+	WRITE_FILE(S["loadout_enabled"], loadout_enabled) // BLUEMOON ADD
 
 	if(length(tcg_cards))
 		S["tcg_cards"] << safe_json_encode(tcg_cards)

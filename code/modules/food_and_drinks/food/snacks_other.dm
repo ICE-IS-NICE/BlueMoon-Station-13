@@ -34,6 +34,24 @@
 	tastes = list("cheese" = 1)
 	foodtype = DAIRY
 
+/obj/item/reagent_containers/food/snacks/curd_cheese
+	name = "curd cheese"
+	desc = "Known by many names throughout human cuisine, curd cheese is useful for a wide variety of dishes."
+	icon_state = "curd_cheese"
+	cooked_type = /obj/item/reagent_containers/food/snacks/cheese_curds
+	list_reagents = list(/datum/reagent/consumable/nutriment/protein = 3, /datum/reagent/consumable/cream = 1)
+	tastes = list("cream" = 1, "cheese" = 1)
+	w_class = WEIGHT_CLASS_SMALL
+	foodtype = DAIRY
+
+/obj/item/reagent_containers/food/snacks/cheese_curds
+	name = "cheese curds"
+	desc = "Not to be mistaken for curd cheese. Tasty deep fried."
+	icon_state = "cheese_curds"
+	list_reagents = list(/datum/reagent/consumable/nutriment/protein = 3, /datum/reagent/consumable/cream = 1)
+	tastes = list("cream" = 1, "cheese" = 1)
+	w_class = WEIGHT_CLASS_SMALL
+
 /obj/item/reagent_containers/food/snacks/watermelonslice
 	name = "watermelon slice"
 	desc = "A slice of watery goodness."
@@ -227,6 +245,25 @@
 	filling_color = "#B22222"
 	tastes = list("beans" = 1)
 	foodtype = VEGETABLES
+
+/obj/item/reagent_containers/food/snacks/swirl_lollipop
+	name = "Swirl Lollipop"
+	desc = "A massive rainbow swirlled lollipop. Said to contain extra sugar."
+	icon_state = "swirl_lollipop"
+	item_state = "swirl_lollipop"
+	list_reagents = list(
+		/datum/reagent/consumable/sugar = 30,
+		/datum/reagent/drug/happiness = 5, //swirl lollipops make everyone happy!
+		/datum/reagent/medicine/omnizine = 2,
+	)
+	bonus_reagents = list(/datum/reagent/medicine/omnizine = 3)
+	tastes = list("whimsical joy" = 1, "sugar" = 2)
+	foodtype = JUNKFOOD | SUGAR
+	slot_flags = ITEM_SLOT_MASK
+
+/obj/item/reagent_containers/food/snacks/swirl_lollipop/Initialize(mapload)
+	. = ..()
+	AddElement(/datum/element/chewable)
 
 /obj/item/reagent_containers/food/snacks/spidereggs
 	name = "spider eggs"
@@ -740,7 +777,7 @@
 	filling_color = "#f2efdc"
 	w_class = WEIGHT_CLASS_SMALL
 	tastes = list("cream cheese" = 4, "crab" = 3, "crispiness" = 2)
-	foodtype = MEAT | DAIRY | GRAIN
+	foodtype = MEAT | DAIRY | GRAIN | SEAFOOD
 
 /obj/item/reagent_containers/food/snacks/chocolatestrawberry
 	name = "Chocolate dipped strawberries"

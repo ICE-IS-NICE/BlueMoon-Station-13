@@ -1,6 +1,6 @@
 /obj/item/clothing/head/mod
 	name = "MOD helmet"
-	desc = "A helmet for a MODsuit."
+	desc = "Шлем для MOD-костюма."
 	/*	icon = 'icons/obj/clothing/modsuit/mod_clothing.dmi' // BLUEMOON COMMENTING OUT saving old code lines
 	mob_overlay_icon = 'icons/mob/clothing/modsuit/mod_clothing.dmi'
 	anthro_mob_worn_overlay = 'icons/mob/clothing/modsuit/mod_clothing_anthro.dmi' */
@@ -28,6 +28,7 @@
 	item_flags = IMMUTABLE_SLOW
 	var/alternate_layer = NECK_LAYER
 	var/obj/item/mod/control/mod
+	var/obj/item/clothing/overslot
 	mutantrace_variation = STYLE_MUZZLE
 
 /obj/item/clothing/head/mod/Destroy()
@@ -37,9 +38,17 @@
 		QDEL_NULL(mod)
 	return ..()
 
+/// Restores the head item that was stored when the MOD helmet was deployed over it
+/obj/item/clothing/head/mod/proc/show_overslot()
+	if(!overslot)
+		return
+	if(!mod.wearer.equip_to_slot_if_possible(overslot, overslot.slot_flags, qdel_on_fail = FALSE, disable_warning = TRUE))
+		mod.wearer.dropItemToGround(overslot, force = TRUE)
+	overslot = null
+
 /obj/item/clothing/suit/mod
 	name = "MOD chestplate"
-	desc = "A chestplate for a MODsuit."
+	desc = "Нагрудник для MOD-костюма."
 	/*	icon = 'icons/obj/clothing/modsuit/mod_clothing.dmi' // BLUEMOON COMMENTING OUT saving old code lines
 	mob_overlay_icon = 'icons/mob/clothing/modsuit/mod_clothing.dmi'
 	anthro_mob_worn_overlay = 'icons/mob/clothing/modsuit/mod_clothing_anthro.dmi' */
@@ -66,6 +75,7 @@
 	allowed = list(/obj/item/flashlight, /obj/item/tank/internals, /obj/item/device/cooler)
 	resistance_flags = NONE
 	var/obj/item/mod/control/mod
+	var/obj/item/clothing/overslot
 	mutantrace_variation = STYLE_DIGITIGRADE
 
 /obj/item/clothing/suit/mod/Destroy()
@@ -75,9 +85,17 @@
 		QDEL_NULL(mod)
 	return ..()
 
+/// Restores the suit/outer clothing that was stored when the MOD chestplate was deployed over it
+/obj/item/clothing/suit/mod/proc/show_overslot()
+	if(!overslot)
+		return
+	if(!mod.wearer.equip_to_slot_if_possible(overslot, overslot.slot_flags, qdel_on_fail = FALSE, disable_warning = TRUE))
+		mod.wearer.dropItemToGround(overslot, force = TRUE)
+	overslot = null
+
 /obj/item/clothing/gloves/mod
 	name = "MOD gauntlets"
-	desc = "A pair of gauntlets for a MODsuit."
+	desc = "Пара рукавиц для MOD-костюма."
 	/*	icon = 'icons/obj/clothing/modsuit/mod_clothing.dmi' // BLUEMOON COMMENTING OUT saving old code lines
 	mob_overlay_icon = 'icons/mob/clothing/modsuit/mod_clothing.dmi'
 	anthro_mob_worn_overlay = 'icons/mob/clothing/modsuit/mod_clothing_anthro.dmi' */
@@ -119,7 +137,7 @@
 
 /obj/item/clothing/shoes/mod
 	name = "MOD boots"
-	desc = "A pair of boots for a MODsuit."
+	desc = "Пара ботинок для MOD-костюма."
 	/*	icon = 'icons/obj/clothing/modsuit/mod_clothing.dmi' // BLUEMOON COMMENTING OUT saving old code lines
 	mob_overlay_icon = 'icons/mob/clothing/modsuit/mod_clothing.dmi'
 	anthro_mob_worn_overlay = 'icons/mob/clothing/modsuit/mod_clothing_anthro.dmi' */

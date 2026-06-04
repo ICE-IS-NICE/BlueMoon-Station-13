@@ -1,6 +1,7 @@
 #define WAND_OPEN "Open Door"
 #define WAND_BOLT "Toggle Bolts"
 #define WAND_EMERGENCY "Toggle Emergency Access"
+#define WAND_SPEED "Change Speed"
 
 /obj/item/door_remote
 	icon_state = "gangtool-white"
@@ -9,7 +10,7 @@
 	righthand_file = 'icons/mob/inhands/misc/devices_righthand.dmi'
 	icon = 'icons/obj/device.dmi'
 	name = "control wand"
-	desc = "Remotely controls airlocks."
+	desc = "Удаленно управляет шлюзами. Совместим с ID картами."
 	w_class = WEIGHT_CLASS_TINY
 	var/mode = WAND_OPEN
 	var/region_access = 1 //See access.dm
@@ -20,6 +21,14 @@
 	access_list = get_region_accesses(region_access)
 	AddComponent(/datum/component/ntnet_interface)
 
+/obj/item/door_remote/GetAccess()
+	return access_list
+
+/obj/item/door_remote/examine(mob/user)
+	. = ..()
+	if(obj_flags & EMAGGED)
+		. += span_warning("Индикатор доступа неисправен и моргает разными цветами.")
+
 /obj/item/door_remote/attack_self(mob/user)
 	switch(mode)
 		if(WAND_OPEN)
@@ -27,12 +36,33 @@
 		if(WAND_BOLT)
 			mode = WAND_EMERGENCY
 		if(WAND_EMERGENCY)
+			mode = WAND_SPEED
+		if(WAND_SPEED)
 			mode = WAND_OPEN
 	to_chat(user, "Now in mode: [mode].")
 
-// Airlock remote works by sending NTNet packets to whatever it's pointed at.
 /obj/item/door_remote/afterattack(atom/A, mob/user)
 	. = ..()
+	var/obj/machinery/door/airlock/door = A
+	if(!istype(door) || !door.hasPower() || !door.canAIControl())
+		return
+	if(!(door.check_access(src) || door.allowed(user)))
+		return
+
+	switch(mode)
+		if(WAND_OPEN)
+			door.user_toggle_open()
+		if(WAND_BOLT)
+			door.toggle_bolt()
+		if(WAND_EMERGENCY)
+			door.toggle_emergency()
+		if(WAND_SPEED)
+			door.normalspeed = !door.normalspeed
+			to_chat(user, span_notice("Шлюз теперь в <b>[door.normalspeed ? "нормальном" : "быстром"]</b> режиме."))
+
+	// Bluemoon EDIT || FUCK THIS SHIT
+	// Airlock remote works by sending NTNet packets to whatever it's pointed at.
+	/*
 	var/datum/component/ntnet_interface/target_interface = A.GetComponent(/datum/component/ntnet_interface)
 
 	if(!target_interface)
@@ -49,16 +79,26 @@
 			data.data["data"] = "bolt"
 		if(WAND_EMERGENCY)
 			data.data["data"] = "emergency"
+		if(WAND_EMERGENCY)
+			data.data["data"] = "emergency"
 
 	data.data["data_secondary"] = "toggle"
 	data.passkey = access_list
 
 	ntnet_send(data)
+	*/
 
+/obj/item/door_remote/emag_act()
+	if(obj_flags & EMAGGED)
+		return
+	. = ..()
+	obj_flags |= EMAGGED
+	region_access = 0
+	access_list = get_region_accesses(region_access)
+	playsound(src, 'sound/effects/light_flicker.ogg', 80, 1)
 
 /obj/item/door_remote/omni
 	name = "omni door remote"
-	desc = "This control wand can access any door on the station."
 	icon_state = "gangtool-yellow"
 	region_access = 0
 
@@ -74,7 +114,6 @@
 
 /obj/item/door_remote/quartermaster
 	name = "supply door remote"
-	desc = "Remotely controls airlocks. This remote has additional Vault access."
 	icon_state = "gangtool-green"
 	region_access = 6
 
@@ -106,3 +145,4 @@
 #undef WAND_OPEN
 #undef WAND_BOLT
 #undef WAND_EMERGENCY
+#undef WAND_SPEED

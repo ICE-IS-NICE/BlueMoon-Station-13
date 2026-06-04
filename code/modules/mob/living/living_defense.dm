@@ -146,7 +146,7 @@
 			skipcatch = TRUE
 			blocked = TRUE
 	else
-		if(mob_run_block(AM, thrown_item.throwforce, "\the [thrown_item.name]", ATTACK_TYPE_THROWN, 0, throwingdatum.thrower, zone, list()))
+		if(mob_run_block(AM, thrown_item.throwforce, "\the [thrown_item.name]", ATTACK_TYPE_THROWN, 0, null, zone, list()))
 			hitpush = FALSE
 			skipcatch = TRUE
 			blocked = TRUE
@@ -213,6 +213,10 @@
 
 //proc to upgrade a simple pull into a more aggressive grab.
 /mob/living/proc/grippedby(mob/living/carbon/user, instant = FALSE)
+	// Без активного pull этой цели (напр. сверхтяж: can_be_pulled вернул FALSE) нельзя повышать grab_state —
+	// иначе у атакующего остаётся модификатор скорости «в грабе» без реальной цели (так ломает tackle с перчатками).
+	if(user.pulling != src)
+		return FALSE
 	if(user.grab_state < GRAB_KILL)
 		user.DelayNextAction(CLICK_CD_GRABBING, flush = TRUE)
 		playsound(src, 'sound/weapons/thudswoosh.ogg', 50, 1, -1)
@@ -540,7 +544,7 @@
 /mob/living/proc/flash_act(intensity = 1, override_blindness_check = 0, affect_silicon = 0, visual = 0, type = /atom/movable/screen/fullscreen/tiled/flash, override_protection = 0)
 	if((override_protection || get_eye_protection() < intensity) && (override_blindness_check || !(HAS_TRAIT(src, TRAIT_BLIND))))
 		overlay_fullscreen("flash", type)
-		addtimer(CALLBACK(src, PROC_REF(clear_fullscreen), "flash", 25), 25)
+		addtimer(CALLBACK(src, PROC_REF(clear_fullscreen), "flash", 25), 25, TIMER_DELETE_ME)
 		return TRUE
 	return FALSE
 

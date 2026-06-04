@@ -111,18 +111,26 @@
 /mob/living/simple_animal/hostile/swarmer/Initialize(mapload)
 	. = ..()
 	remove_verb(src, /mob/living/verb/pulled)
-	for(var/datum/atom_hud/data/diagnostic/diag_hud in GLOB.huds)
+	for(var/datum/atom_hud/data/diagnostic/diag_hud in GLOB.all_huds)
 		diag_hud.add_to_hud(src)
 	AddElement(/datum/element/ventcrawling, given_tier = VENTCRAWLER_ALWAYS)
 
 /mob/living/simple_animal/hostile/swarmer/med_hud_set_health()
+	if(QDELETED(src) || !loc)
+		return
 	var/image/holder = hud_list[DIAG_HUD]
+	if(!holder)
+		return
 	var/icon/I = icon(icon, icon_state, dir)
 	holder.pixel_y = I.Height() - world.icon_size
 	holder.icon_state = "huddiag[RoundDiagBar(health/maxHealth)]"
 
 /mob/living/simple_animal/hostile/swarmer/med_hud_set_status()
+	if(QDELETED(src) || !loc)
+		return
 	var/image/holder = hud_list[DIAG_STAT_HUD]
+	if(!holder)
+		return
 	var/icon/I = icon(icon, icon_state, dir)
 	holder.pixel_y = I.Height() - world.icon_size
 	holder.icon_state = "hudstat"

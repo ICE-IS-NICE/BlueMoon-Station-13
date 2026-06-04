@@ -7,10 +7,6 @@
 //	var/stomppref = TRUE // Please step on me.
 	var/list/gfluid_blacklist = list() //Stuff you don't want people to cum into you
 	var/new_character_creator = TRUE // old/new character creator
-	var/show_in_directory = 1	//Show in Character Directory
-	var/directory_tag = "Unset" //Sorting tag to use in character directory
-	var/directory_erptag = "Unset"	//ditto, but for non-vore scenes
-	var/directory_ad = ""		//Advertisement stuff to show in character directory.
 	var/fuzzy = FALSE			//Fuzzy scaling
 
 /datum/preferences/New(client/C)
@@ -246,8 +242,7 @@
 			//SPLURT EDIT
 			dat += "<h2>Headshot Image</h2>"
 			dat += "<a href='?_src_=prefs;preference=headshot'><b>Set Headshot Image</b></a><br>"
-			if(features["headshot_link"])
-				dat += "<img src='[features["headshot_link"]]' width='160px' height='120px'>"
+			dat += headshot_preview_html(features["headshot_link"], 160, 120)
 			dat += "<br><br>"
 			//SPLURT EDIT END
 			//SKYRAT EDIT
@@ -267,7 +262,7 @@
 			dat += 	"[mobsex_pref_label] : <a href='?_src_=prefs;preference=mobsex_pref'>[mobsexpref]</a><br>"
 			dat += 	"[hornyantags_pref_label] : <a href='?_src_=prefs;preference=hornyantags_pref'>[hornyantagspref]</a><br>"
 			//END OF Gardelin0 Addoon
-
+			dat += 	"ERP Позиция : <a href='?_src_=prefs;preference=directory_erptag'>[directory_erptag]</a><br>"
 			dat += "<h2>Records</h2><br>"
 			dat += "<a href='?_src_=prefs;preference=security_records;task=input'><b>Security Records</b></a><br>"
 			if(length_char(security_records) <= 40)
@@ -400,7 +395,7 @@
 			// rp marking selection
 			// assume you can only have mam markings or regular markings or none, never both
 			var/marking_type
-			if(parent.can_have_part("mam_body_markings"))
+			if(parent?.can_have_part("mam_body_markings"))
 				marking_type = "mam_body_markings"
 			if(marking_type)
 				dat += APPEARANCE_CATEGORY_COLUMN
@@ -467,7 +462,7 @@
 			for(var/mutant_part in GLOB.all_mutant_parts)
 				if(mutant_part == "mam_body_markings")
 					continue
-				if(parent.can_have_part(mutant_part))
+				if(parent?.can_have_part(mutant_part))
 					if(!mutant_category)
 						dat += APPEARANCE_CATEGORY_COLUMN
 					var/mutant_part_label = src.use_modern_translations ? get_modern_text(mutant_part, src) : GLOB.all_mutant_parts[mutant_part]
@@ -672,7 +667,7 @@
 					var/tauric_shape = FALSE
 					if(features["cock_taur"])
 						var/datum/sprite_accessory/penis/P = GLOB.cock_shapes_list[features["cock_shape"]]
-						if(P.taur_icon && parent.can_have_part("taur"))
+						if(P.taur_icon && parent?.can_have_part("taur"))
 							var/datum/sprite_accessory/taur/T = GLOB.taur_list[features["taur"]]
 							if(T.taur_mode & P.accepted_taurs)
 								tauric_shape = TRUE
@@ -761,8 +756,8 @@
 						dat += "<span style='border: 1px solid #161616; background-color: #[features["butt_color"]];'><font color='[color_hex2num(features["butt_color"]) < 200 ? "FFFFFF" : "000000"]'>#[features["butt_color"]]</font></span> <a href='?_src_=prefs;preference=butt_color;task=input'>Change</a><br>"
 					var/butt_size_value = features["butt_size"]
 					var/butt_visibility_value = features["butt_visibility"]
-					dat += "<b>" + butt_size_label + ":</b><a style='display:block;width:50px' href='?_src_=prefs;preference=butt_size;task=input'>" + butt_size_value + "</a>"
-					dat += "<b>" + butt_visibility_label + ":</b><a style='display:block;width:100px' href='?_src_=prefs;preference=butt_visibility;task=input'>" + butt_visibility_value + "</a>"
+					dat += "<b>[butt_size_label]:</b><a style='display:block;width:50px' href='?_src_=prefs;preference=butt_size;task=input'>[butt_size_value]</a>"
+					dat += "<b>[butt_visibility_label]:</b><a style='display:block;width:100px' href='?_src_=prefs;preference=butt_visibility;task=input'>[butt_visibility_value]</a>"
 					var/butt_stuffing_text = features["butt_stuffing"] == TRUE ? "Yes" : "No"
 					dat += "<b>[butt_stuffing_label]:</b><a style='display:block;width:50px' href='?_src_=prefs;preference=butt_stuffing'>[butt_stuffing_text]</a>"
 					var/has_anus_text = features["has_anus"] == TRUE ? "Yes" : "No"
@@ -860,10 +855,14 @@
 			dat += "<b>Screentip Color:</b> <span style='border:1px solid #161616; background-color: [screentip_color];'><font color='[color_hex2num(screentip_color) < 200 ? "FFFFFF" : "000000"]'>[screentip_color]</font></span> <a href='?_src_=prefs;preference=screentip_color'>Change</a><BR>"
 			dat += "<b>tgui Monitors:</b> <a href='?_src_=prefs;preference=tgui_lock'>[(tgui_lock) ? "Primary" : "All"]</a><br>"
 			dat += "<b>tgui Style:</b> <a href='?_src_=prefs;preference=tgui_fancy'>[(tgui_fancy) ? "Fancy" : "No Frills"]</a><br>"
-			dat += "<b>Input Framework:</b> <a href='?_src_=prefs;preference=tgui_input_mode'>[(tgui_input_mode) ? "tgui" : "BYOND"]</a><br>"
+			dat += "<b>Input Framework:</b> <a href='?_src_=prefs;preference=tgui_input_mode'>[(tgui_input_mode) ? "TGUI" : "BYOND"]</a><br>"
+			if(tgui_input_mode)
+				dat += "<b>Input Verbs (SAY, ME, OOC, etc.) Framework:</b> <a href='?_src_=prefs;preference=tgui_input_verbs'>[(tgui_input_verbs) ? "TGUI" : "BYOND"]</a><br>"
 			dat += "<b>tgui Button Size:</b> <a href='?_src_=prefs;preference=tgui_large_buttons'>[(tgui_large_buttons) ? "Large" : "Small"]</a><br>"
 			dat += "<b>tgui Buttons Swapped:</b> <a href='?_src_=prefs;preference=tgui_swapped_buttons'>[(tgui_swapped_buttons) ? "Yes" : "No"]</a><br>"
 			dat += "<b>Show Runechat Chat Bubbles:</b> <a href='?_src_=prefs;preference=chat_on_map'>[chat_on_map ? "Enabled" : "Disabled"]</a><br>"
+			if(chat_on_map)
+				dat += "<b>Show Runechat LOOC Chat Bubbles:</b> <a href='?_src_=prefs;preference=chat_on_map_looc'>[chat_on_map_looc ? "Enabled" : "Disabled"]</a><br>"
 			dat += "<b>Runechat message char limit:</b> <a href='?_src_=prefs;preference=max_chat_length;task=input'>[max_chat_length]</a><br>"
 			dat += "<b>See Runechat for non-mobs:</b> <a href='?_src_=prefs;preference=see_chat_non_mob'>[see_chat_non_mob ? "Enabled" : "Disabled"]</a><br>"
 			//SKYRAT CHANGES BEGIN
@@ -891,8 +890,12 @@
 				if(unlock_content)
 					dat += "<b>BYOND Membership Publicity:</b> <a href='?_src_=prefs;preference=publicity'>[(toggles & MEMBER_PUBLIC) ? "Public" : "Hidden"]</a><br>"
 				if(unlock_content || check_rights_for(user.client, R_ADMIN))
-					dat += "<b>OOC Color:</b> <span style='border: 1px solid #161616; background-color: [ooccolor ? ooccolor : GLOB.normal_ooc_colour];'><font color='[color_hex2num(ooccolor ? ooccolor : GLOB.normal_ooc_colour) < 200 ? "FFFFFF" : "000000"]'>[ooccolor ? ooccolor : GLOB.normal_ooc_colour]</font></span> <a href='?_src_=prefs;preference=ooccolor;task=input'>Change</a><br>"
-					dat += "<b>Antag OOC Color:</b> <span style='border: 1px solid #161616; background-color: [aooccolor ? aooccolor : GLOB.normal_aooc_colour];'><font color='[color_hex2num(aooccolor ? aooccolor : GLOB.normal_aooc_colour) < 200 ? "FFFFFF" : "000000"]'>[aooccolor ? aooccolor : GLOB.normal_aooc_colour]</font></span> <a href='?_src_=prefs;preference=aooccolor;task=input'>Change</a><br>"
+					dat += "<b>Custom OOC Color:</b> <a href='?_src_=prefs;preference=custom_color_ooc'>[(custom_colors & CUSTOM_OOC) ? "Enabled":"Disabled"]</a><br>"
+					if(custom_colors & CUSTOM_OOC)
+						dat += "<b>OOC Color:</b> <span style='border: 1px solid #161616; background-color: [ooccolor ? ooccolor : GLOB.normal_ooc_colour];'><font color='[color_hex2num(ooccolor ? ooccolor : GLOB.normal_ooc_colour) < 200 ? "FFFFFF" : "000000"]'>[ooccolor ? ooccolor : GLOB.normal_ooc_colour]</font></span> <a href='?_src_=prefs;preference=ooccolor;task=input'>Change</a><br>"
+					dat += "<b>Custom AOOC Color:</b> <a href='?_src_=prefs;preference=custom_color_aooc'>[(custom_colors & CUSTOM_AOOC) ? "Enabled":"Disabled"]</a><br>"
+					if(custom_colors & CUSTOM_AOOC)
+						dat += "<b>Antag OOC Color:</b> <span style='border: 1px solid #161616; background-color: [aooccolor ? aooccolor : GLOB.normal_aooc_colour];'><font color='[color_hex2num(aooccolor ? aooccolor : GLOB.normal_aooc_colour) < 200 ? "FFFFFF" : "000000"]'>[aooccolor ? aooccolor : GLOB.normal_aooc_colour]</font></span> <a href='?_src_=prefs;preference=aooccolor;task=input'>Change</a><br>"
 
 			dat += "</td>"
 
@@ -940,15 +943,15 @@
 				dat += "<b>Announce Login:</b> <a href='?_src_=prefs;preference=announce_login'>[(toggles & ANNOUNCE_LOGIN)?"Enabled":"Disabled"]</a><br>"
 				dat += "<br>"
 				dat += "<b>Combo HUD Lighting:</b> <a href = '?_src_=prefs;preference=combohud_lighting'>[(toggles & COMBOHUD_LIGHTING)?"Full-bright":"No Change"]</a><br>"
-				dat += "<b>Use Modern Player Panel:</b> <a href='?_src_=prefs;preference=use_new_playerpanel'>[use_new_playerpanel ? "Yes" : "No"]</a><br>" // sandstorm end - moves admins prefs to the right
 
 				//deadmin
 				dat += "<h2>Deadmin While Playing</h2>"
+				dat += "<b>Deadmin On Login:</b> <a href = '?_src_=prefs;preference=toggle_deadmin_onlogin'>[(deadmin & DEADMIN_ONLOGIN)?"Enabled":"Disabled"]</a><br>"
 				if(CONFIG_GET(flag/auto_deadmin_players))
-					dat += "<b>Always Deadmin:</b> FORCED</a><br>"
+					dat += "<b>Deadmin On Spawn:</b> FORCED</a><br>"
 				else
-					dat += "<b>Always Deadmin:</b> <a href = '?_src_=prefs;preference=toggle_deadmin_always'>[(deadmin & DEADMIN_ALWAYS)?"Enabled":"Disabled"]</a><br>"
-					if(!(deadmin & DEADMIN_ALWAYS))
+					dat += "<b>Deadmin On Spawn:</b> <a href = '?_src_=prefs;preference=toggle_deadmin_onspawn'>[(deadmin & DEADMIN_ONSPAWN)?"Enabled":"Disabled"]</a><br>"
+					if(!(deadmin & DEADMIN_ONSPAWN))
 						dat += "<br>"
 						if(!CONFIG_GET(flag/auto_deadmin_antagonists))
 							dat += "<b>As Antag:</b> <a href = '?_src_=prefs;preference=toggle_deadmin_antag'>[(deadmin & DEADMIN_ANTAGONIST)?"Deadmin":"Keep Admin"]</a><br>"
@@ -985,6 +988,7 @@
 			dat += "<h2>S.P.L.U.R.T. Preferences</h2>"
 			dat += "<b>Be Antagonist Victim:</b> <a href='?_src_=prefs;preference=be_victim;task=input'>[be_victim ? be_victim : BEVICTIM_ASK]</a><br>"
 			dat += "<b>Disable combat mode cursor:</b> <a href='?_src_=prefs;preference=disable_combat_cursor'>[disable_combat_cursor?"Yes":"No"]</a><br>"
+			dat += "<b>Disable combat mouse lock:</b> <a href='?_src_=prefs;preference=disable_combat_mouse_lock'>[disable_combat_mouse_lock?"Yes":"No"]</a><br>"
 			dat += "<b>Splashscreen Player Panel Style:</b> <a href='?_src_=prefs;preference=tg_playerpanel'>[(toggles & TG_PLAYER_PANEL)?"TG":"Old"]</a><br>"
 			dat += "<br>"
 
@@ -1033,6 +1037,7 @@
 					dat += "High"
 			dat += "</a><br>"
 			dat += "<b>Ambient Occlusion:</b> <a href='?_src_=prefs;preference=ambientocclusion'>[ambientocclusion ? "Enabled" : "Disabled"]</a><br>"
+			dat += "<b>Lighting Blur:</b> <a href='?_src_=prefs;preference=lighting_blur'>[lighting_blur]</a><br>"
 			dat += "<b>Fit Viewport:</b> <a href='?_src_=prefs;preference=auto_fit_viewport'>[auto_fit_viewport ? "Auto" : "Manual"]</a><br>"
 			dat += "<b>HUD Button Flashes:</b> <a href='?_src_=prefs;preference=hud_toggle_flash'>[hud_toggle_flash ? "Enabled" : "Disabled"]</a><br>"
 			dat += "<b>HUD Button Flash Color:</b> <span style='border: 1px solid #161616; background-color: [hud_toggle_color];'><font color='[color_hex2num(hud_toggle_color) < 200 ? "FFFFFF" : "000000"]'>[hud_toggle_color]</font></span> <a href='?_src_=prefs;preference=hud_toggle_color;task=input'>Change</a><br>"
@@ -1087,12 +1092,18 @@
 
 			dat += "<table align='center' width='100%'>"
 			dat += "<tr><td colspan=4><center><b><font color='[gear_points == 0 ? "#E62100" : "#CCDDFF"]'>[gear_points]</font> loadout points remaining.</b> \[<a href='?_src_=prefs;preference=gear;clear_loadout=1'>Clear Loadout</a>\]</center></td></tr>"
+			// BLUEMOON ADD - переключатель спавна с лодаутом
+			var/loadout_toggle_color = loadout_enabled ? "#6ABF6A" : "#E62100"
+			var/loadout_toggle_text = loadout_enabled ? "ON" : "OFF"
+			dat += "<tr><td colspan=4><center>Replace clothing with loadout: <a href='?_src_=prefs;preference=gear;toggle_loadout_enabled=1'><font color='[loadout_toggle_color]'><b>[loadout_toggle_text]</b></font></a></center></td></tr>"
+			// BLUEMOON ADD END
 			dat += "<tr><td colspan=4><center>You can only choose one item per category, unless it's an item that spawns in your backpack or hands.</center></td></tr>"
 			dat += "<tr><td colspan=4><center><b>"
 
 			if(!length(GLOB.loadout_items))
 				dat += "<center>ERROR: No loadout categories - something is horribly wrong!"
 			else
+				sanitize_loadout_navigation(src)
 				if(!GLOB.loadout_categories[gear_category])
 					gear_category = GLOB.loadout_categories[1]
 				var/firstcat = TRUE
@@ -1125,9 +1136,9 @@
 						else
 							dat += " |"
 						if(gear_subcategory == subcategory)
-							dat += " <a href='?_src_=prefs;preference=gear;select_subcategory=[url_encode(subcategory)]' class='linkOn'>[subcategory]</a> "
+							dat += " <a href='?_src_=prefs;preference=gear;select_category=[url_encode(gear_category)];select_subcategory=[url_encode(subcategory)]' class='linkOn'>[subcategory]</a> "
 						else
-							dat += " <a href='?_src_=prefs;preference=gear;select_subcategory=[url_encode(subcategory)]'>[subcategory]</a> "
+							dat += " <a href='?_src_=prefs;preference=gear;select_category=[url_encode(gear_category)];select_subcategory=[url_encode(subcategory)]'>[subcategory]</a> "
 					dat += "</b></center></td></tr>"
 
 					dat += "<tr width=10% style='vertical-align:top;'><td width=15%><b>Name</b></td>"
@@ -1182,7 +1193,7 @@
 						else if((gear_points - gear.cost) < 0)
 							class_link = "style='white-space:normal;' class='linkOff'"
 						else if(donoritem)
-							class_link = "style='white-space:normal;background:#ebc42e;' href='?_src_=prefs;preference=gear;toggle_gear_path=[url_encode(name)];toggle_gear=1'"
+							class_link = "style='white-space:normal;background:#2e6eeb;' href='?_src_=prefs;preference=gear;toggle_gear_path=[url_encode(name)];toggle_gear=1'"
 						else if(!istype(gear, /datum/gear/unlockable) || can_use_unlockable(gear))
 							class_link = "style='white-space:normal;' href='?_src_=prefs;preference=gear;toggle_gear_path=[url_encode(name)];toggle_gear=1'"
 						else

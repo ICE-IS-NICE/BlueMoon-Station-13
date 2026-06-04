@@ -36,27 +36,28 @@ Will print: "/mob/living/carbon/human/death" (you can optionally embed it in a s
 
 //Human Overlays Indexes/////////
 //LOTS OF CIT CHANGES HERE. BE CAREFUL WHEN UPSTREAM ADDS MORE LAYERS
-#define MUTATIONS_LAYER			41		//mutations. Tk headglows, cold resistance glow, etc
-#define GENITALS_BEHIND_LAYER	40		//Some genitalia needs to be behind everything, such as with taurs (Taurs use body_behind_layer
-#define BODY_BEHIND_LAYER		39		//certain mutantrace features (tail when looking south) that must appear behind the body parts
-#define BODYPARTS_LAYER			38		//Initially "AUGMENTS", this was repurposed to be a catch-all bodyparts flag
-#define MARKING_LAYER			37		//Matrixed body markings because clashing with snouts?
-#define BODY_ADJ_LAYER			36		//certain mutantrace features (snout, body markings) that must appear above the body parts
-#define GENITALS_FRONT_LAYER	35		//Draws some genitalia above clothes and the TAUR body if need be.
-#define BODY_LAYER				34		//underwear, undershirts, socks, eyes, lips(makeup)
-#define BODY_ADJ_UPPER_LAYER	33
-#define FRONT_MUTATIONS_LAYER	32		//mutations that should appear above body, body_adj and bodyparts layer (e.g. laser eyes)
-#define UNDERWEAR_LAYER			31
-#define SOCKS_LAYER				30
-#define SHIRT_LAYER				29
-#define UNIFORM_LAYER			28
-#define ID_LAYER				27
-#define GENITALS_EXPOSED_LAYER	26
-#define HANDS_PART_LAYER		25
-#define DAMAGE_LAYER			24		//damage indicators (cuts and burns)
-#define LOWER_MEDICINE_LAYER	23		//Medicine, like gauze and tourniquets
-#define MEDICINE_LAYER			22		//Medicine, like gauze and tourniquets
-#define SHOES_LAYER				21
+#define MUTATIONS_LAYER			42		//mutations. Tk headglows, cold resistance glow, etc
+#define GENITALS_BEHIND_LAYER	41		//Some genitalia needs to be behind everything, such as with taurs (Taurs use body_behind_layer)
+#define BODY_BEHIND_LAYER		40		//certain mutantrace features (tail when looking south) that must appear behind the body parts
+#define BODYPARTS_LAYER			39		//Initially "AUGMENTS", this was repurposed to be a catch-all bodyparts flag
+#define MARKING_LAYER			38		//Matrixed body markings because clashing with snouts?
+#define BODY_ADJ_LAYER			37		//certain mutantrace features (snout, body markings) that must appear above the body parts
+#define GENITALS_FRONT_LAYER	36		//Draws some genitalia above clothes and the TAUR body if need be.
+#define BODY_LAYER				35		//Eyes, lips(makeup)
+#define BODY_ADJ_UPPER_LAYER	34
+#define FRONT_MUTATIONS_LAYER	33		//mutations that should appear above body, body_adj and bodyparts layer (e.g. laser eyes)
+#define UNDERWEAR_LAYER			32
+#define SOCKS_LAYER				31
+#define SHIRT_LAYER				30
+#define UNIFORM_LAYER			29
+#define SHOES_LAYER				28
+#define DRESS_LAYER				27		//Any uniform that should be drawn on top of shoes, including jumpskirts
+#define ID_LAYER				26
+#define GENITALS_EXPOSED_LAYER	25
+#define HANDS_PART_LAYER		24
+#define DAMAGE_LAYER			23		//damage indicators (cuts and burns)
+#define LOWER_MEDICINE_LAYER	22		//Medicine, like gauze and tourniquets
+#define MEDICINE_LAYER			21		//Medicine, like gauze and tourniquets
 #define GLOVES_LAYER			20
 #define WRISTS_LAYER			19
 #define EAR_RIGHT_LAYER			18
@@ -77,7 +78,7 @@ Will print: "/mob/living/carbon/human/death" (you can optionally embed it in a s
 #define BODY_FRONT_LAYER		3
 #define ANTAG_LAYER				2		//stuff for things like cultism indicators (clock cult glow, cultist red halos, whatever else new that comes up)
 #define FIRE_LAYER				1		//If you're on fire
-#define TOTAL_LAYERS			41		//KEEP THIS UP-TO-DATE OR SHIT WILL BREAK ;_;
+#define TOTAL_LAYERS			42		//KEEP THIS UP-TO-DATE OR SHIT WILL BREAK ;_;
 
 //Human Overlay Index Shortcuts for alternate_worn_layer, layers
 //Because I *KNOW* somebody will think layer+1 means "above"
@@ -86,7 +87,6 @@ Will print: "/mob/living/carbon/human/death" (you can optionally embed it in a s
 #define UNDER_HEAD_LAYER			(HEAD_LAYER+1)
 
 //AND -1 MEANS "ABOVE", OK?, OK!?!
-#define ABOVE_SHOES_LAYER			(SHOES_LAYER-1)
 #define ABOVE_BODY_FRONT_LAYER		(BODY_FRONT_LAYER-1)
 #define ABOVE_HEAD_LAYER			(HEAD_LAYER-1) // BlueMoon added
 
@@ -165,18 +165,6 @@ GLOBAL_LIST_EMPTY(bloody_footprints_cache)
 #define BLOOD_STATE_OIL				"oil"
 #define BLOOD_STATE_NOT_BLOODY		"no blood whatsoever"
 #define BLOOD_AMOUNT_PER_DECAL		20
-
-//Blood Decal Colors
-#define BLOOD_COLOR_HUMAN			"#dc0000"
-#define BLOOD_COLOR_XENO			"#9cff75"
-#define BLOOD_COLOR_OIL				"#301d02"
-#define BLOOD_COLOR_SYNTHETIC		"#3f48aa"
-#define BLOOD_COLOR_SLIME			"#00ff90"
-#define BLOOD_COLOR_LIZARD			"#db004D"
-#define BLOOD_COLOR_UNIVERSAL		"#db3300"
-#define BLOOD_COLOR_BUG				"#ffc933"
-#define BLOOD_COLOR_PLANT			"#3d610e"
-
 
 //suit sensors: sensor_mode defines
 
@@ -281,28 +269,28 @@ GLOBAL_LIST_INIT(pda_styles, list(MONO, VT, ORBITRON, SHARE))
 #define PDA_SKIN_MINIMAL "Minimal"
 
 GLOBAL_LIST_INIT(pda_reskins, list(
-	PDA_SKIN_CLASSIC = list("icon" = 'icons/obj/pda.dmi'),
-	PDA_SKIN_ALT = list("icon" = 'icons/obj/pda_alt.dmi'),
-	PDA_SKIN_RUGGED = list("icon" = 'icons/obj/pda_rugged.dmi'),
-	PDA_SKIN_MODERN = list("icon" = 'icons/obj/pda_modern.dmi'),
-	PDA_SKIN_MINIMAL = list("icon" = 'icons/obj/pda_minimal.dmi')
+	PDA_SKIN_CLASSIC = list("icon" = 'icons/obj/pda.dmi', "icon_state_menu" = null),
+	PDA_SKIN_ALT = list("icon" = 'icons/obj/pda_alt.dmi', "icon_state_menu" = "screen_default"),
+	PDA_SKIN_RUGGED = list("icon" = 'icons/obj/pda_rugged.dmi', "icon_state_menu" = null),
+	PDA_SKIN_MODERN = list("icon" = 'icons/obj/pda_modern.dmi', "icon_state_menu" = null),
+	PDA_SKIN_MINIMAL = list("icon" = 'icons/obj/pda_minimal.dmi', "icon_state_menu" = null)
 	))
 
 //Payed ERT calls
 GLOBAL_LIST_INIT(payed_ert, list(
 	list(
 		"available" = TRUE,
-		"price" = 40000,
-		"name" = "Доставщики питцы",
+		"price" = 25000,
+		"name" = "Доставщики Питцы",
 		"disc" = "Нечего есть? Поешьте питцы.",
 		"mission" = "Накормите станцию питцей. Вы не полноправное ОБР и подчиняетесь капитану станции в разумных пределах. Готовьте, развлекайте экипаж и веселитесь.",
-		"size" = 3,
+		"size" = 5,
 		"link" = /datum/ert/pizza,
 	),
 	list(
 		"available" = TRUE,
-		"price" = 80000,
-		"name" = "Развлекательная труппа",
+		"price" = 50000,
+		"name" = "Развлекательная Труппа",
 		"disc" = "Смена стала скучной? -Пора вызывать этих ребят",
 		"mission" = "Развеселите экипаж. Вы не полноправное ОБР и подчиняетесь капитану станции в разумных пределах. Стройте, творите, сделайте смену веселее.",
 		"teamsize" = 5,
@@ -310,30 +298,39 @@ GLOBAL_LIST_INIT(payed_ert, list(
 	),
 	list(
 		"available" = TRUE,
-		"price" = 85000,
-		"name" = "Отряд зачистки",
+		"price" = 75000,
+		"name" = "Отряд Зачистки",
 		"disc" = "Вся грязь и вредители на станции будут уничтожены",
 		"mission" = "Очистите станцию. Вы не полноправное ОБР и подчиняетесь капитану станции в разумных пределах. Приложите все усилия, что бы станция сверкала.",
-		"teamsize" = 3,
+		"teamsize" = 5,
 		"link" = /datum/ert/janitor,
 	),
 	list(
 		"available" = TRUE,
-		"price" = 160000,
-		"name" = "Санитарная бригада",
+		"price" = 100000,
+		"name" = "Санитарная Бригада",
 		"disc" = "Горы трупов и полное отсуствие медиков? Этот вопрос решаем",
 		"mission" = "Лечите экипаж. Вы не полноправное ОБР и подчиняетесь капитану станции в разумных пределах.",
-		"teamsize" = 4,
+		"teamsize" = 5,
 		"link" = /datum/ert/hsc,
 	),
 	list(
 		"available" = TRUE,
-		"price" = 240000,
+		"price" = 150000,
 		"name" = "Ремонтная бригада",
 		"disc" = "Разгермы, последствия аварий, подача питания - они справятся со всем",
 		"mission" = "Ремонт и строительство - это ваша работа. Вы не полноправное ОБР и подчиняетесь капитану станции в разумных пределах.",
-		"teamsize" = 4,
+		"teamsize" = 5,
 		"link" = /datum/ert/engineer_ert,
+	),
+	list(
+		"available" = TRUE,
+		"price" = 200000,
+		"name" = "Отряд Быстрого Реагирования",
+		"disc" = "Вам требуется помощь здесь и сейчас, а ЦК не отвечает уже пять минут? Вызывайте! Они обязательно справятся.",
+		"mission" = "Защитите станцию любой ценой и докажите свою состоятельность!",
+		"teamsize" = 5,
+		"link" = /datum/ert/green,
 	),
 ))
 
@@ -493,6 +490,10 @@ GLOBAL_LIST_INIT(payed_ert, list(
 #define SYRINGE_DRAW 0
 #define SYRINGE_INJECT 1
 
+#define SYRINGE_PIERCE_NONE 0 // Blocked by any clothing covering the hit zone
+#define SYRINGE_PIERCE_THICK 1 // Pierces normal clothing, blocked by THICKMATERIAL
+#define SYRINGE_PIERCE_ALL 2 // Pierces all clothing including THICKMATERIAL
+
 //gold slime core spawning
 #define NO_SPAWN 0
 #define HOSTILE_SPAWN 1
@@ -553,6 +554,7 @@ GLOBAL_LIST_INIT(payed_ert, list(
 
 //Filters
 #define AMBIENT_OCCLUSION(_size, _color) list("type"="drop_shadow","x"=0,"y"=-2,"size"=_size,"color"=_color)
+#define AMBIENT_OCCLUSION_SCALED(_base_size, _color, _blur_level) list("type"="drop_shadow","x"=0,"y"=-2,"size"=(_base_size) + (_blur_level) * 0.5,"color"=_color)
 #define EYE_BLUR(size) list("type"="blur", "size"=size)
 #define GRAVITY_MOTION_BLUR list("type"="motion_blur","x"=0,"y"=0)
 
@@ -628,6 +630,8 @@ GLOBAL_LIST_INIT(payed_ert, list(
 #define NOTIFY_JUMP "jump"
 #define NOTIFY_ATTACK "attack"
 #define NOTIFY_ORBIT "orbit"
+/// Ghost alert: jump to target turf then try attack_ghost (possess / interact)
+#define NOTIFY_POSSESS "possess"
 
 GLOBAL_LIST_INIT(month_names, list("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"))
 GLOBAL_LIST_INIT(day_names, list("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"))

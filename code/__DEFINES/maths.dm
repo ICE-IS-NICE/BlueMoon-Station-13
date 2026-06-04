@@ -83,7 +83,7 @@
 // Performs a linear interpolation between a and b.
 // Note that amount=0 returns a, amount=1 returns b, and
 // amount=0.5 returns the mean of a and b.
-#define LERP(a, b, amount) ( amount ? ((a) + ((b) - (a)) * (amount)) : a )
+#define LERP(a, b, amount) (lerp((a), (b), (amount)))
 
 // Returns the nth root of x.
 #define ROOT(n, x) ((x) ** (1 / (n)))
@@ -114,6 +114,9 @@
 // Will filter out extra rotations and negative rotations
 // E.g: 540 becomes 180. -180 becomes 180.
 #define SIMPLIFY_DEGREES(degrees) (MODULUS((degrees), 360))
+
+/// Opposite direction in degrees (drift / stabilization)
+#define REVERSE_ANGLE(degrees) (SIMPLIFY_DEGREES((degrees) + 180))
 
 #define GET_ANGLE_OF_INCIDENCE(face, input) (MODULUS((face) - (input), 360))
 

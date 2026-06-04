@@ -11,7 +11,7 @@ GLOBAL_VAR(changeling_team_objective_type) //If this is not null, we hand our th
 	antag_flag = ROLE_CHANGELING
 	false_report_weight = 10
 	chaos = 5
-	protected_jobs = list("Prisoner", "Shaft Miner", "NanoTrasen Representative", "Internal Affairs Agent", "Security Officer", "Blueshield", "Peacekeeper", "Brig Physician", "Warden", "Detective", "Head of Security","Bridge Officer", "Captain", "Head of Personnel", "Quartermaster", "Chief Engineer", "Chief Medical Officer", "Research Director")
+	protected_jobs = list("Prisoner", "NanoTrasen Representative", "Internal Affairs Agent", "Security Officer", "Blueshield", "Peacekeeper", "Brig Physician", "Warden", "Detective", "Head of Security","Bridge Officer", "Captain", "Head of Personnel", "Quartermaster", "Chief Engineer", "Chief Medical Officer", "Research Director")
 	restricted_jobs = list("AI", "Cyborg", "Positronic Brain") // BLUEMOON EDIT
 
 	required_players = 2
@@ -101,21 +101,23 @@ GLOBAL_VAR(changeling_team_objective_type) //If this is not null, we hand our th
 
 	//vars hackery. not pretty, but better than the alternative.
 	for(var/slot in GLOB.slots)
-		if(istype(user.vars[slot], GLOB.slot2type[slot]) && !(chosen_prof.exists_list[slot])) //remove unnecessary flesh items
+		var/changeling_flesh_type = GLOB.slot2type[slot]
+		if(!changeling_flesh_type)
+			continue // Sandstorm: underwear etc. expanded GLOB.slots without matching flesh types — skip to avoid runtime
+		if(istype(user.vars[slot], changeling_flesh_type) && !(chosen_prof.exists_list[slot])) //remove unnecessary flesh items
 			qdel(user.vars[slot])
 			continue
 
-		if((user.vars[slot] && !istype(user.vars[slot], GLOB.slot2type[slot])) || !(chosen_prof.exists_list[slot]))
+		if((user.vars[slot] && !istype(user.vars[slot], changeling_flesh_type)) || !(chosen_prof.exists_list[slot]))
 			continue
 
 		var/obj/item/C
 		var/equip = 0
 		if(!user.vars[slot])
-			var/thetype = GLOB.slot2type[slot]
 			equip = 1
-			C = new thetype(user)
+			C = new changeling_flesh_type(user)
 
-		else if(istype(user.vars[slot], GLOB.slot2type[slot]))
+		else if(istype(user.vars[slot], changeling_flesh_type))
 			C = user.vars[slot]
 
 		C.appearance = chosen_prof.appearance_list[slot]

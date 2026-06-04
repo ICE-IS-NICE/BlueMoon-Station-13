@@ -113,8 +113,8 @@ Class Procs:
 		//0 = dont run the auto
 		//1 = run auto, use idle
 		//2 = run auto, use active
-	var/idle_power_usage = 0
-	var/active_power_usage = 0
+	var/idle_power_usage = 100
+	var/active_power_usage = 500
 	var/power_channel = EQUIP
 		//EQUIP,ENVIRON or LIGHT
 	var/list/component_parts = null //list of all the parts used to build it, if made from certain kinds of frames.
@@ -159,6 +159,7 @@ Class Procs:
 	if(!armor)
 		armor = list(MELEE = 25, BULLET = 10, LASER = 10, ENERGY = 0, BOMB = 0, BIO = 0, RAD = 0, FIRE = 50, ACID = 70)
 	. = ..()
+	set_is_operational(!(machine_stat & (NOPOWER|BROKEN|MAINT)))
 	SSmachines.register_machine(src)
 	GLOB.machines += src
 
@@ -214,17 +215,11 @@ Class Procs:
 		return
 	. = machine_stat
 	machine_stat = new_value
-	on_stat_update(machine_stat)
+	on_stat_update(.)
 
 ///Called when the value of `stat` changes, so we can react to it.
 /obj/machinery/proc/on_stat_update(old_value)
-	//From off to on.
-	if((old_value & (NOPOWER|BROKEN|MAINT)) && !(machine_stat & (NOPOWER|BROKEN|MAINT)))
-		set_is_operational(TRUE)
-		return
-	//From on to off.
-	if(machine_stat & (NOPOWER|BROKEN|MAINT))
-		set_is_operational(FALSE)
+	set_is_operational(!(machine_stat & (NOPOWER|BROKEN|MAINT)))
 
 /obj/machinery/emp_act(severity)
 	. = ..()
@@ -287,12 +282,13 @@ Class Procs:
 	occupant = new_occupant
 
 /obj/machinery/proc/auto_use_power()
-	if(!powered(power_channel))
+	var/area/our_area = get_area(src)
+	if(!our_area?.powered(power_channel))
 		return FALSE
-	if(use_power == 1)
-		use_power(idle_power_usage,power_channel)
-	else if(use_power >= 2)
-		use_power(active_power_usage,power_channel)
+	if(use_power == IDLE_POWER_USE)
+		our_area.use_power(idle_power_usage, power_channel)
+	else if(use_power >= ACTIVE_POWER_USE)
+		our_area.use_power(active_power_usage, power_channel)
 	return TRUE
 
 /**
@@ -433,6 +429,8 @@ Class Procs:
 
 //Return a non FALSE value to interrupt attack_hand propagation to subtypes.
 /obj/machinery/interact(mob/user, special_state)
+	if(!user)
+		return
 	if(interaction_flags_machine & INTERACT_MACHINE_SET_MACHINE)
 		user.set_machine(src)
 	. = ..()
@@ -547,7 +545,7 @@ Class Procs:
 /obj/machinery/obj_break(damage_flag)
 	. = ..()
 	if(!(machine_stat & BROKEN) && !(flags_1 & NODECONSTRUCT_1))
-		machine_stat |= BROKEN
+		set_machine_stat(machine_stat | BROKEN)
 		SEND_SIGNAL(src, COMSIG_MACHINERY_BROKEN, damage_flag)
 		update_appearance()
 		return TRUE
@@ -569,18 +567,19 @@ Class Procs:
 		return TRUE
 
 /obj/machinery/proc/default_deconstruction_screwdriver(mob/user, icon_state_open, icon_state_closed, obj/item/I)
-	if(!(flags_1 & NODECONSTRUCT_1) && I.tool_behaviour == TOOL_SCREWDRIVER)
-		I.play_tool_sound(src, 50)
-		if(!panel_open)
-			panel_open = TRUE
-			icon_state = icon_state_open
-			to_chat(user, "<span class='notice'>Вы скручиваете винты панели обслуживания [src].</span>")
-		else
-			panel_open = FALSE
-			icon_state = icon_state_closed
-			to_chat(user, "<span class='notice'>Вы вкручиваете панель обслуживания [src] обратно.</span>")
-		return TRUE
-	return FALSE
+	if((flags_1 & NODECONSTRUCT_1) || I.tool_behaviour != TOOL_SCREWDRIVER)
+		return FALSE
+
+	I.play_tool_sound(src, 50)
+	panel_open = !panel_open
+	if(panel_open)
+		icon_state = icon_state_open
+		to_chat(user, "<span class='notice'>Вы скручиваете винты панели обслуживания [src].</span>")
+	else
+		icon_state = icon_state_closed
+		to_chat(user, "<span class='notice'>Вы вкручиваете панель обслуживания [src] обратно.</span>")
+	update_icon()
+	return TRUE
 
 /obj/machinery/proc/default_change_direction_wrench(mob/user, obj/item/I)
 	if(panel_open && I.tool_behaviour == TOOL_WRENCH)
@@ -692,11 +691,11 @@ Class Procs:
 		var/healthpercent = (obj_integrity/max_integrity) * 100
 		switch(healthpercent)
 			if(50 to 99)
-				. += "Выглядит слегка поврежденным."
+				. += span_warning("Выглядит слегка поврежденным.")
 			if(25 to 50)
-				. += "Выглядит крайне поврежденным."
+				. += span_warning("Выглядит крайне поврежденным.")
 			if(0 to 25)
-				. += "<span class='warning'>Вот-вот развалится!</span>"
+				. += span_warning("Вот-вот развалится!")
 	if(user.research_scanner && component_parts)
 		. += display_parts(user, TRUE)
 

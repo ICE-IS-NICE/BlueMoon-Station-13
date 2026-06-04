@@ -187,7 +187,7 @@
 				if(istype(W, /obj/item/card/id))
 					id_card = W
 				else
-					var/obj/item/pda/pda = W
+					var/obj/item/modular_computer/pda/pda = W
 					id_card = pda.id
 				output_maintenance_dialog(id_card, user)
 				return
@@ -264,6 +264,8 @@
 
 /obj/vehicle/sealed/mecha/wrench_act(mob/living/user, obj/item/I)
 	..()
+	if(user.a_intent == INTENT_HARM)
+		return
 	. = TRUE
 	if(construction_state == MECHA_SECURE_BOLTS)
 		construction_state = MECHA_LOOSE_BOLTS
@@ -275,6 +277,8 @@
 
 /obj/vehicle/sealed/mecha/crowbar_act(mob/living/user, obj/item/I)
 	..()
+	if(user.a_intent == INTENT_HARM)
+		return
 	. = TRUE
 	if(construction_state == MECHA_LOOSE_BOLTS)
 		construction_state = MECHA_OPEN_HATCH
@@ -286,6 +290,8 @@
 
 /obj/vehicle/sealed/mecha/screwdriver_act(mob/living/user, obj/item/I)
 	..()
+	if(user.a_intent == INTENT_HARM)
+		return
 	. = TRUE
 	if(internal_damage & MECHA_INT_TEMP_CONTROL)
 		clearInternalDamage(MECHA_INT_TEMP_CONTROL)

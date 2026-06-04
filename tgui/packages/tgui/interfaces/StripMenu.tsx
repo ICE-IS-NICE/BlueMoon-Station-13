@@ -1,5 +1,6 @@
 import { range } from "common/collections";
 import { BooleanLike } from "common/react";
+import { InfernoNode } from "inferno";
 
 import { resolveAsset } from "../assets";
 import { useBackend } from "../backend";
@@ -23,7 +24,7 @@ const getGridSpotKey = (spot: [number, number]): GridSpotKey => {
 const CornerText = (props: {
   readonly align: "left" | "right";
   readonly children: string;
-}): JSX.Element => {
+}): InfernoNode => {
   const { align, children } = props;
 
   return (
@@ -91,7 +92,7 @@ const SLOTS: Record<
     displayName: string;
     gridSpot: GridSpotKey;
     image?: string;
-    additionalComponent?: JSX.Element;
+    additionalComponent?: InfernoNode;
   }
 > = {
 
@@ -259,7 +260,7 @@ const SLOTS_LONG: Record<
     displayName: string;
     gridSpot: GridSpotKey;
     image?: string;
-    additionalComponent?: JSX.Element;
+    additionalComponent?: InfernoNode;
   }
 > = {
 
@@ -448,6 +449,7 @@ type StripMenuItem =
           icon: string;
           name: string;
           alternate?: string;
+          interactable: boolean;
         }
       | {
           obscured: ObscuringLevel;
@@ -509,6 +511,7 @@ export const StripMenu = (props, context) => {
 
                   let content;
                   let tooltip;
+                  let interactable;
 
                   if (item === null) {
                     tooltip = slot.displayName;
@@ -520,17 +523,21 @@ export const StripMenu = (props, context) => {
                     content = (
                       <Box
                         as="img"
-                        src={`data:image/jpeg;base64,${item.icon}`}
+                        src={`data:image/png;base64,${item.icon}`}
                         height="100%"
                         width="100%"
                         style={{
-                          "-ms-interpolation-mode": "nearest-neighbor",
+                          imageRendering: "pixelated",
                           "vertical-align": "middle",
                         }}
                       />
                     );
 
                     tooltip = item.name;
+                    if(item.interactable) {
+                      interactable = item.interactable;
+                      tooltip = `${tooltip} (CAN USE ITEMS ON IT)`;
+                    }
                   } else if ("obscured" in item) {
                     content = (
                       <Icon
@@ -579,7 +586,9 @@ export const StripMenu = (props, context) => {
                           style={{
                             background: item?.interacting
                               ? "hsl(39, 73%, 30%)"
-                              : undefined,
+                              : interactable
+                                ? "green"
+                                : undefined,
                             position: "relative",
                             width: "100%",
                             height: "100%",

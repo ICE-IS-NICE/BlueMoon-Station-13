@@ -112,6 +112,8 @@
 	/// directional recoil multiplier
 	var/dir_recoil_amp = 10
 
+	var/can_shoot_yourself = TRUE
+
 /obj/item/gun/ui_action_click(mob/user, action)
 	if(istype(action, /datum/action/item_action/toggle_firemode))
 		fire_select()
@@ -155,19 +157,42 @@
 
 /obj/item/gun/Destroy()
 	if(isobj(pin))
-		QDEL_NULL(pin)
+		if(QDELING(pin))
+			pin = null
+		else
+			QDEL_NULL(pin)
 	if(gun_light)
-		QDEL_NULL(gun_light)
+		if(QDELING(gun_light))
+			gun_light = null
+		else
+			QDEL_NULL(gun_light)
 	if(bayonet)
-		QDEL_NULL(bayonet)
+		if(QDELING(bayonet))
+			bayonet = null
+		else
+			QDEL_NULL(bayonet)
 	if(chambered)
-		QDEL_NULL(chambered)
+		if(QDELING(chambered))
+			chambered = null
+		else
+			QDEL_NULL(chambered)
 	if(azoom)
-		QDEL_NULL(azoom)
+		if(QDELING(azoom))
+			azoom = null
+		else
+			QDEL_NULL(azoom)
 	if(firemode_action)
-		QDEL_NULL(firemode_action)
+		if(QDELING(firemode_action))
+			firemode_action = null
+		else
+			QDEL_NULL(firemode_action)
 	if(isatom(suppressed))
-		QDEL_NULL(suppressed)
+		var/atom/suppressed_atom = suppressed
+		if(QDELING(suppressed_atom))
+			suppressed = null
+		else
+			QDEL_NULL(suppressed_atom)
+			suppressed = null
 	return ..()
 
 /obj/item/gun/examine(mob/user)
@@ -249,7 +274,7 @@
 	balloon_alert(user, "Щёлк!")
 
 /obj/item/gun/proc/shoot_live_shot(mob/living/user, pointblank = FALSE, mob/pbtarget, message = 1, stam_cost = 0)
-	if(recoil)
+	if(recoil && !zoomed)
 		directional_recoil(user, recoil*dir_recoil_amp, Get_Angle(user, pbtarget))
 
 	if(stam_cost) //CIT CHANGE - makes gun recoil cause staminaloss
@@ -345,8 +370,11 @@
 			return
 		if(!ismob(target) || user.a_intent == INTENT_HARM) //melee attack
 			return
-		if(target == user && (user.a_intent != INTENT_DISARM) && !(user.zone_selected == BODY_ZONE_PRECISE_MOUTH || (user.zone_selected == BODY_ZONE_PRECISE_GROIN && user.a_intent != INTENT_HELP))) //so we can't shoot ourselves (unless mouth selected or disarm intent) // BLUEMOON EDIT add BODY_ZONE_PRECISE_GROIN
-			return
+		if(target == user)
+			if(!can_shoot_yourself)
+				return
+			if((user.a_intent != INTENT_DISARM) && !(user.zone_selected == BODY_ZONE_PRECISE_MOUTH || (user.zone_selected == BODY_ZONE_PRECISE_GROIN && user.a_intent != INTENT_HELP))) //so we can't shoot ourselves (unless mouth selected or disarm intent) // BLUEMOON EDIT add BODY_ZONE_PRECISE_GROIN
+				return
 		if(iscarbon(target))
 			var/mob/living/carbon/C = target
 			for(var/i in C.all_wounds)
@@ -732,17 +760,24 @@
 		var/datum/action/A = X
 		A.UpdateButtons()
 
+/obj/item/gun/proc/get_gunlight_overlay()
+	if(!gun_light)
+		return
+	var/mutable_appearance/flashlight_overlay
+	var/state = "[gunlight_state][gun_light.on? "_on":""]"	//Generic state.
+	if(gun_light.icon_state in icon_states('icons/obj/guns/flashlights.dmi'))	//Snowflake state?
+		state = gun_light.icon_state
+	flashlight_overlay = mutable_appearance('icons/obj/guns/flashlights.dmi', state)
+	flashlight_overlay.pixel_x = flight_x_offset
+	flashlight_overlay.pixel_y = flight_y_offset
+	return flashlight_overlay
+
 /obj/item/gun/update_overlays()
 	. = ..()
 	if(gun_light)
-		var/mutable_appearance/flashlight_overlay
-		var/state = "[gunlight_state][gun_light.on? "_on":""]"	//Generic state.
-		if(gun_light.icon_state in icon_states('icons/obj/guns/flashlights.dmi'))	//Snowflake state?
-			state = gun_light.icon_state
-		flashlight_overlay = mutable_appearance('icons/obj/guns/flashlights.dmi', state)
-		flashlight_overlay.pixel_x = flight_x_offset
-		flashlight_overlay.pixel_y = flight_y_offset
-		. += flashlight_overlay
+		var/mutable_appearance/flashlight_overlay = get_gunlight_overlay()
+		if(istype(flashlight_overlay))
+			. += flashlight_overlay
 
 	if(bayonet)
 		var/mutable_appearance/knife_overlay
@@ -917,6 +952,12 @@
 /obj/item/gun/proc/zoom(mob/living/user, direct, forced_zoom)
 	if(!(user?.client))
 		return
+
+	if(user.get_active_held_item() != src && user.get_inactive_held_item() != src)
+		if(zoomed)
+			forced_zoom = FALSE
+		else
+			return
 
 	if(!isnull(forced_zoom))
 		if(zoomed == forced_zoom)

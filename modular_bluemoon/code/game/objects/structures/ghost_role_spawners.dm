@@ -2,8 +2,15 @@
 /datum/antagonist/ghost_role/inteq
 	name = "InteQ Ship Crew"
 
+/datum/antagonist/ghost_role/inteq/is_banned(mob/M)
+	. = ..()
+	if(.)
+		return TRUE
+	return jobban_isbanned(M, ROLE_INTEQ)
+
 /datum/antagonist/ghost_role/ghost_cafe
 	name = "Ghost Cafe"
+	show_in_check_antagonists = FALSE
 	var/area/adittonal_allowed_area
 
 /datum/antagonist/ghost_role/tarkov
@@ -38,8 +45,13 @@
 
 
 mob/living/proc/ghost_cafe_traits(switch_on = FALSE, additional_area)
+	var/static/list/buttons = list(
+		/datum/action/toggle_dead_chat_mob,
+		/datum/action/disguise,
+		/datum/action/cooldown/ghost_role_eligible,
+	)
 	if(switch_on)
-		AddElement(/datum/element/ghost_role_eligibility, free_ghosting = TRUE)
+		AddElement(/datum/element/ghost_role_eligibility, free_ghosting = TRUE, _low_priority = TRUE)
 		AddElement(/datum/element/dusts_on_catatonia)
 		var/list/Not_dust_area = list(/area/centcom/holding/exterior,  /area/hilbertshotel)
 		if(additional_area)
@@ -50,13 +62,12 @@ mob/living/proc/ghost_cafe_traits(switch_on = FALSE, additional_area)
 		ADD_TRAIT(src, TRAIT_EXEMPT_HEALTH_EVENTS, GHOSTROLE_TRAIT)
 		ADD_TRAIT(src, TRAIT_NO_MIDROUND_ANTAG, GHOSTROLE_TRAIT) //The mob can't be made into a random antag, they are still eligible for ghost roles popups.
 
-		var/datum/action/toggle_dead_chat_mob/D = new(src)
-		D.Grant(src)
-		var/datum/action/disguise/disguise_action = new(src)
-		disguise_action.Grant(src)
+		for(var/path in buttons)
+			var/datum/action/D = new path(src)
+			D.Grant(src)
 
 	else
-		RemoveElement(/datum/element/ghost_role_eligibility, free_ghosting = TRUE)
+		RemoveElement(/datum/element/ghost_role_eligibility, free_ghosting = TRUE, _low_priority = TRUE)
 		RemoveElement(/datum/element/dusts_on_catatonia)
 		var/datum/antagonist/ghost_role/ghost_cafe/GC = mind?.has_antag_datum(/datum/antagonist/ghost_role/ghost_cafe)
 		if(GC)
@@ -68,20 +79,22 @@ mob/living/proc/ghost_cafe_traits(switch_on = FALSE, additional_area)
 		REMOVE_TRAIT(src, TRAIT_EXEMPT_HEALTH_EVENTS, GHOSTROLE_TRAIT)
 		REMOVE_TRAIT(src, TRAIT_NO_MIDROUND_ANTAG, GHOSTROLE_TRAIT)
 
-		var/datum/action/toggle_dead_chat_mob/D = locate(/datum/action/toggle_dead_chat_mob) in actions
-		if(D)
+		for(var/path in buttons)
+			var/datum/action/D = locate(path) in actions
+			if(!D)
+				continue
+
+			if(istype(D, /datum/action/disguise))
+				var/datum/action/disguise/Ddisg = D
+				if(Ddisg.currently_disguised)
+					remove_alt_appearance("ghost_cafe_disguise")
 			D.Remove(src)
-		var/datum/action/disguise/disguise_action = locate(/datum/action/disguise) in actions
-		if(disguise_action)
-			if(disguise_action.currently_disguised)
-				remove_alt_appearance("ghost_cafe_disguise")
-			disguise_action.Remove(src)
 
 /obj/effect/mob_spawn/qareen/attack_ghost(mob/user, latejoinercalling)
-	if(GLOB.master_mode == "Extended")
+	if(GLOB.master_mode in list(ROUNDTYPE_EXTENDED, ROUNDTYPE_DYNAMIC_LIGHT))
 		return . = ..()
 	else
-		return to_chat(user, "<span class='warning'>Игра за ЕРП-антагонистов допускается лишь в Режим Extended!</span>")
+		return to_chat(user, span_warning("Игра за ЕРП-антагонистов допускается лишь в режимах Extended или Dynamic Light!"))
 
 /obj/effect/mob_spawn/qareen //not grief antag u little shits
 	name = "Qareen - The Horny Spirit"
@@ -161,7 +174,7 @@ mob/living/proc/ghost_cafe_traits(switch_on = FALSE, additional_area)
 		/obj/item/implant/radio/centcom,
 		)
 
-/obj/effect/mob_spawn/human/changeling_extended //not grief antag u little shits
+/obj/effect/mob_spawn/human/changeling_extended
 	name = "Changeling - The Horny Creature"
 	desc = "An ancient tomb designed for long-term stasis. This one has the word HORNY scratched all over the surface!"
 	short_desc = "Вы таинственное нечто и абсолютно идеальный организм, который питается возбуждением своих жертв!"
@@ -181,10 +194,10 @@ mob/living/proc/ghost_cafe_traits(switch_on = FALSE, additional_area)
 	category = "special"
 
 /obj/effect/mob_spawn/human/changeling_extended/attack_ghost(mob/user, latejoinercalling)
-	if(GLOB.master_mode == "Extended")
+	if(GLOB.master_mode in list(ROUNDTYPE_EXTENDED, ROUNDTYPE_DYNAMIC_LIGHT))
 		return . = ..()
 	else
-		return to_chat(user, "<span class='warning'>Игра за ЕРП-антагонистов допускается лишь в режим Extended!</span>")
+		return to_chat(user, span_warning("Игра за ЕРП-антагонистов допускается лишь в режимах Extended или Dynamic Light!"))
 
 /obj/effect/mob_spawn/human/changeling_extended/special(mob/living/new_spawn)
 	. = ..()
@@ -294,13 +307,15 @@ mob/living/proc/ghost_cafe_traits(switch_on = FALSE, additional_area)
 /obj/effect/mob_spawn/human/ds2/syndicate/enginetech/special(mob/living/carbon/human/new_spawn)
 	. = ..()
 	ADD_TRAIT(new_spawn.mind, TRAIT_KNOW_ENGI_WIRES, GHOSTROLE_TRAIT)
-	new_spawn.mind.add_skill_modifier(list(/datum/skill_modifier/job/level/wiring/expert, /datum/skill_modifier/job/affinity/wiring))
+	ADD_SINGLETON_SKILL_MODIFIER(new_spawn.mind, /datum/skill_modifier/job/level/wiring/expert, null)
+	ADD_SINGLETON_SKILL_MODIFIER(new_spawn.mind, /datum/skill_modifier/job/affinity/wiring, null)
 
 /obj/effect/mob_spawn/human/ds2/syndicate/researcher/special(mob/living/carbon/human/new_spawn)
 	. = ..()
 	ADD_TRAIT(new_spawn.mind, TRAIT_KNOW_CYBORG_WIRES, GHOSTROLE_TRAIT)
 	ADD_TRAIT(new_spawn.mind, TRAIT_MECHA_EXPERT, GHOSTROLE_TRAIT)
-	new_spawn.mind.add_skill_modifier(list(/datum/skill_modifier/job/level/wiring/trained, /datum/skill_modifier/job/affinity/wiring))
+	ADD_SINGLETON_SKILL_MODIFIER(new_spawn.mind, /datum/skill_modifier/job/level/wiring/trained, null)
+	ADD_SINGLETON_SKILL_MODIFIER(new_spawn.mind, /datum/skill_modifier/job/affinity/wiring, null)
 
 /obj/effect/mob_spawn/human/ds2/syndicate/stationmed/special(mob/living/carbon/human/new_spawn)
 	. = ..()
@@ -312,7 +327,8 @@ mob/living/proc/ghost_cafe_traits(switch_on = FALSE, additional_area)
 	. = ..()
 	ADD_TRAIT(new_spawn.mind, TRAIT_KNOW_ENGI_WIRES, GHOSTROLE_TRAIT)
 	ADD_TRAIT(new_spawn.mind, TRAIT_KNOW_CYBORG_WIRES, GHOSTROLE_TRAIT)
-	new_spawn.mind.add_skill_modifier(list(/datum/skill_modifier/job/level/wiring/expert, /datum/skill_modifier/job/affinity/wiring))
+	ADD_SINGLETON_SKILL_MODIFIER(new_spawn.mind, /datum/skill_modifier/job/level/wiring/expert, null)
+	ADD_SINGLETON_SKILL_MODIFIER(new_spawn.mind, /datum/skill_modifier/job/affinity/wiring, null)
 
 ////////////////////////////////////
 

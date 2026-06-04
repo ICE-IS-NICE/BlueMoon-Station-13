@@ -29,6 +29,8 @@ SUBSYSTEM_DEF(jukeboxes)
 	wait = 5
 	priority = FIRE_PRIORITY_SOUND_LOOPS
 	var/list/songs = list()
+	var/list/song_names = list()
+	var/list/songs_by_name = list()
 	var/list/activejukeboxes = list()
 	var/list/freejukeboxchannels = list()
 
@@ -137,6 +139,9 @@ SUBSYSTEM_DEF(jukeboxes)
 /datum/controller/subsystem/jukeboxes/Initialize()
 	init_channels()
 
+	if(!fexists("config/jukebox_music/sounds/"))
+		return ..()
+
 	var/list/tracks = flist("config/jukebox_music/sounds/")
 	//SPLURT EDIT
 	var/max_tracks = CONFIG_GET(number/max_jukebox_songs)
@@ -149,6 +154,10 @@ SUBSYSTEM_DEF(jukeboxes)
 		if(!track_datum)
 			continue
 		songs |= track_datum
+
+	for(var/datum/track/T in songs)
+		song_names += T.song_name
+		songs_by_name[T.song_name] = T
 
 	return ..()
 
@@ -172,7 +181,7 @@ SUBSYSTEM_DEF(jukeboxes)
 	track_datum.song_name = track_name
 	var/track_length = LAZYACCESS(track_data, TRACK_LENGTH)
 	if(!track_length)
-		stack_trace("Track [track] lacks length.")
+		log_world("Jukebox: Track [track] lacks length. Use format: name+length_seconds+bpm+id")
 		return FALSE
 	track_length = text2num(track_length)
 	if(!isnum(track_length))

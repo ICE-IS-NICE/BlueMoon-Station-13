@@ -390,7 +390,8 @@
 
 /obj/item/clothing/shoes/wheelys/dropped(mob/user)
 	if(wheelToggle)
-		W.unbuckle_mob(user)
+		if(W.is_occupant(user))
+			W.unbuckle_mob(user)
 		wheelToggle = FALSE
 	..()
 
@@ -475,8 +476,9 @@
 	desc = "Contrary to popular belief, these do not allow you to walk on walls. Through bluespace magic stolen from an organisation that hoards technology, they simply allow you to slip through the atoms that make up anything, but only while walking, for safety reasons. As well as this, they unfortunately cause minor breath loss as the majority of atoms in your lungs are sucked out into any solid object you walk through. Make sure not to overuse them."
 	icon_state = "walkboots"
 	var/walkcool = 0
-	var/wallcharges = 20
+	var/wallcharges = 6
 	var/newlocobject = null
+	var/recharge_timer = null
 
 /obj/item/clothing/shoes/timidcostume
 	name = "timid woman boots"
@@ -498,10 +500,24 @@
 	. = ..()
 	if(slot == ITEM_SLOT_FEET)
 		RegisterSignal(user, COMSIG_MOB_CLIENT_MOVE, PROC_REF(intercept_user_move))
+		recharge_timer = addtimer(CALLBACK(src, PROC_REF(recharge_charges)), 10 SECONDS, TIMER_LOOP | TIMER_STOPPABLE)
 
 /obj/item/clothing/shoes/wallwalkers/dropped(mob/user)
 	. = ..()
-	UnregisterSignal(user, COMSIG_MOB_CLIENT_MOVE)
+	if(user)
+		UnregisterSignal(user, COMSIG_MOB_CLIENT_MOVE)
+	if(recharge_timer)
+		deltimer(recharge_timer)
+		recharge_timer = null
+
+/obj/item/clothing/shoes/wallwalkers/Destroy()
+	if(recharge_timer)
+		deltimer(recharge_timer)
+		recharge_timer = null
+	return ..()
+
+/obj/item/clothing/shoes/wallwalkers/proc/recharge_charges()
+	wallcharges = min(wallcharges + 1, 20)
 
 /obj/item/clothing/shoes/wallwalkers/attackby(obj/item/W, mob/user, params)
 	. = ..()

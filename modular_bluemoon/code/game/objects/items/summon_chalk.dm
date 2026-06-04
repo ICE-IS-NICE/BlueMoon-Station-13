@@ -1,7 +1,7 @@
 /obj/item/summon_chalk
 	name = "summon chalk"
 	desc = "A weird chalk covered in ectoplasm."
-	icon = 'modular_bluemoon/Gardelin0/icons/items/qareen_chalk.dmi'
+	icon = 'modular_bluemoon/icons/obj/lewd_items/qareen_chalk.dmi'
 	icon_state = "chalk_pink"
 	throw_speed = 3
 	throw_range = 5
@@ -10,7 +10,7 @@
 /obj/item/summon_chalk/afterattack(atom/target, mob/user as mob, proximity)
 	if(!proximity || !istype(target, /turf/open/floor))
 		return
-	if(GLOB.master_mode != "Extended")
+	if(!(GLOB.master_mode in list(ROUNDTYPE_EXTENDED, ROUNDTYPE_DYNAMIC_LIGHT)))
 		to_chat(user, "<span class='warning'>Unfortunately, magic does not work.</span>") //*boowomp
 		return
 
@@ -22,7 +22,7 @@
 /obj/effect/summon_rune
 	name = "Lewd summon rune"
 	desc = "It is believed this rune is capable of summoning horny creatures!"
-	icon = 'modular_bluemoon/Gardelin0/icons/items/qareen_chalk.dmi'
+	icon = 'modular_bluemoon/icons/obj/lewd_items/qareen_chalk.dmi'
 	icon_state = "rune_pink"
 	light_color = LIGHT_COLOR_PINK
 	var/cooldown = 0
@@ -50,6 +50,8 @@
 		if(!HAS_TRAIT(H, TRAIT_LEWD_SUMMON) || HAS_TRAIT(H, TRAIT_LEWD_SUMMONED))
 			continue
 		if(!H.client)
+			continue
+		if(iszombie_infectious(H))
 			continue
 		applicants += H
 		var/species = "[H.dna.species]"
@@ -129,7 +131,7 @@
 			if(target.mind?.has_antag_datum(/datum/antagonist/ghost_role/ghost_cafe))
 				target.ghost_cafe_traits(FALSE) // Выдаём и забираем трэйты в разных места для ситуаций ухода госта обратно домой
 
-	playsound(loc, "modular_bluemoon/Gardelin0/sound/effect/spook.ogg", 50, 1)
+	playsound(loc, 'modular_bluemoon/sound/effects/spook.ogg', 50, 1)
 	new /obj/effect/temp_visual/yellowsparkles(target.loc)
 	if(transfer_target_items)
 		transfer_items(target)
@@ -161,6 +163,12 @@
 		STOP_PROCESSING(SSobj, src)
 		new /obj/effect/temp_visual/yellowsparkles(src)
 		qdel(src)
+		return
+
+	if(QDELETED(returner) || !returner.loc)
+		STOP_PROCESSING(SSobj, src)
+		qdel(src)
+		return
 
 	var/xdiff=abs(returner.x-src.x)
 	var/ydiff=abs(returner.y-src.y)
@@ -183,6 +191,9 @@
 	. = ..()
 	if(returner)
 		teleport_summoned(returner, return_pos, TRUE)
+		returner = null
+	return_pos = null
+	listed_items = null
 
 //Проклятые техники телепортации
 //При телепортации мы помещаем всё "нежелательное" (контейнеры) в руну призыва, а после, когда появляется руна возврата - всё перенесётся в неё (в процессе return_rune/Initialize)

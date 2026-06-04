@@ -8,12 +8,37 @@
 	spawn_positions = 3
 	supervisors = "the head of personnel"
 	selection_color = "#dddddd"
+	alt_titles = list(
+		"Assistant Curator", //Стажер выше, для удобства
+		"Adventurer",
+		"Archaeologist",
+		"Archivist",
+		"Artist",
+		"Conservator",
+		"Correspondent",
+		"Game Master",
+		"Hentai Artist",
+		"Historian",
+		"Journalist",
+		"Keeper",
+		"Librarian",
+		"Museologist",
+		"Newsman",
+		"Painter",
+		"Professor",
+		"Questioner",
+		"Reporter",
+		"Scholar",
+		"Teacher",
+		"Translator",
+		"Veteran Adventurer"
+		)
 
 	outfit = /datum/outfit/job/curator
 	plasma_outfit = /datum/outfit/plasmaman/curator
 
-	access = list(ACCESS_LIBRARY)
-	minimal_access = list(ACCESS_LIBRARY, ACCESS_CONSTRUCTION, ACCESS_MINING_STATION)
+	access = list(ACCESS_LIBRARY, ACCESS_MINERAL_STOREROOM, ACCESS_PRODUCTION_SERVICE)
+	minimal_access = list(ACCESS_LIBRARY, ACCESS_CONSTRUCTION, ACCESS_MINING_STATION, ACCESS_MINERAL_STOREROOM, ACCESS_PRODUCTION_SERVICE)
 	paycheck = PAYCHECK_EASY
 	paycheck_department = ACCOUNT_CIV
 
@@ -31,7 +56,7 @@
 	jobtype = /datum/job/curator
 
 	shoes = /obj/item/clothing/shoes/laceup
-	belt = /obj/item/pda/curator
+	belt = /obj/item/modular_computer/pda/curator
 	ears = /obj/item/radio/headset/headset_srv
 	uniform = /obj/item/clothing/under/rank/civilian/curator
 	l_hand = /obj/item/storage/bag/books
@@ -48,7 +73,7 @@
 	name = "Syndicate Curator"
 	jobtype = /datum/job/curator
 
-	//belt = /obj/item/pda/syndicate/no_deto
+	//belt = /obj/item/modular_computer/pda/syndicate/no_deto
 
 	shoes = /obj/item/clothing/shoes/jackboots/tall_default
 	ears = /obj/item/radio/headset/headset_srv

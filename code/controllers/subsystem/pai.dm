@@ -23,7 +23,11 @@ SUBSYSTEM_DEF(pai)
 		if(istype(card, /obj/item/paicard) && istype(candidate, /datum/paiCandidate))
 			if(check_ready(candidate) != candidate)
 				return FALSE
-			var/mob/living/silicon/pai/pai = new(card)
+			var/mob/living/silicon/pai/pai
+			if(istype(card, /obj/item/paicard/syndicate))
+				pai = new /mob/living/silicon/pai/syndicate(card)
+			else
+				pai = new(card)
 			if(!candidate.name)
 				pai.name = pick(GLOB.ninja_names)
 			else
@@ -137,7 +141,9 @@ SUBSYSTEM_DEF(pai)
 	dat += "<a href='byond://?src=[REF(src)];option=save;new=1;candidate=[REF(candidate)]'>Save Personality</a><br>"
 	dat += "<a href='byond://?src=[REF(src)];option=load;new=1;candidate=[REF(candidate)]'>Load Personality</a><br>"
 
-	M << browse(dat, "window=paiRecruit")
+	var/datum/browser/popup = new(M, "paiRecruit", "pAI Recruit")
+	popup.set_content(dat)
+	popup.open()
 
 /datum/controller/subsystem/pai/proc/spam_again()
 	ghost_spam = FALSE
@@ -198,7 +204,9 @@ SUBSYSTEM_DEF(pai)
 
 	dat += "</table>"
 
-	user << browse(dat, "window=findPai")
+	var/datum/browser/popup = new(user, "findPai", "Find pAI")
+	popup.set_content(dat)
+	popup.open()
 
 /datum/paiCandidate
 	var/name

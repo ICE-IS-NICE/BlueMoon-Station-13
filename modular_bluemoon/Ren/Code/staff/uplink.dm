@@ -71,15 +71,14 @@
 	name = "Melter"
 	desc = "Генератор высокотемпературной плазмы, предназначенный для производственных нужд, но после внедрения технологий NT получил возможность отправлять сгусток плазмы в полёт. Имеет два режима стрельбы"
 	item = /obj/item/gun/energy/pulse/pistol/inteq
-	cost = 15
-	limited_stock = 1
+	cost = 10
 	purchasable_from = (UPLINK_TRAITORS | UPLINK_NUKE_OPS)
 
 /datum/uplink_item/inteq/canceller
 	name = "Canceller"
 	desc = "Старый пистолет для не летальных задержаний использовавшийся спецслужбами Солнечной федерации. Вместо батареи был поставлен РИТЭГ, благодаря чему заряд постепенно восполняется, а рукам становится тепло в этом холодном космосе."
 	item = /obj/item/gun/energy/laser/canceller
-	cost = 6
+	cost = 5
 	purchasable_from = (UPLINK_TRAITORS | UPLINK_NUKE_OPS)
 
 /datum/uplink_item/inteq/sand_parasite
@@ -88,12 +87,13 @@
 	item = /obj/item/reagent_containers/syringe/sand
 	cost = 15
 	purchasable_from = (UPLINK_TRAITORS | UPLINK_NUKE_OPS)
+	required_round_types = list(ROUNDTYPE_DYNAMIC_HARD)
 
 /datum/uplink_item/dangerous/garand
 	name = "Old, but gold rifle"
 	desc = "Классическая полуавтоматическая винтовка с деревянной фурнитурой под калибр .308 winchester. Мы знаем как трудно достать в наше время сменные клипсы, по этому в комплекте идёт диск с чертежами патронов для автолата."
 	item = /obj/item/storage/backpack/guitarbag/sniper
-	cost = 9 //у патронов .308 оказывается понизили урон до 45 с 60.
+	cost = 8 //у патронов .308 оказывается понизили урон до 45 с 60.
 	purchasable_from = (UPLINK_TRAITORS | UPLINK_NUKE_OPS)
 
 
@@ -220,7 +220,7 @@
 			new /obj/item/suspiciousphone(src)
 			new /obj/item/camera_bug(src)
 			new /obj/item/sbeacondrop/powersink(src)
-			new /obj/item/cartridge/virus/syndicate(src)
+			new /obj/item/cartridge/virus/detomatix(src)
 			new /obj/item/storage/toolbox/syndicate(src) //To actually get to those places
 			new /obj/item/pizzabox/bomb
 

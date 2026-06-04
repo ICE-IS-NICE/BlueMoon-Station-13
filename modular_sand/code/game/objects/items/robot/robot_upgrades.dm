@@ -1,7 +1,7 @@
 
 /obj/item/borg/upgrade/xwelding
 	name = "engineering cyborg experimental welding tool"
-	desc = "An experimental welding tool replacement for the engineering module's standard welding tool."
+	desc = "Экспериментальный сварочный аппарат для замены стандартного сварочного аппарата инженерного модуля."
 	icon_state = "cyborg_upgrade3"
 	require_module = TRUE
 	module_type = list(/obj/item/robot_module/engineering)
@@ -61,7 +61,7 @@
 /* Shit doesnt work, work on it later
 /obj/item/borg/upgrade/plasma
 	name = "engineering cyborg plasma resource upgrade"
-	desc = "An upgrade that allows cyborgs the ability to use plasma and assorted plasma products."
+	desc = "Улучшение, позволяющее киборгам использовать плазму и различные плазменные продукты."
 	icon_state = "cyborg_upgrade3"
 	require_module = 1
 	module_type = list(/obj/item/robot_module/engineering)
@@ -92,7 +92,7 @@
 
 /obj/item/borg/upgrade/bsrpd
 	name = "engineering cyborg bluespace RPD"
-	desc = "A bluespace RPD replacement for the engineering module's standard RPD."
+	desc = "Блюспейс-РПД для замены стандартного РПД инженерного модуля."
 	icon_state = "cyborg_upgrade3"
 	require_module = TRUE
 	module_type = list(/obj/item/robot_module/engineering)
@@ -173,7 +173,7 @@
 		smoke.start()
 		sleep(2)
 		for(var/i in 1 to 4)
-			playsound(R, pick('sound/items/drill_use.ogg', 'sound/items/jaws_cut.ogg', 'sound/items/jaws_pry.ogg', 'sound/items/welder.ogg', 'sound/items/ratchet.ogg'), 80, 1, -1)
+			playsound(R, pick('sound/items/drill3.ogg', 'sound/items/jaws_cut.ogg', 'sound/items/jaws_pry.ogg', 'sound/items/welder.ogg', 'sound/items/ratchet.ogg'), 80, 1, -1)
 			sleep(12)
 		if(!prev_locked_down)
 			R.SetLockdown(0)
@@ -194,7 +194,7 @@
 
 /obj/item/borg/upgrade/shrink
 	name = "borg shrinker"
-	desc = "A cyborg resizer, it makes a cyborg small."
+	desc = "Изменитель размера киборга, делает киборга маленьким."
 	icon_state = "cyborg_upgrade3"
 
 /obj/item/borg/upgrade/shrink/action(mob/living/silicon/robot/R, user = usr)
@@ -221,7 +221,7 @@
 		smoke.start()
 		sleep(2)
 		for(var/i in 1 to 4)
-			playsound(R, pick('sound/items/drill_use.ogg', 'sound/items/jaws_cut.ogg', 'sound/items/jaws_pry.ogg', 'sound/items/welder.ogg', 'sound/items/ratchet.ogg'), 80, 1, -1)
+			playsound(R, pick('sound/items/drill3.ogg', 'sound/items/jaws_cut.ogg', 'sound/items/jaws_pry.ogg', 'sound/items/welder.ogg', 'sound/items/ratchet.ogg'), 80, 1, -1)
 			sleep(12)
 		if(!prev_locked_down)
 			R.SetLockdown(0)
@@ -242,21 +242,57 @@
 /*		R.remove_movespeed_modifier(/datum/movespeed_modifier/reagent/freon) / BLUEMOON REMOVAL - увеличиваем степень замедления роботов, уменьшенных или увеличенных в размере */
 		R.remove_movespeed_modifier(/datum/movespeed_modifier/changed_robot_size/shrink) // BLUEMOON ADD
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 /obj/item/borg/upgrade/transform/syndicatejack
     name = "borg module picker (Syndicate)"
-    desc = "Allows you to to turn a cyborg into a experimental syndicate cyborg."
+    desc = "Позволяет вашему киборгу трансформироваться в экспериментальную модель Синдиката."
     icon_state = "cyborg_upgrade3"
     new_module = /obj/item/robot_module/syndicatejack
 
 /obj/item/borg/upgrade/transform/syndicatejack/action(mob/living/silicon/robot/R, user = usr)
-    if(R.emagged)
-        return ..()
+	if(R.emagged)
+		R.camera_remove(TRUE)
+		return ..()
+
+/obj/item/borg/upgrade/transform/syndicatejack/syndie_assault
+    name = "borg module picker (Syndicate Assault)"
+    desc = "Позволяет вашему киборгу трансформироваться в штурмовую модель Синдиката."
+    new_module = /obj/item/robot_module/syndicate
+
+/obj/item/borg/upgrade/transform/syndicatejack/syndie_medical
+    name = "borg module picker (Syndicate Medical)"
+    desc = "Позволяет вашему киборгу трансформироваться в медицинскую модель Синдиката."
+    new_module = /obj/item/robot_module/syndicate_medical
+
+/obj/item/borg/upgrade/transform/syndicatejack/syndie_saboteur
+    name = "borg module picker (Syndicate Saboteur)"
+    desc = "Позволяет вашему киборгу трансформироваться в диверсионную модель Синдиката."
+    new_module = /obj/item/robot_module/saboteur
+
+/////////////////////////////
+
+/obj/item/borg/upgrade/transform/syndicatejack/inteq_assault
+    name = "borg module picker (InteQ Assault)"
+    desc = "Позволяет вашему киборгу трансформироваться в штурмовую модель InteQ."
+    new_module = /obj/item/robot_module/syndicate/inteq
+
+/obj/item/borg/upgrade/transform/syndicatejack/inteq_medical
+    name = "borg module picker (InteQ Medical)"
+    desc = "Позволяет вашему киборгу трансформироваться в медицинскую модель InteQ."
+    new_module = /obj/item/robot_module/syndicate_medical/inteq
+
+/obj/item/borg/upgrade/transform/syndicatejack/inteq_saboteur
+    name = "borg module picker (InteQ Saboteur)"
+    desc = "Позволяет вашему киборгу трансформироваться в диверсионную модель InteQ."
+    new_module = /obj/item/robot_module/saboteur/inteq
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 /obj/item/borg/upgrade/shuttlemaking
 	name = "engineering cyborg rapid shuttle designator"
-	desc = "A device used to define the area required for custom ships. Uses bluespace crystals to create bluespace-capable ships.\n\
-			It appears to be a rough adaptation for cyborgs."
+	desc = "Устройство для определения области, необходимой для пользовательских кораблей. Использует блюспейс-кристаллы для создания блюспейс-способных кораблей.\n\
+			Похоже, это грубая адаптация для киборгов."
 	icon_state = "cyborg_upgrade5"
 	require_module = TRUE
 	module_type = list(/obj/item/robot_module/engineering)

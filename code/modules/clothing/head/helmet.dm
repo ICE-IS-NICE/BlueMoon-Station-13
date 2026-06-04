@@ -101,9 +101,9 @@
 /obj/item/clothing/head/helmet/nvg/hecu
 	name = "Powered Combat Helmet with NVG"
 	desc = "A deprecated combat helmet developed during the early 21th century in Sol-3, with protections rated level III-A. Protects the head from impacts. Equipped with a night vision apparatus on the front edge."
-	icon = 'modular_bluemoon/SmiLeY/hecu/icons/hecucloth.dmi'
-	mob_overlay_icon = 'modular_bluemoon/SmiLeY/hecu/icons/hecumob.dmi'
-	anthro_mob_worn_overlay = 'modular_bluemoon/SmiLeY/hecu/icons/hecumob_muzzled.dmi'
+	icon = 'modular_bluemoon/icons/mob/clothing/hecu/hecucloth.dmi'
+	mob_overlay_icon = 'modular_bluemoon/icons/mob/clothing/hecu/hecumob.dmi'
+	anthro_mob_worn_overlay = 'modular_bluemoon/icons/mob/clothing/hecu/hecumob_muzzled.dmi'
 	icon_state = "hecu_helm_nvg"
 	item_state = "hecu_helm_nvg"
 	darkness_view = 10
@@ -207,7 +207,7 @@
 	alt_toggle_message = "You push the visor up on"
 	can_toggle = 1
 	armor = list(MELEE = 45, BULLET = 15, LASER = 5,ENERGY = 5, BOMB = 5, BIO = 2, RAD = 0, FIRE = 50, ACID = 50, WOUND = 30)
-	flags_inv = HIDEEARS|HIDEFACE
+	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR
 	strip_delay = 80
 	actions_types = list(/datum/action/item_action/toggle)
 	visor_flags_inv = HIDEFACE

@@ -126,6 +126,7 @@
 	glasses = /obj/item/clothing/glasses/thermal/eyepatch
 	back = /obj/item/storage/backpack/rucksack
 	belt = /obj/item/storage/belt/grenade/fire_grenade
+	shoes = /obj/item/clothing/shoes/magboots/syndie/advance
 	r_hand = /obj/item/gun/energy/laser/hellgun
 	backpack_contents = list(/obj/item/storage/box/survival/centcom=1,\
 		/obj/item/clothing/mask/gas/sechailer/swat=1,\
@@ -163,6 +164,7 @@
 	back = /obj/item/storage/backpack/rucksack
 	belt = /obj/item/storage/belt/grenade/fire_grenade
 	l_hand = /obj/item/gun/energy/laser/hellgun
+	shoes = /obj/item/clothing/shoes/magboots/syndie/advance
 	backpack_contents = list(/obj/item/storage/box/survival/centcom=1,\
 		/obj/item/clothing/mask/gas/sechailer=1,\
 		/obj/machinery/igniter=1,\
@@ -188,12 +190,12 @@
 	suit = /obj/item/clothing/suit/space/hardsuit/ert/alert
 	glasses = /obj/item/clothing/glasses/hud/security/sunglasses
 	back = /obj/item/storage/backpack/ert_commander
-	belt = /obj/item/storage/belt/grenade/full
+	belt = /obj/item/storage/belt/military/ert_max
 	r_hand = /obj/item/gun/ballistic/automatic/shotgun/bulldog/unrestricted
 	//l_hand = /obj/item/melee/powerfist
-	backpack_contents = list(/obj/item/storage/box/survival/engineer=1,\
+	backpack_contents = list(/obj/item/storage/box/survival/centcom=1,\
 		/obj/item/clothing/mask/gas/sechailer/swat=1,\
-		/obj/item/choice_beacon/ert_mech=1,\
+		/obj/item/choice_beacon/vehicle/misc_mech/ert=1,\
 		/obj/item/storage/box/syndie_kit/revolver=1,\
 		/obj/item/grenade/plastic/x4=1,
 		/obj/item/storage/ifak=1,\
@@ -225,10 +227,10 @@
 	suit = /obj/item/clothing/suit/space/hardsuit/ert/alert/sec
 	glasses = /obj/item/clothing/glasses/hud/security/sunglasses
 	back = /obj/item/storage/backpack/ert_commander/ert_security
-	belt = /obj/item/storage/belt/grenade/full
+	belt = /obj/item/storage/belt/military/ert_max
 	r_hand = /obj/item/gun/ballistic/automatic/ar
 	l_hand = /obj/item/melee/powerfist
-	backpack_contents = list(/obj/item/storage/box/survival/engineer=1,\
+	backpack_contents = list(/obj/item/storage/box/survival/centcom=1,\
 		/obj/item/clothing/mask/gas/sechailer=1,\
 		/obj/item/storage/ifak=1,\
 		/obj/item/ammo_box/magazine/m556=3)
@@ -250,9 +252,9 @@
 	suit = /obj/item/clothing/suit/space/hardsuit/ert/alert/sec
 	glasses = /obj/item/clothing/glasses/hud/security/sunglasses
 	back = /obj/item/storage/backpack/ert_commander/ert_security
-	belt = /obj/item/storage/belt/security/full
+	belt = /obj/item/storage/belt/military/ert_max
 	r_hand = /obj/item/gun/ballistic/automatic/l6_saw/unrestricted
-	backpack_contents = list(/obj/item/storage/box/survival/engineer=1,\
+	backpack_contents = list(/obj/item/storage/box/survival/centcom=1,\
 		/obj/item/storage/ifak=1,\
 		/obj/item/ammo_box/magazine/mm712x82=2)
 
@@ -412,7 +414,7 @@
 	ears = /obj/item/radio/headset/nri/bowman/command
 	r_hand = /obj/item/gun/ballistic/automatic/vss
 	backpack_contents = list(/obj/item/storage/box/survival/engineer=1,\
-		/obj/item/choice_beacon/nri_mech=1,\
+		/obj/item/choice_beacon/vehicle/misc_mech/nri=1,\
 		/obj/item/storage/box/syndie_kit/revolver=1,\
 		/obj/item/storage/ifak=1,\
 		/obj/item/ammo_box/magazine/vss_mag=4)
@@ -571,7 +573,7 @@
 		/obj/item/storage/ifak=1,\
 		/obj/item/gun/ballistic/automatic/pistol/deagle=1,\
         /obj/item/ammo_box/magazine/m50=2,\
-		/obj/item/choice_beacon/sol_mech=1,\
+		/obj/item/choice_beacon/vehicle/misc_mech/sol=1,\
 		/obj/item/ammo_box/magazine/m12g/slug=4)
 
 // BLUEMOON ADD START - командная коробочка для командира
@@ -647,7 +649,7 @@
 	back = /obj/item/storage/backpack/ert_commander/ert_security
 	belt = /obj/item/storage/belt/military/ert_min
 	backpack_contents = list(/obj/item/storage/box/survival/centcom=1,\
-		/obj/item/pda/heads=1,
+		/obj/item/modular_computer/pda/heads=1,
 		/obj/item/stamp/law=1,
 		/obj/item/storage/firstaid/regular=1,)
 	accessory = list(/obj/item/clothing/accessory/lawyers_badge)

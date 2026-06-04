@@ -12,6 +12,10 @@
 /mob/living/carbon/human/slip(knockdown_amount, obj/O, lube)
 	if(HAS_TRAIT(src, TRAIT_NOSLIPALL))
 		return FALSE
+	if(shoes && istype(shoes, /obj/item/clothing))
+		var/obj/item/clothing/CS = shoes
+		if (CS.clothing_flags & NOSLIP_ALL)
+			return FALSE
 	if (!(lube & GALOSHES_DONT_HELP))
 		if(HAS_TRAIT(src, TRAIT_NOSLIPWATER))
 			return FALSE
@@ -42,12 +46,12 @@
 			. = 1
 
 /mob/living/carbon/human/mob_negates_gravity()
-	return ((shoes && shoes.negates_gravity()) || (dna.species.negates_gravity(src)))
+	return ((shoes && shoes.negates_gravity()) || (dna?.species?.negates_gravity(src)))
 
 /mob/living/carbon/human/Move(NewLoc, direct)
 	var/oldpseudoheight = pseudo_z_axis
 	. = ..()
-	for(var/datum/mutation/human/HM in dna.mutations)
+	for(var/datum/mutation/human/HM in dna?.mutations)
 		HM.on_move(NewLoc)
 	if(. && (combat_flags & COMBAT_FLAG_SPRINT_ACTIVE) && !(movement_type & FLYING) && CHECK_ALL_MOBILITY(src, MOBILITY_MOVE|MOBILITY_STAND) && m_intent == MOVE_INTENT_RUN && has_gravity(loc) && (!pulledby || (pulledby.pulledby == src)))
 		if(!HAS_TRAIT(src, TRAIT_FREESPRINT))
@@ -81,6 +85,7 @@
 						FP.entered_dirs |= dir
 						FP.bloodiness = S.bloody_shoes[S.blood_state]
 						if(S.last_bloodtype)
+							LAZYINITLIST(FP.blood_DNA)
 							FP.blood_DNA[S.last_blood_DNA] = S.last_bloodtype
 							if(!FP.blood_DNA["color"])
 								FP.blood_DNA["color"] = S.last_blood_color
@@ -96,10 +101,10 @@
 	if(movement_type & GROUND && dirtyness_maker)
 		dirt_buildup()
 
-/mob/living/carbon/human/Process_Spacemove(movement_dir = 0) //Temporary laziness thing. Will change to handles by species reee.
-	if(dna.species.space_move(src))
+/mob/living/carbon/human/Process_Spacemove(movement_dir = 0, continuous_move = FALSE) //Temporary laziness thing. Will change to handles by species reee.
+	if(dna?.species?.space_move(src))
 		return TRUE
-	return ..()
+	return ..(movement_dir, continuous_move)
 
 /mob/living/carbon/human/proc/dirt_buildup(strength = 1)
 	if(!shoes || !(shoes.body_parts_covered & FEET))

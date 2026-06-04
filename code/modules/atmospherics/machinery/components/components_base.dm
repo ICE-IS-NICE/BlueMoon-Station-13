@@ -64,8 +64,10 @@
 // Pipenet stuff; housekeeping
 
 /obj/machinery/atmospherics/components/nullifyNode(i)
+	var/datum/gas_mixture/air_ref = airs ? airs[i] : null
 	if(parents[i])
 		nullifyPipenet(parents[i])
+	prune_stale_pipeline_memberships(air_ref)
 	QDEL_NULL(airs[i])
 	return ..()
 
@@ -116,6 +118,32 @@
 			CRASH("nullifyPipenet() called on qdeleting [reference]")
 		qdel(reference)
 
+/obj/machinery/atmospherics/components/proc/prune_stale_pipeline_memberships(datum/gas_mixture/air_ref)
+	var/list/seen_pipelines = list()
+	for(var/list/source as anything in list(SSair.networks, SSair.currentrun))
+		if(!islist(source))
+			continue
+		for(var/thing as anything in source)
+			if(!istype(thing, /datum/pipeline))
+				continue
+			var/datum/pipeline/P = thing
+			if(P in seen_pipelines)
+				continue
+			seen_pipelines += P
+			if(QDELETED(P) || QDESTROYING(P))
+				continue
+			var/changed = FALSE
+			if(src in P.other_atmosmch)
+				P.other_atmosmch -= src
+				changed = TRUE
+			if(air_ref && (air_ref in P.other_airs))
+				P.other_airs -= air_ref
+				changed = TRUE
+			if(changed)
+				P.update = TRUE
+				if(!length(P.other_atmosmch) && !length(P.members))
+					qdel(P)
+
 /obj/machinery/atmospherics/components/returnPipenetAirs(datum/pipeline/reference)
 	var/list/returned_air = list()
 	if(!parents || !airs)
@@ -137,7 +165,12 @@
 	parents[nodes.Find(A)] = reference
 
 /obj/machinery/atmospherics/components/returnPipenet(obj/machinery/atmospherics/A = nodes[1]) //returns parents[1] if called without argument
-	return parents[nodes.Find(A)]
+	if(!parents?.len || !nodes?.len)
+		return null
+	var/index = nodes.Find(A)
+	if(!index || index > parents.len)
+		return null
+	return parents[index]
 
 /obj/machinery/atmospherics/components/replacePipenet(datum/pipeline/Old, datum/pipeline/New)
 	parents[parents.Find(Old)] = New
@@ -180,7 +213,7 @@
 	for(var/i in 1 to device_type)
 		var/datum/pipeline/parent = parents[i]
 		if(!parent)
-			WARNING("Component is missing a pipenet! Rebuilding...")
+			investigate_log("[type] at [COORD(src)] is missing a pipenet, rebuilding", INVESTIGATE_ATMOS)
 			SSair.add_to_rebuild_queue(src)
 		else
 			parent.update = TRUE

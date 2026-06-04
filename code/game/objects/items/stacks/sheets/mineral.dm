@@ -335,6 +335,7 @@ GLOBAL_LIST_INIT(titanium_recipes, list ( \
 	point_value = 45
 	merge_type = /obj/item/stack/sheet/mineral/plastitanium
 	walltype = /turf/closed/wall/mineral/plastitanium
+	tableVariant = /obj/structure/table/reinforced/plastitanium
 
 /obj/item/stack/sheet/mineral/plastitanium/fifty
 	amount = 50
@@ -434,6 +435,7 @@ GLOBAL_LIST_INIT(snow_recipes, list ( \
 	sheettype = "abductor"
 	merge_type = /obj/item/stack/sheet/mineral/abductor
 	walltype = /turf/closed/wall/mineral/abductor
+	tableVariant = /obj/structure/table/abductor
 
 /obj/item/stack/sheet/mineral/abductor/fifty
 	amount = 50

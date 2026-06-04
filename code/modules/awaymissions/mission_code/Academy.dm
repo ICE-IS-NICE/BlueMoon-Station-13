@@ -127,7 +127,7 @@
 
 	if(!current_wizard)
 		return
-	var/list/mob/candidates = pollCandidatesForMob("Do you want to play as Wizard Academy Defender?", ROLE_WIZARD, null, ROLE_WIZARD, 50, current_wizard)
+	var/list/mob/candidates = pollCandidatesForMob("Do you want to play as Wizard Academy Defender?", ROLE_WIZARD, null, ROLE_WIZARD, 50, current_wizard, priority_check = FALSE)
 
 	if(LAZYLEN(candidates))
 		var/mob/C = pick(candidates)
@@ -170,6 +170,14 @@
 	can_be_rigged = FALSE
 	var/reusable = 1
 	var/used = 0
+
+/obj/item/dice/d20/fate/Initialize(mapload)
+	. = ..()
+	GLOB.poi_list |= src
+
+/obj/item/dice/d20/fate/Destroy()
+	GLOB.poi_list -= src
+	. = ..()
 
 /obj/item/dice/d20/fate/one_use
 	reusable = 0
@@ -266,12 +274,11 @@
 			var/mob/living/carbon/human/H = new(drop_location())
 			H.equipOutfit(/datum/outfit/butler)
 			var/datum/mind/servant_mind = new /datum/mind()
-			var/datum/antagonist/magic_servant/A = new
-			servant_mind.add_antag_datum(A)
-			A.setup_master(user)
 			servant_mind.transfer_to(H)
+			var/datum/antagonist/magic_servant/A = servant_mind.add_antag_datum(/datum/antagonist/magic_servant)
+			A?.setup_master(user)
 
-			var/list/mob/candidates = pollCandidatesForMob("Do you want to play as [user.real_name] Servant?", ROLE_WIZARD, null, ROLE_WIZARD, 50, H)
+			var/list/mob/candidates = pollCandidatesForMob("Do you want to play as [user.real_name] Servant?", ROLE_WIZARD, null, ROLE_WIZARD, 20 SECONDS, H, priority_check = FALSE)
 			if(LAZYLEN(candidates))
 				var/mob/C = pick(candidates)
 				message_admins("[ADMIN_LOOKUPFLW(C)] was spawned as Dice Servant")

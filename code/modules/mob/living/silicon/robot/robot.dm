@@ -4,7 +4,7 @@
 	icon = 'icons/mob/robots.dmi'
 	icon_state = "robot"
 	bubble_icon = "robot"
-	var/obj/item/pda/ai/aiPDA
+	var/obj/item/modular_computer/pda/silicon/aiPDA
 	var/flash_protect = FALSE
 
 /mob/living/silicon/robot/get_cell()
@@ -32,10 +32,8 @@
 	ident = rand(1, 999)
 
 	if(!shell)
-		aiPDA = new/obj/item/pda/ai(src)
-		aiPDA.owner = real_name
-		aiPDA.ownjob = "Cyborg"
-		aiPDA.name = real_name + " ([aiPDA.ownjob])"
+		aiPDA = new/obj/item/modular_computer/pda/silicon(src)
+		aiPDA.imprint_id(real_name, "Cyborg")
 
 	previous_health = health
 
@@ -106,14 +104,18 @@
 	modularInterface.plane = ABOVE_HUD_PLANE
 
 /mob/living/silicon/robot/Destroy()
+	QDEL_NULL(profile)
 	if(connected_ai)
 		set_connected_ai(null)
 	if(shell)
 		GLOB.available_ai_shells -= src
 	QDEL_NULL(modularInterface)
 	QDEL_NULL(wires)
+	module_active = null
+	for(var/i in 1 to held_items.len)
+		held_items[i] = null
 	QDEL_NULL(module)
-	QDEL_NULL(eye_lights)
+	eye_lights = null
 	QDEL_NULL(inv1)
 	QDEL_NULL(inv2)
 	QDEL_NULL(inv3)
@@ -188,6 +190,8 @@
 	name = real_name
 	if(!QDELETED(builtInCamera))
 		builtInCamera.c_tag = real_name	//update the camera name too
+	if(aiPDA && !shell)
+		aiPDA.imprint_id(real_name, aiPDA.saved_job)
 
 /mob/living/silicon/robot/proc/get_standard_name()
 	return "[(designation ? "[designation] " : "")][mmi.braintype]-[ident]"
@@ -421,7 +425,7 @@
 /mob/living/silicon/robot/verb/unlock_own_cover()
 	set category = "Robot Commands"
 	set name = "Unlock Cover"
-	set desc = "Unlocks your own cover if it is locked. You can not lock it again. A human will have to lock it for you."
+	set desc = "Разблокирует вашу крышку, если она заблокирована. Вы не сможете заблокировать её снова. Человек должен будет заблокировать её за вас."
 	if(stat == DEAD)
 		return //won't work if dead
 	if(locked)
@@ -550,7 +554,7 @@
 
 /mob/living/silicon/robot/verb/set_automatic_say_channel() //Borg version of setting the radio for autosay messages.
 	set name = "Set Auto Announce Mode"
-	set desc = "Modify the default radio setting for stating your laws."
+	set desc = "Изменить настройки радио по умолчанию для оглашения ваших законов."
 	set category = "Robot Commands"
 
 	if(usr.stat == DEAD)
@@ -691,7 +695,7 @@
 	. = ..()
 	radio = new /obj/item/radio/borg/syndicate(src)
 	laws = new /datum/ai_laws/syndicate_override()
-	addtimer(CALLBACK(src, PROC_REF(show_playstyle)), 5)
+	addtimer(CALLBACK(src, PROC_REF(show_playstyle)), 5, TIMER_DELETE_ME)
 
 /mob/living/silicon/robot/modules/syndicate/create_modularInterface()
 	if(!modularInterface)
@@ -749,7 +753,7 @@
 	. = ..()
 	radio = new /obj/item/radio/borg/inteq(src)
 	laws = new /datum/ai_laws/inteq_override()
-	addtimer(CALLBACK(src, PROC_REF(show_playstyle)), 5)
+	addtimer(CALLBACK(src, PROC_REF(show_playstyle)), 5, TIMER_DELETE_ME)
 
 /mob/living/silicon/robot/modules/inteq/create_modularInterface()
 	if(!modularInterface)
@@ -868,7 +872,7 @@
 
 	previous_health = health
 
-/mob/living/silicon/robot/update_sight()
+/mob/living/silicon/robot/update_sight(forced = TRUE)
 	if(!client)
 		return
 	if(stat == DEAD)
@@ -948,8 +952,7 @@
 	if(!QDELETED(builtInCamera))
 		builtInCamera.c_tag = real_name
 	if(aiPDA && !shell)
-		aiPDA.owner = newname
-		aiPDA.name = newname + " (" + aiPDA.ownjob + ")"
+		aiPDA.imprint_id(newname, aiPDA.saved_job)
 	custom_name = newname
 
 
@@ -1147,7 +1150,7 @@
 
 /datum/action/innate/undeployment
 	name = "Disconnect from shell"
-	desc = "Stop controlling your shell and resume normal core operations."
+	desc = "Прекратить управление оболочкой и возобновить нормальные операции ядра."
 	icon_icon = 'icons/mob/actions/actions_AI.dmi'
 	button_icon_state = "ai_core"
 	required_mobility_flags = NONE
@@ -1162,7 +1165,7 @@
 
 /datum/action/innate/custom_holoform
 	name = "Select Custom Holoform"
-	desc = "Select one of your existing avatars to use as a holoform."
+	desc = "Выбрать один из существующих аватаров для использования в качестве голоформы."
 	icon_icon = 'icons/mob/actions/actions_silicon.dmi'
 	button_icon_state = "custom_holoform"
 	required_mobility_flags = NONE
@@ -1269,6 +1272,28 @@
 		var/mob/unbuckle_me_now = i
 		unbuckle_mob(unbuckle_me_now, FALSE)
 
+/mob/living/silicon/robot/proc/camera_remove(drop_assembly = FALSE)
+	if(QDELETED(builtInCamera))
+		return
+
+	if(drop_assembly)
+		var/cyborg_turf_loc = get_turf(src)
+		new /obj/item/wallframe/camera (cyborg_turf_loc)
+		new /obj/item/stack/cable_coil(cyborg_turf_loc, 2)
+	QDEL_NULL(builtInCamera)
+
+/mob/living/silicon/robot/proc/camera_restore()
+	if(!QDELETED(builtInCamera) || scrambledcodes)
+		return
+
+	builtInCamera = new (src)
+	builtInCamera.c_tag = real_name
+	builtInCamera.network = list("ss13")
+	builtInCamera.internal_light = FALSE
+
+	if(wires?.is_cut(WIRE_CAMERA))
+		builtInCamera.toggle_cam(src, 0)
+
 /mob/living/silicon/robot/proc/TryConnectToAI(mob/living/silicon/ai/connect_to)
 	set_connected_ai(connect_to || select_active_ai_with_fewest_borgs(z))
 	if(connected_ai)
@@ -1296,41 +1321,27 @@
 /mob/living/silicon/robot/proc/rest_style()
 	set name = "Switch Rest Style"
 	set category = "Robot Commands"
-	set desc = "Select your resting pose."
-	sitting = 0
-	bellyup = 0
-	deep_rest = 0		//DarkSer request by Gardelin0
-	wag_rest = 0		//DarkSer request by Gardelin0
-	wag_sit = 0			//DarkSer request by Gardelin0
+	set desc = "Выбрать позу отдыха."
 
-	if(module.drakerest == TRUE)	//DarkSer request by Gardelin0
-		var/choice_drake = tgui_alert(usr, "Select resting pose", "Pose", list("Resting", "Sitting", "Belly up", "Napping", "Resting Wag", "Sitting Wag"))
-		switch(choice_drake)
-			if("Resting")
-				update_icons()
-				return FALSE
-			if("Sitting")
-				sitting = 1
-			if("Belly up")
-				bellyup = 1
-			if("Napping")
-				deep_rest = 1
-			if("Resting Wag")
-				wag_rest = 1
-			if("Sitting Wag")
-				wag_sit = 1
-		update_icons()
-	if(module.drakerest == FALSE)
-		var/choice = tgui_alert(usr, "Select resting pose", "Pose", list("Resting", "Sitting", "Belly up"))
-		switch(choice)
-			if("Resting")
-				update_icons()
-				return FALSE
-			if("Sitting")
-				sitting = 1
-			if("Belly up")
-				bellyup = 1
-		update_icons()
+	var/list/poses = list("Resting", "Sitting", "Belly up")
+	if(module.drakerest)
+		poses.Add("Napping", "Resting Wag", "Sitting Wag")
+
+	var/choice = tgui_input_list(usr, "Select resting pose", "Pose", poses)
+	switch(choice)
+		if("Resting")
+			resting_state = "rest"
+		if("Sitting")
+			resting_state = "sit"
+		if("Belly up")
+			resting_state = "bellyup"
+		if("Napping")
+			resting_state = "rest_deep"
+		if("Resting Wag")
+			resting_state = "rest_alt"
+		if("Sitting Wag")
+			resting_state = "sit_alt"
+	update_icons()
 
 /mob/living/silicon/robot/verb/viewmanifest()
 	set category = "Robot Commands"
@@ -1377,19 +1388,35 @@
 	if(program)
 		program.force_full_update()
 
-/mob/living/silicon/robot/get_tooltip_data()
-	var/t_He = ru_who(TRUE)
-	var/t_is = p_are()
-	. = list()
-	var/borg_type = module ? module : "Default"
-//This isn't even used normally, but if that ever changes, just uncomment this
-/*	var/obj/item/borg_chameleon/chameleon = locate() in src
+/// Проверка на инженерную маскировку
+/mob/living/silicon/robot/proc/chameleon_module()
+	var/obj/item/borg_chameleon/chameleon = locate() in src
 	if(!chameleon)
 		chameleon = locate() in src.module
 	if(chameleon?.active)
-		borg_type = "Engineering"
-*/
-	. += "[t_He] [t_is] a [borg_type] unit"
+		return TRUE
+	else
+		return FALSE
+
+/// Проверка на модуль антагролей
+/mob/living/silicon/robot/proc/check_allegiance()
+	if(chameleon_module())
+		return
+
+	if(module.type in GLOB.syndicate_cyborg_modules)
+		return " синдикатовского производства"
+	if(module.type in GLOB.inteq_cyborg_modules)
+		return " принадлежности InteQ"
+	if(module.type in GLOB.spider_cyborg_modules)
+		return " Паучьего Клана"
+
+/mob/living/silicon/robot/get_tooltip_data()
+	. = list()
+	var/borg_type = module ? module.name : "стандартный"
+	if(chameleon_module())
+		borg_type = "инженерный"
+
+	. += "Это [vocabulary_to_ru(GLOB.borgmodule_ru_adjective, borg_type)] киборг[check_allegiance()]"
 	if(activity)
 		. += activity
 	SEND_SIGNAL(src, COMSIG_PARENT_EXAMINE, usr, .)

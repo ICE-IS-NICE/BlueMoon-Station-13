@@ -6329,7 +6329,7 @@
 /turf/open/floor/engine,
 /area/awaymission/wildwest/vault)
 "xR" = (
-/obj/machinery/grill,
+/obj/machinery/grill/oldschool,
 /turf/open/floor/wood,
 /area/awaymission/wildwest/mines)
 "xS" = (
@@ -10547,7 +10547,7 @@
 /obj/structure/table,
 /obj/machinery/door/window/northleft{
 	name = "First-Aid Supplies";
-	red_alert_access = 1;
+
 	req_access_txt = "5"
 	},
 /obj/effect/decal/cleanable/glass,

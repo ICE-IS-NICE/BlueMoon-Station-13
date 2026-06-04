@@ -14,9 +14,7 @@
 			to_chat(L, "<span class='warning'>You are unable to swing [src] right now!</span>")
 			return
 	. = attackchain_flags
-	if(tool_behaviour && ((. = target.tool_act(user, src, tool_behaviour)) & STOP_ATTACK_PROC_CHAIN))
-		if(tool_behaviour == TOOL_MULTITOOL)
-			update_icon()
+	if((. = target.base_item_interaction(user, src, params)) & STOP_ATTACK_PROC_CHAIN)
 		return
 	if((. |= pre_attack(target, user, params, ., damage_multiplier)) & STOP_ATTACK_PROC_CHAIN)
 		return
@@ -163,12 +161,7 @@
 	if(I.force)
 		apply_damage(totitemdamage, I.damtype)
 		if(I.damtype == BRUTE)
-			if(prob(33))
-				I.add_mob_blood(src)
-				var/turf/location = get_turf(src)
-				add_splatter_floor(location)
-				if(totitemdamage >= 10 && get_dist(user, src) <= 1)	//people with TK won't get smeared with blood
-					user.add_mob_blood(src)
+			attack_effects(totitemdamage, null, I, user)
 		return TRUE //successful attack
 
 /mob/living/simple_animal/attacked_by(obj/item/I, mob/living/user, attackchain_flags = NONE, damage_multiplier = 1)

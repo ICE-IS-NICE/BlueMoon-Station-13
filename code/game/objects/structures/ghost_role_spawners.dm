@@ -1,3 +1,7 @@
+GLOBAL_LIST_EMPTY(ashwalker_spawns)
+
+#define ASH_RESPAWN_COOLDOWN 20 MINUTES
+
 /datum/team/ghost_role
 	name = "Ghost Role"
 	show_roundend_report = FALSE
@@ -22,6 +26,13 @@
 
 /datum/antagonist/ghost_role/get_team()
 	return ghost_team
+
+/datum/antagonist/ghost_role/is_banned(mob/M)
+	if(!M)
+		return FALSE
+	if(QDELETED(M))
+		return TRUE
+	return job_rank && jobban_isbanned(M, job_rank)
 
 //Objects that spawn ghosts in as a certain role when they click on it, i.e. away mission bartenders.
 #define spawnOverride TRUE
@@ -83,10 +94,17 @@
 			if(damage_amount)
 				playsound(loc, 'sound/items/welder.ogg', 100, TRUE)
 
-/obj/structure/ash_walker_eggshell/attack_ghost(mob/user) //Pass on ghost clicks to the mob spawner
-	if(egg)
-		egg.attack_ghost(user)
-	. = ..()
+/obj/structure/ash_walker_eggshell/attack_ghost(mob/user)
+    if(egg)
+        var/time_spawn = GLOB.ashwalker_spawns[user.ckey]
+        if(time_spawn && world.time - time_spawn < ASH_RESPAWN_COOLDOWN)
+            var/time_left = max(0, ASH_RESPAWN_COOLDOWN - (world.time - time_spawn))
+            var/mins_left  = floor(time_left / 600)        // 600 тиков = 1 минута
+            var/secs_left  = floor((time_left % 600) / 10) // остаток в секундах
+            to_chat(user, span_warning("Необходимо подождать ещё [mins_left] минут[mins_left % 10 == 1 && mins_left % 100 != 11 ? "а" : (mins_left % 10 >= 2 && mins_left % 10 <= 4 && (mins_left % 100 < 10 || mins_left % 100 >= 20) ? "ы" : "")] и [secs_left] секунд[secs_left % 10 == 1 && secs_left % 100 != 11 ? "а" : (secs_left % 10 >= 2 && secs_left % 10 <= 4 && (secs_left % 100 < 10 || secs_left % 100 >= 20) ? "ы" : "")] до возможности возродиться."))
+            return
+        egg.attack_ghost(user)
+    . = ..()
 
 /obj/structure/ash_walker_eggshell/Destroy()
 	if(!egg)
@@ -161,8 +179,13 @@
 		if(team)
 			new_spawn.mind.add_antag_datum(/datum/antagonist/ashwalker, team)
 			team.players_spawned += (new_spawn.ckey)
+		if(new_spawn.ckey)
+			GLOB.ashwalker_spawns[new_spawn.ckey] = world.time
 		eggshell.egg = null
 		QDEL_NULL(eggshell)
+		new_spawn.remove_all_languages()
+		new_spawn.grant_language(/datum/language/draconic, ALL, LANGUAGE_ATOM)
+		new_spawn.set_active_language(/datum/language/draconic)
 
 /obj/effect/mob_spawn/human/ash_walker/Initialize(mapload, datum/team/ashwalkers/ashteam)
 	. = ..()
@@ -320,7 +343,7 @@
 	short_desc = "Вы застряли в этом Безбожном Месте."
 	flavour_text = "Каждый день вы еле-еле сводите концы с концами, \
 	враждебными существами и Пепельными Дрейками, слетающими с безоблачного неба. Все, что вы можете пожелать, это почувствовать мягкую траву между пальцами ног и \
-	свежий воздух Земли. Эти мысли развеиваются очередным воспоминанием о том, как вы сюда попали..."
+	свежий воздух Земли. Эти мысли развеиваются очередным воспоминанием о том, как вы сюда попали... Также в вашем распоряжении есть пергамент что поможет вам создавать и метала и стекла различные детали и платы что могут вам помочь."
 	assignedrole = "Hermit"
 	can_load_appearance = TRUE
 	loadout_enabled = TRUE
@@ -333,31 +356,40 @@
 	switch(arrpee)
 		if(1)
 			flavour_text += "вы были помощником [pick("Оружейника", "Корабельщика", "Финансового Менеджера")] на небольшой торговой станции в нескольких секторах отсюда. Рейдеры напали на ваше судно и в спасательном отсеке оставалась \
-			всего только одна капсула. Вы отбросили или отвлекли, или вас пропустили и в итоге благодаря спасательной капсуле вы... спаслись? Так или иначе, вы не забудете ту кучу испуганных лиц в момент вашего отлёта."
+			всего только одна капсула. Вы отбросили или отвлекли, или вас пропустили и в итоге благодаря спасательной капсуле вы... спаслись? Так или иначе, вы не забудете ту кучу испуганных лиц в момент вашего отлёта. Вы смогли с собой взять ваш чертеж с наработками, где вы создали собственную технику создания важной машинерии и деталей, вы еще в этом деле аматор, но со временем явно сможете делать лучше."
 			outfit.uniform = /obj/item/clothing/under/misc/assistantformal
 			outfit.shoes = /obj/item/clothing/shoes/sneakers/black
 			outfit.back = /obj/item/storage/backpack
+			backpack_contents = list(
+				/obj/item/research_paper = 1,)
 		if(2)
 			flavour_text += "вы изгнанник из кооператива 'Тигр'. Их технологический фанатизм заставил вас усомниться в силе и убеждениях Экзолитиков и они сочли вас \
 			еретиком, и подвергли вас многочасовым ужасным пыткам. Вы были в нескольких часах от казни, когда ваш высокопоставленный друг в Кооперативе сумел достать для вас капсулу, \
-			зашифровал координаты места назначения и запустил ее. Вы очнулись от стазиса, когда приземлились... и с тех пор выживаете - с трудом, но выживаете."
+			зашифровал координаты места назначения и запустил ее. Вы очнулись от стазиса, когда приземлились... и с тех пор выживаете - с трудом, но выживаете. Вы смогли с собой взять ваш чертеж с наработками, где вы создали собственную технику создания важной машинерии и деталей, вы еще в этом деле аматор, но со временем явно сможете делать лучше."
 			outfit.uniform = /obj/item/clothing/under/rank/prisoner
 			outfit.shoes = /obj/item/clothing/shoes/sneakers/orange
 			outfit.back = /obj/item/storage/backpack
+			backpack_contents = list(
+				/obj/item/research_paper = 1,)
 		if(3)
 			flavour_text += "Вы были врачом на одной из космических станций Nanotrasen, но вы оставили позади тиранию этой проклятой корпорации и все то, за что она стояла. Из метафорического ада \
-			в буквальный - вы обнаружили, что вам все же не хватает чистого воздуха и теплых полов из сего того, что вы оставили... но вы все равно предпочтете быть здесь, а не там."
+			в буквальный - вы обнаружили, что вам все же не хватает чистого воздуха и теплых полов из сего того, что вы оставили... но вы все равно предпочтете быть здесь, а не там. Вы смогли с собой взять ваш чертеж с наработками, где вы создали собственную технику создания важной машинерии и деталей, вы еще в этом деле аматор, но со временем явно сможете делать лучше."
 			outfit.uniform = /obj/item/clothing/under/rank/medical/doctor
 			outfit.suit = /obj/item/clothing/suit/toggle/labcoat
 			outfit.back = /obj/item/storage/backpack/medic
 			outfit.shoes = /obj/item/clothing/shoes/sneakers/black
+			backpack_contents = list(
+				/obj/item/research_paper = 1,)
 		if(4)
 			flavour_text += "Ваши друзья всегда подшучивали над вами за то, что вы 'Не Играете с Полной Колодой', как они так доброжелательно выражались. Похоже, они были правы, когда вы, находясь на экскурсии \
 			по одному из самых современных исследовательских комплексов Nanotrasen, оказались в одной из спасательных капсул в одиночестве и увидели красную кнопку. Она была большой и блестящей, и это привлекло ваше внимание. Вы нажали на неё \
-			и после ужасающего, и быстрого путешествия в течение нескольких дней вы оказались здесь. С тех пор у вас было время поумнеть и вы думаете, что ваши старые друзья сейчас бы не смеялись."
+			и после ужасающего, и быстрого путешествия в течение нескольких дней вы оказались здесь. С тех пор у вас было время поумнеть и вы думаете, что ваши старые друзья сейчас бы не смеялись. За время вы научились выживать, и создали собственную технику что может вам помочь в создании различной машинерии и деталей к ним."
 			outfit.uniform = /obj/item/clothing/under/color/grey/glorf
 			outfit.shoes = /obj/item/clothing/shoes/sneakers/black
 			outfit.back = /obj/item/storage/backpack
+			backpack_contents = list(
+				/obj/item/research_paper = 1,)
+
 
 /obj/effect/mob_spawn/human/hermit/Destroy()
 	new/obj/structure/fluff/empty_cryostasis_sleeper(get_turf(src))
@@ -366,6 +398,7 @@
 /obj/effect/mob_spawn/human/hermit/special(mob/living/carbon/human/new_spawn)
 	. = ..()
 	ADD_TRAIT(new_spawn,TRAIT_EXEMPT_HEALTH_EVENTS,GHOSTROLE_TRAIT)
+	ADD_TRAIT(new_spawn,TRAIT_KNOWS_RESEARCH,GHOSTROLE_TRAIT)
 
 //Broken rejuvenation pod: Spawns in animal hospitals in lavaland. Ghosts become disoriented interns and are advised to search for help.
 /obj/effect/mob_spawn/human/doctor/alive/lavaland
@@ -875,7 +908,7 @@
 
 /datum/action/toggle_dead_chat_mob
 	icon_icon = 'icons/mob/mob.dmi'
-	button_icon_state = "ghost"
+	button_icon_state = "ghost1"
 	name = "Toggle deadchat"
 	desc = "Turn off or on your ability to hear ghosts."
 
@@ -1321,7 +1354,7 @@
 	short_desc = "Вы Специалист Синдиката, работающий на Общем Корабле Синдиката из ячейки 'Глубокий Космос Два' под названием \
 	'Благословлённый' под Начальством Адмирала одной из Сторон и изучающий аномальное поле Системы Синих Лун."
 	flavour_text = "Синдикат счел нужным направить передовую оперативную базу в Сектор Тринадцать для наблюдения за \
-	операциями NT и Кордоном. Ваш приказ - поддерживать целостность корабля и по возможности не высовываться."
+	операциями NT и Кордоном. Ваш приказ - поддерживать целостность своего объекта, следить за положением в системе, в условиях 'Безопасной Системы' оказывать информационную поддержку и по возможности не высовываться за пределы своего сектора."
 	important_info = "Вы не антагонист."
 	roundstart = FALSE
 	death = FALSE
@@ -1355,7 +1388,7 @@
 	short_desc = "Вы Специалист Синдиката, работающий на Оперативной Базе Синдиката из формирования 'Глубокий Космос Два' под названием \
 	'Благословлённый' под Начальством Адмирала одной из Сторон и изучающий аномальное поле Системы Синих Лун."
 	flavour_text = "Синдикат счел нужным направить передовую оперативную базу в Сектор Тринадцать для наблюдения за операциями NT и Кордоном. \
-	Ваш приказ - поддерживать целостность корабля и по возможности не высовываться."
+	Ваш приказ - поддерживать целостность своего объекта, следить за положением в системе, в условиях 'Безопасной Системы' оказывать информационную поддержку и по возможности не высовываться за пределы своего сектора."
 	important_info = "Вы не антагонист."
 	outfit = /datum/outfit/ds2/syndicate
 	starting_money = 1000 // BLUEMOON ADD
@@ -1368,7 +1401,7 @@
 	short_desc = "Вы Адмирал одной из ячеек Синдиката, работающий на Корабле Синдиката из ячейки 'Глубокий Космос Два' под названием 'Благословлённый'. \
 	Приведите Объект под вашей ответственностью к успеху, который планировался, либо умрите - стараясь."
 	flavour_text = "Синдикат счел нужным направить передовую оперативную базу в Сектор Тринадцать для наблюдения за операциями NT и Кордоном. \
-	Ваш приказ - поддерживать целостность корабля и по возможности не высовываться."
+	Ваш приказ - поддерживать целостность своего объекта, следить за положением в системе, в условиях 'Безопасной Системы' оказывать информационную поддержку и по возможности не высовываться за пределы своего сектора."
 	important_info = "Вы не антагонист."
 	outfit = /datum/outfit/ds2/syndicate_command
 	starting_money = 5000 // BLUEMOON ADD
@@ -1416,10 +1449,12 @@
 	outfit = /datum/outfit/ds2/syndicate_command/corporateliaison
 
 /obj/effect/mob_spawn/human/ds2/syndicate_command/comms
+	name = "a Syndicate Comms Agent"
 	mob_name = "a Syndicate Comms Agent"
 	short_desc = "Вы Агент или Офицер Прослушки одной из ячеек Синдиката, работающий на Корабле Синдиката из ячейки 'Глубокий Космос Два' под названием 'Благославлённый'. \
-	Помогите вашемукомандованию привести Объект к успеху, который планировался, либо умрите - стараясь."
-
+	Ваш приказ - поддерживать целостность своего объекта, следить за положением в системе, в условиях 'Безопасной Системы' оказывать информационную поддержку и по возможности не высовываться за пределы своего сектора."
+	flavour_text = "Синдикат счел нужным направить передовую оперативную базу в Сектор Тринадцать для наблюдения за операциями NT и Кордоном. \
+	Приведите Объект под вашей ответственностью к успеху, который планировался, либо умрите - стараясь."
 	outfit = /datum/outfit/ds2/syndicate_command/comms
 
 /obj/effect/mob_spawn/human/ds2/syndicate_command/admiral
@@ -1461,6 +1496,8 @@
 	id = /obj/item/card/id/syndicate/advanced/ds
 	id_trim = /datum/id_trim/syndicom/ds2
 	implants = list(/obj/item/implant/weapons_auth, /obj/item/implant/deathrattle/deepspacecrew)
+
+	accessory = list(/obj/item/clothing/accessory/permit/special/deep_space_syndicate)
 
 /datum/outfit/ds2/syndicate/service
 	name = "DS-2 General Staff"
@@ -1544,6 +1581,8 @@
 	id = /obj/item/card/id/syndicate/advanced/ds/gold/command
 	implants = list(/obj/item/implant/weapons_auth, /obj/item/implant/deathrattle/deepspacecrew)
 	id_trim = /datum/id_trim/syndicom/ds2
+
+	accessory = list(/obj/item/clothing/accessory/permit/special/deep_space_syndicate)
 
 /datum/outfit/ds2/syndicate_command/masteratarms
 	name = "DS-2 Master At Arms"

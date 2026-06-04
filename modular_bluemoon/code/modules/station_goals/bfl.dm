@@ -270,7 +270,7 @@
 
 /obj/machinery/bfl_receiver
 	name = "BFL Receiver"
-	desc = "Кнопка активации выглядит подозрительно. Возможно, следует открыть шахту вручную с помощью лома."
+	desc = "Кнопка активации тускло мерцает."
 	icon = 'modular_bluemoon/icons/obj/machines/BFL_mission/Hole.dmi'
 	icon_state = "Receiver_Off"
 	anchored = TRUE
@@ -533,7 +533,8 @@
 	if(!.)
 		return
 	if(step_count > 5)
-		Destroy()
+		qdel(src)
+		return
 	step_count++
 	pixel_x = -32
 	pixel_y = -32 //Explictly stating, that pixel_x and pixel_y will ALWAYS be -32/-32 when moved, because moving objects reset their offset.

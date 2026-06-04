@@ -3,15 +3,19 @@
 	caste = "d"
 	maxHealth = 250
 	health = 250
-	icon_state = "aliend"
+	icon = 'icons/Xeno/castes/drone.dmi'
+	icon_state = "Drone Walking"
 	meleeKnockdownPower = 80
 
 /mob/living/carbon/alien/humanoid/drone/maid
 	name = "Xeno Maid"
-	icon_state = "alienmaid"
-	caste = "maid"
+	icon_state = "Drone Walking"
+	caste = "m"
 	has_fine_manipulation = 1
 	initial_language_holder = /datum/language_holder
+
+/mob/living/carbon/alien/humanoid/drone/maid/Initialize(mapload)
+	. = ..(/mob/living/carbon/alien/humanoid)
 
 /mob/living/carbon/alien/humanoid/drone/Initialize(mapload)
 	AddAbility(new/obj/effect/proc_holder/alien/evolve(null))
@@ -31,6 +35,9 @@
 	action_icon_state = "alien_evolve_drone"
 
 /obj/effect/proc_holder/alien/evolve/fire(mob/living/carbon/alien/humanoid/user)
+	if(istype(user, /mob/living/carbon/alien/humanoid/drone/maid))
+		to_chat(user, "<span class='notice'>This caste cannot take a position of leadership.</span>")
+		return FALSE
 	var/obj/item/organ/alien/hivenode/node = user.getorgan(/obj/item/organ/alien/hivenode)
 	if(!node) //Players are Murphy's Law. We may not expect there to ever be a living xeno with no hivenode, but they _WILL_ make it happen.
 		to_chat(user, "<span class='danger'>Without the hivemind, you can't possibly hold the responsibility of leadership!</span>")

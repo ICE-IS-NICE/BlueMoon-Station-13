@@ -73,3 +73,25 @@
 	mob_overlay_icon = 'modular_bluemoon/icons/mob/clothing/masks.dmi'
 	lefthand_file = 'modular_bluemoon/icons/mob/inhands/clothing_lefthand.dmi'
 	righthand_file = 'modular_bluemoon/icons/mob/inhands/clothing_righthand.dmi'
+
+/obj/item/clothing/mask/gas/syndicate/cool_version/winter_mask
+	name = "Ami's Winter Mask"
+	desc = "If you look closely, the owner's name, Ami'Ira Vel'Ssaran, is written on the inside of the mask. On the outside, it's a regular white military-style mask."
+	icon = 'modular_bluemoon/fluffs/icons/obj/clothing/mask.dmi'
+	mob_overlay_icon = 'modular_bluemoon/fluffs/icons/mob/clothing/mask.dmi'
+	icon_state = "winter_mask"
+	mutantrace_variation = STYLE_DIGITIGRADE|STYLE_NO_ANTHRO_ICON
+	alternate_worn_layer = GLASSES_LAYER
+
+/obj/item/clothing/mask/gas/sechailer/star_dust
+	name = "\"Star dust\" rebriser mask"
+	desc = "Сильно модифицированный внутри и лишь незначительно внешне противогаз, превращённый в маску с установленным фильтром и аккумулирующим кислород вместо пользователя мотором. Сверх того, имеет внутри встроенные системы оповещения и некоторой фильтрации изображения. Тактика как она есть."
+	icon = 'modular_bluemoon/fluffs/icons/obj/clothing/mask.dmi'
+	mob_overlay_icon = 'modular_bluemoon/fluffs/icons/mob/clothing/mask.dmi'
+	icon_state = "star_dust"
+
+/obj/item/modkit/star_dust_kit
+	name = "\"Star dust\" rebriser mask Kit"
+	desc = "A modkit for making a Security Gas Mask into a \"Star dust\" rebriser mask."
+	product = /obj/item/clothing/mask/gas/sechailer/star_dust
+	fromitem = list(/obj/item/clothing/mask/gas/sechailer)

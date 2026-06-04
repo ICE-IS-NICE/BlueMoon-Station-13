@@ -66,6 +66,8 @@
 /// If the owner's deleted, we will simply remove from them, but if the target's deleted, we will self-delete
 /datum/action/proc/clear_ref(datum/ref)
 	SIGNAL_HANDLER
+	if(QDELETED(src))
+		return
 	if(ref == owner)
 		Remove(owner)
 	if(ref == target)
@@ -95,9 +97,11 @@
 	SHOULD_CALL_PARENT(TRUE)
 
 	for(var/datum/hud/hud in viewers)
-		if(!hud.mymob)
-			continue
-		HideFrom(hud.mymob)
+		var/atom/movable/screen/movable/action_button/button = viewers[hud]
+		if(hud.mymob)
+			HideFrom(hud.mymob)
+		else if(button)
+			qdel(button) // Mob destroyed; remove orphaned button to prevent GC failure
 	LAZYREMOVE(remove_from?.actions, src) // We aren't always properly inserted into the viewers list, gotta make sure that action's cleared
 	viewers = list()
 
@@ -111,7 +115,7 @@
 	))
 
 	if(target == owner)
-		RegisterSignal(target, COMSIG_PARENT_QDELETING, PROC_REF(clear_ref))
+		RegisterSignal(target, COMSIG_PARENT_QDELETING, PROC_REF(clear_ref), override = TRUE)
 	UnregisterSignal(remove_from, COMSIG_MOB_KEYDOWN)
 	if(owner == remove_from)
 		owner = null
@@ -133,7 +137,7 @@
  * * silent - If false this is being called to check if we have any messages to show to the owner
  */
 /datum/action/proc/IsAvailable(silent = FALSE)
-	if(!owner)
+	if(!owner || QDELETED(owner))
 		return FALSE
 	var/mob/living/L = owner
 	if(istype(L) && !CHECK_ALL_MOBILITY(L, required_mobility_flags))
@@ -204,7 +208,7 @@
 
 /datum/action/proc/update_button_status(atom/movable/screen/movable/action_button/current_button, force = FALSE)
 	current_button.update_keybind_maptext(full_key)
-	if(IsAvailable())
+	if(IsAvailable(TRUE))
 		current_button.color = rgb(255,255,255,255)
 	else
 		current_button.color = transparent_when_unavailable ? rgb(128,0,0,128) : rgb(128,0,0)
@@ -288,6 +292,8 @@
 /// A general use signal proc that reacts to an event and updates JUST our button's status
 /datum/action/proc/update_status_on_signal(datum/source, new_stat, old_stat)
 	SIGNAL_HANDLER
+	if(QDELETED(src))
+		return
 	UpdateButton(status_only = TRUE)
 
 //Presets for item actions
@@ -305,8 +311,9 @@
 
 /datum/action/item_action/Destroy()
 	var/obj/item/I = target
-	I.actions -= src
-	UNSETEMPTY(I.actions)
+	if(I?.actions)
+		I.actions -= src
+		UNSETEMPTY(I.actions)
 	return ..()
 
 /datum/action/item_action/Trigger(trigger_flags)
@@ -340,8 +347,8 @@
 	name = "Toggle Light"
 
 /datum/action/item_action/toggle_light/pda/Trigger(trigger_flags)
-	if(istype(target, /obj/item/pda))
-		var/obj/item/pda/P = target
+	if(istype(target, /obj/item/modular_computer/pda))
+		var/obj/item/modular_computer/pda/P = target
 		return P.toggle_light(owner)
 
 /datum/action/item_action/toggle_hood
@@ -991,8 +998,8 @@
 	var/small_icon_state
 
 /datum/action/small_sprite/queen
-	small_icon = 'icons/mob/alien.dmi'
-	small_icon_state = "alienq"
+	small_icon = 'icons/Xeno/castes/queen.dmi'
+	small_icon_state = "Queen Walking"
 
 /datum/action/small_sprite/drake
 	small_icon = 'icons/mob/lavaland/lavaland_monsters.dmi'

@@ -205,6 +205,10 @@ The reactor CHEWS through moderator. It does not do this slowly. Be very careful
 	for(var/obj/item/fuel_rod/FR in fuel_rods)
 		FR.depletion = 100
 
+/obj/machinery/atmospherics/components/trinary/nuclear_reactor/Destroy()
+	disconnect_from_network()
+	return ..()
+
 /obj/machinery/atmospherics/components/trinary/nuclear_reactor/Initialize()
 	. = ..()
 	connect_to_network()
@@ -830,6 +834,7 @@ BLUEMOON REMOVAL END */
 	ui_header = "smmon_0.gif"
 	program_icon_state = "smmon_0"
 	extended_desc = "This program connects to specially calibrated sensors to provide information on the status of nuclear reactors."
+	category = PROGRAM_CATEGORY_ENGI
 	requires_ntnet = TRUE
 	transfer_access = ACCESS_CONSTRUCTION
 	//network_destination = "rbmk monitoring system" //Apparently we don't use these anymore
@@ -937,9 +942,11 @@ BLUEMOON REMOVAL END */
 
 /obj/effect/decal/nuclear_waste/Initialize()
 	. = ..()
+	if(. == INITIALIZE_HINT_QDEL || . == INITIALIZE_HINT_QDEL_FORCE)
+		return .
 	for(var/obj/A in get_turf(src))
 		if(istype(A, /obj/structure))
-			qdel(src) //It is more processing efficient to do this here rather than when searching for available turfs.
+			return INITIALIZE_HINT_QDEL //It is more processing efficient to do this here rather than when searching for available turfs.
 	set_light(3)
 	AddComponent(/datum/component/radioactive, 1000, src, 0)
 
@@ -980,7 +987,7 @@ BLUEMOON REMOVAL END */
 	radiation_pulse(get_turf(src), 500, 5) // BLUEMOON CHANGES - более безопасная проверка на src.loc
 
 /obj/effect/decal/nuclear_waste/attackby(obj/item/tool, mob/user)
-	if(tool.tool_behaviour == TOOL_SHOVEL)
+	if(tool.tool_behaviour == TOOL_SHOVEL || istype(tool, /obj/item/broom/liquidator))
 		radiation_pulse(get_turf(src), 1000, 5) // BLUEMOON CHANGES - более безопасная проверка на src.loc
 		to_chat(user, "<span class='notice'>You start to clear [src]...</span>")
 		if(tool.use_tool(src, user, 50, volume=100))

@@ -35,6 +35,10 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 	*/
 
 /client/Topic(href, href_list, hsrc)
+	// BYOND 516 can invoke browser/topic callbacks with a null usr.
+	// Normalize to this client's mob so tgui callbacks are not dropped.
+	if(isnull(usr))
+		usr = mob
 	if(!usr || usr != mob)	//stops us calling Topic for somebody else's client. Also helps prevent usr=null
 		return
 
@@ -44,6 +48,31 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 		asset_cache_job = asset_cache_confirm_arrival(href_list["asset_cache_confirm_arrival"])
 		if (!asset_cache_job)
 			return
+
+	// Tgui Topic middleware — exempt from rate limiting.
+	// tgui messages (ready, ping, UI interactions) must not be dropped
+	// during connection burst when many asset/stat topics fire at once.
+	var/log_tgui_ingress = href_list["tgui"] && CONFIG_GET(flag/emergency_tgui_logging)
+	if(log_tgui_ingress)
+		var/topic_type = href_list["type"]
+		var/window_id = href_list["window_id"]
+		var/payload_len = length(href_list["payload"])
+		var/href_preview = href
+		if(length(href_preview) > 256)
+			href_preview = "[copytext(href_preview, 1, 257)]..."
+		log_tgui(src,
+			"ingress usr=[usr] usr_eq_mob=[usr == mob] type=[topic_type] window_id=[window_id] payload_len=[payload_len] href=[href_preview]",
+			context = "client/Topic")
+	if(tgui_Topic(href_list))
+		return
+
+	if(href_list["legacy_zoom_set"])
+		set_ui_zoom(href_list["legacy_zoom_key"], text2num(href_list["legacy_zoom_value"]))
+		return
+
+	if(href_list["statbrowser_zoom_save"])
+		set_ui_zoom("statbrowser", text2num(href_list["zoom_value"]))
+		return
 
 	// Rate limiting
 	var/mtl = CONFIG_GET(number/minute_topic_limit)
@@ -77,15 +106,16 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 		if (topiclimiter[SECOND_COUNT] > stl)
 			to_chat(src, "<span class='danger'>Your previous action was ignored because you've done too many in a second</span>")
 			return
-
-
-	// Tgui Topic middleware
-	if(tgui_Topic(href_list))
-		return
 	if(href_list["reload_tguipanel"])
 		nuke_chat()
 	if(href_list["reload_statbrowser"])
+		statbrowser_ready = FALSE
+		statpanel_protocol_acked = FALSE
+		statpanel_last_sent.Cut()
+		statpanel_last_mc_iter = -1
+		reset_listed_turf_icon_cache()
 		src << browse(file('html/statbrowser.html'), "window=statbrowser")
+		addtimer(CALLBACK(src, PROC_REF(check_panel_loaded)), 30 SECONDS)
 	// Log all hrefs
 	log_href("[src] (usr:[usr]\[[COORD(usr)]\]) : [hsrc ? "[hsrc] " : ""][href]")
 
@@ -156,6 +186,10 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 	var/atom/target = locate(href_list["statpanel_item_target"])
 	if(!target)
 		return
+	var/turf/listed = mob?.listed_turf
+	var/refresh_listed_turf = listed && get_turf(target) == listed
+	if(refresh_listed_turf)
+		mark_listed_turf_dirty(force_icon_refresh = TRUE)
 	var/button = "left=1"
 	switch(href_list["statpanel_item_click"])
 		if("middle")
@@ -165,6 +199,116 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 		else
 			button = "left=1"
 	Click(target, target.loc, null, "[button];[href_list["statpanel_item_shiftclick"]?"shift=1;":null][href_list["statpanel_item_ctrlclick"]?"ctrl=1;":null]&alt=[href_list["statpanel_item_altclick"]?"alt=1;":null]", FALSE, "statpanel")
+	if(refresh_listed_turf)
+		mark_listed_turf_dirty(force_icon_refresh = TRUE)
+
+/client/proc/mark_listed_turf_dirty(force_icon_refresh = FALSE)
+	if(mob?.listed_turf)
+		listed_turf_dirty = TRUE
+		listed_turf_dirty_at = world.time
+		if(force_icon_refresh)
+			listed_turf_icon_refresh_pending = TRUE
+
+/client/proc/mark_listed_turf_dirty_from_signal(datum/source)
+	SIGNAL_HANDLER
+	mark_listed_turf_dirty()
+
+/// Handler for COMSIG_TURF_CHANGE — fires on the OLD turf datum just before it is qdel'd
+/// and replaced by a new turf at the same coords. Without this, listed_turf_watched would
+/// dangle to a dead datum (UnregisterSignal would no-op or runtime). We capture the coords
+/// and rebind on the next tick, when the replacement turf exists.
+/client/proc/listed_turf_changed_signal(datum/source)
+	SIGNAL_HANDLER
+	if(!source)
+		return
+	var/turf/old_turf = source
+	var/x = old_turf.x
+	var/y = old_turf.y
+	var/z = old_turf.z
+	// Source is being qdel'd; null the watched ref so we don't UnregisterSignal a dead datum later.
+	listed_turf_watched = null
+	if(mob?.listed_turf == old_turf)
+		mob.listed_turf = null
+	cached_turf_ref = null
+	cached_turf_encoded = null
+	addtimer(CALLBACK(src, PROC_REF(rebind_listed_turf_at_coords), x, y, z), 0, TIMER_UNIQUE | TIMER_OVERRIDE)
+
+/client/proc/rebind_listed_turf_at_coords(x, y, z)
+	if(!mob)
+		return
+	var/turf/replacement = locate(x, y, z)
+	if(!replacement || QDELETED(replacement))
+		clear_listed_turf()
+		return
+	if(!mob.TurfAdjacent(replacement))
+		clear_listed_turf()
+		return
+	set_listed_turf(replacement)
+	if(statbrowser_ready)
+		mark_listed_turf_dirty(force_icon_refresh = TRUE)
+
+/client/proc/update_listed_turf_watch(turf/T)
+	if(listed_turf_watched == T)
+		return
+	if(listed_turf_watched)
+		UnregisterSignal(listed_turf_watched, list(COMSIG_ATOM_ENTERED, COMSIG_ATOM_EXITED, COMSIG_ATOM_CONTENTS_DEL, COMSIG_TURF_CHANGE))
+	listed_turf_watched = T
+	if(T)
+		RegisterSignal(T, list(COMSIG_ATOM_ENTERED, COMSIG_ATOM_EXITED, COMSIG_ATOM_CONTENTS_DEL), PROC_REF(mark_listed_turf_dirty_from_signal))
+		RegisterSignal(T, COMSIG_TURF_CHANGE, PROC_REF(listed_turf_changed_signal))
+
+/client/proc/reset_listed_turf_icon_cache()
+	statpanel_sent_icons.Cut()
+	listed_turf_last_icon_refresh = 0
+	listed_turf_icon_refresh_pending = FALSE
+	SSstatpanels.icon_queue -= src
+
+/client/proc/set_listed_turf(turf/T)
+	if(!mob)
+		return
+	var/turf/old_listed = mob.listed_turf
+	if(old_listed == T)
+		update_listed_turf_watch(T)
+		mark_listed_turf_dirty()
+		return
+	if(old_listed)
+		panel_tabs -= old_listed.name
+	mob.listed_turf = T
+	update_listed_turf_watch(T)
+	reset_listed_turf_icon_cache()
+	cached_turf_ref = null
+	cached_turf_encoded = null
+	listed_turf_last_refresh = 0
+	listed_turf_eye_ref = null
+	listed_turf_dirty = !!T
+	listed_turf_icon_refresh_pending = FALSE
+
+/client/proc/open_listed_turf(turf/T)
+	if(!mob || !T)
+		return
+	set_listed_turf(T)
+	if(!statbrowser_ready)
+		return
+	src << output("[url_encode(json_encode(T.name))];", "statbrowser:create_listedturf")
+	SSstatpanels.refresh_listed_turf(src, force_send = TRUE)
+
+/client/proc/clear_listed_turf(send_output = TRUE)
+	var/turf/old_listed = mob?.listed_turf
+	if(old_listed)
+		panel_tabs -= old_listed.name
+	if(mob)
+		mob.listed_turf = null
+	update_listed_turf_watch(null)
+	reset_listed_turf_icon_cache()
+	cached_turf_ref = null
+	cached_turf_encoded = null
+	listed_turf_last_refresh = 0
+	listed_turf_eye_ref = null
+	listed_turf_dirty = FALSE
+	listed_turf_dirty_at = 0
+	listed_turf_icon_refresh_pending = FALSE
+	if(send_output && statbrowser_ready)
+		src << output("", "statbrowser:remove_listedturf")
 
 /client/proc/is_content_unlocked()
 	if(!prefs.unlock_content && !IS_CKEY_DONATOR_GROUP(key, DONATOR_GROUP_TIER_1))
@@ -266,18 +410,40 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 	tgui_panel = new(src)
 
 	GLOB.ahelp_tickets.ClientLogin(src)
-	var/connecting_admin = FALSE //because de-admined admins connecting should be treated like admins.
+
+	// BLUEMOON EDIT Loading preferences earlier to use the deadmin or similar prefs
+	//preferences datum - also holds some persistent data for the client (because we may as well keep these datums to a minimum)
+	prefs = GLOB.preferences_datums[ckey]
+	if(prefs)
+		prefs.parent = src
+	else
+		prefs = new /datum/preferences(src)
+		GLOB.preferences_datums[ckey] = prefs
+
+	addtimer(CALLBACK(src, PROC_REF(ensure_keys_set), prefs), 10)	//prevents possible race conditions
+
+	prefs.last_ip = address				//these are gonna be used for banning
+	prefs.last_id = computer_id			//these are gonna be used for banning
+	fps = sanitize_clientfps(prefs.clientfps)
+
+	// BLUEMOON EDIT — Enable Ctrl+F find and persistent byondStorage in browser windows (BYOND 516+)
+	if(byond_version >= 516)
+		winset(src, null, "browser-options=+find,+byondstorage")
+
 	//Admin Authorisation
+	var/connecting_admin = FALSE //because de-admined admins connecting should be treated like admins.
 	holder = GLOB.admin_datums[ckey]
 	var/debug_tools_allowed = FALSE			//CITADEL EDIT
 	if(holder)
+		connecting_admin = TRUE
 		GLOB.admins |= src
 		holder.owner = src
-		connecting_admin = TRUE
 		//CITADEL EDIT
 		if(check_rights_for(src, R_DEBUG))
 			debug_tools_allowed = TRUE
 		//END CITADEL EDIT
+		if(prefs.deadmin & DEADMIN_ONLOGIN)
+			holder.auto_deadmin()
 	else if(GLOB.deadmins[ckey])
 		add_verb(src, /client/proc/readmin)
 		connecting_admin = TRUE
@@ -303,19 +469,6 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 		if(isnull(address) || (address in localhost_addresses))
 			var/datum/admin_rank/localhost_rank = new("!localhost!", R_EVERYTHING, R_DBRANKS, R_EVERYTHING) //+EVERYTHING -DBRANKS *EVERYTHING
 			new /datum/admins(localhost_rank, ckey, 1, 1)
-	//preferences datum - also holds some persistent data for the client (because we may as well keep these datums to a minimum)
-	prefs = GLOB.preferences_datums[ckey]
-	if(prefs)
-		prefs.parent = src
-	else
-		prefs = new /datum/preferences(src)
-		GLOB.preferences_datums[ckey] = prefs
-
-	addtimer(CALLBACK(src, PROC_REF(ensure_keys_set), prefs), 10)	//prevents possible race conditions
-
-	prefs.last_ip = address				//these are gonna be used for banning
-	prefs.last_id = computer_id			//these are gonna be used for banning
-	fps = prefs.clientfps //(prefs.clientfps < 0) ? RECOMMENDED_FPS : prefs.clientfps
 
 	if(fexists(roundend_report_file()))
 		add_verb(src, /client/proc/show_previous_roundend_report)
@@ -340,10 +493,10 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 					alert_mob_dupe_login = TRUE
 				if(matches)
 					if(C)
-						message_admins("<span class='danger'><B>Notice: </B></span><span class='notice'>[key_name_admin(src)] has the same [matches] as [key_name_admin(C)].</span>")
+						message_admins(span_admindanger("<B>Notice:</B> ")+"[key_name_admin(src)] has the same [matches] as [key_name_admin(C)].")
 						log_admin_private("Notice: [key_name(src)] has the same [matches] as [key_name(C)].")
 					else
-						message_admins("<span class='danger'><B>Notice: </B></span><span class='notice'>[key_name_admin(src)] has the same [matches] as [key_name_admin(C)] (no longer logged in). </span>")
+						message_admins(span_admindanger("<B>Notice:</B> ")+"[key_name_admin(src)] has the same [matches] as [key_name_admin(C)] (no longer logged in).")
 						log_admin_private("Notice: [key_name(src)] has the same [matches] as [key_name(C)] (no longer logged in).")
 
 	if(GLOB.player_details[ckey])
@@ -380,9 +533,12 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 				return
 
 	// Initialize tgui panel
+	statbrowser_ready = FALSE
+	reset_listed_turf_icon_cache()
 	src << browse(file('html/statbrowser.html'), "window=statbrowser")
 	addtimer(CALLBACK(src, PROC_REF(check_panel_loaded)), 30 SECONDS)
 	tgui_panel.initialize()
+	acquire_dpi()
 
 	if(alert_mob_dupe_login && !holder)
 		var/dupe_login_message = "Your ComputerID has already logged in with another key this round, please log out of this one NOW or risk being banned!"
@@ -528,12 +684,276 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 	view_size = new(src, getScreenSize(prefs.widescreenpref))
 	view_size.resetFormat()
 	view_size.setZoomMode()
+	normalize_ui_layout()
 	fit_viewport()
 	Master.UpdateTickRate()
 
 //////////////
 //DISCONNECT//
 //////////////
+
+/client/proc/get_window_scaling()
+	if(!isnum(window_scaling) || window_scaling <= 0)
+		return 1
+	return window_scaling
+
+/client/proc/get_ui_zoom(window_key, default_zoom = 1)
+	if(!istext(window_key))
+		return clamp(round(isnum(default_zoom) ? default_zoom : 1, 0.01), 0.5, 2.0)
+
+	var/safe_window_key = copytext(window_key, 1, 65)
+	if(!length(safe_window_key))
+		return clamp(round(isnum(default_zoom) ? default_zoom : 1, 0.01), 0.5, 2.0)
+
+	var/safe_default_zoom = clamp(round(isnum(default_zoom) ? default_zoom : 1, 0.01), 0.5, 2.0)
+	if(!prefs || !islist(prefs.ui_zoom_preferences))
+		return safe_default_zoom
+
+	var/stored_zoom = prefs.ui_zoom_preferences[safe_window_key]
+	if(!isnum(stored_zoom))
+		return safe_default_zoom
+	return clamp(round(stored_zoom, 0.01), 0.5, 2.0)
+
+/client/proc/set_ui_zoom(window_key, zoom)
+	if(!prefs || !istext(window_key))
+		return FALSE
+
+	var/safe_window_key = copytext(window_key, 1, 65)
+	if(!length(safe_window_key))
+		return FALSE
+
+	if(!isnum(zoom))
+		return FALSE
+	var/safe_zoom = clamp(round(zoom, 0.01), 0.5, 2.0)
+
+	LAZYINITLIST(prefs.ui_zoom_preferences)
+	var/current_zoom = prefs.ui_zoom_preferences[safe_window_key]
+	if(isnum(current_zoom))
+		current_zoom = clamp(round(current_zoom, 0.01), 0.5, 2.0)
+		if(current_zoom == safe_zoom)
+			return TRUE
+	if(isnull(current_zoom) && prefs.ui_zoom_preferences.len >= 64)
+		return FALSE
+
+	prefs.ui_zoom_preferences[safe_window_key] = safe_zoom
+	prefs.save_preferences(silent = TRUE)
+	return TRUE
+
+/client/proc/legacy_zoom_head(window_key, base_zoom = 100)
+	if(!window_key)
+		return ""
+
+	var/key_json = json_encode("[window_key]")
+	var/topic_base_json = json_encode("?src=_legacybrowser_;legacy_zoom_set=1")
+	var/initial_zoom = get_ui_zoom(window_key)
+	return {"
+		<style>
+			#legacyZoomIndicator {
+				position: fixed;
+				top: 12px;
+				right: 12px;
+				z-index: 2147483647;
+				padding: 6px 10px;
+				border-radius: 6px;
+				background: rgba(0, 0, 0, 0.75);
+				color: #fff;
+				font: 12px/1.2 Verdana, sans-serif;
+				pointer-events: none;
+				opacity: 0;
+				transition: opacity 120ms linear;
+			}
+		</style>
+		<script>
+			(function() {
+				var windowKey = [key_json];
+				var topicBase = [topic_base_json];
+				var baseZoom = [base_zoom];
+				var minZoom = 0.5;
+				var maxZoom = 2.0;
+				var zoomStep = 0.1;
+				var userZoom = [initial_zoom];
+				var indicator = null;
+				var hideTimer = null;
+				var persistTimer = null;
+
+				function clampZoom(value) {
+					return Math.min(maxZoom, Math.max(minZoom, value));
+				}
+
+				function sendByondTopic(href) {
+					var protocolUrl = 'byond://' + href;
+
+					function tryBridgeCall(method, firstArg, secondArg) {
+						if (typeof method !== 'function') {
+							return false;
+						}
+
+						try {
+							method.call(bridge, firstArg);
+							return true;
+						} catch (error) {}
+
+						try {
+							method.call(bridge, secondArg);
+							return true;
+						} catch (error) {}
+
+						return false;
+					}
+
+					if (window.cef_to_byond) {
+						try {
+							window.cef_to_byond(protocolUrl);
+							return true;
+						} catch (error) {}
+					}
+
+					var bridge = window.BYOND;
+					if (bridge) {
+						if (tryBridgeCall(bridge, protocolUrl, href)) {
+							return true;
+						}
+						if (tryBridgeCall(bridge.callByond, protocolUrl, href)) {
+							return true;
+						}
+						if (tryBridgeCall(bridge.byond, protocolUrl, href)) {
+							return true;
+						}
+						if (tryBridgeCall(bridge.call, protocolUrl, href)) {
+							return true;
+						}
+						if (tryBridgeCall(bridge.topic, protocolUrl, href)) {
+							return true;
+						}
+						if (tryBridgeCall(bridge.sendMessage, protocolUrl, href)) {
+							return true;
+						}
+						if (tryBridgeCall(bridge.send, protocolUrl, href)) {
+							return true;
+						}
+						if (tryBridgeCall(bridge.postMessage, protocolUrl, href)) {
+							return true;
+						}
+					}
+
+					try {
+						window.location.href = protocolUrl;
+						return true;
+					} catch (error) {}
+
+					return false;
+				}
+
+				function ensureIndicator() {
+					if (indicator || !document.body) {
+						return;
+					}
+					indicator = document.createElement('div');
+					indicator.id = 'legacyZoomIndicator';
+					document.body.appendChild(indicator);
+				}
+
+				function showIndicator() {
+					ensureIndicator();
+					if (!indicator) {
+						return;
+					}
+					indicator.textContent = 'Scale: ' + Math.round(userZoom * 100) + '%';
+					indicator.style.opacity = '1';
+					clearTimeout(hideTimer);
+					hideTimer = setTimeout(function() {
+						if (indicator) {
+							indicator.style.opacity = '0';
+						}
+					}, 1200);
+				}
+
+				function applyZoom() {
+					if (!document.body) {
+						return;
+					}
+					document.body.style.zoom = (baseZoom * userZoom) + '%';
+				}
+
+				function schedulePersistZoom() {
+					clearTimeout(persistTimer);
+					persistTimer = setTimeout(function() {
+						sendByondTopic(
+							topicBase
+							+ ';legacy_zoom_key=' + encodeURIComponent(windowKey)
+							+ ';legacy_zoom_value=' + encodeURIComponent(String(userZoom))
+						);
+					}, 200);
+				}
+
+				function adjustZoom(delta) {
+					userZoom = clampZoom(Math.round((userZoom + delta) * 100) / 100);
+					applyZoom();
+					schedulePersistZoom();
+					showIndicator();
+				}
+
+				function handleWheel(event) {
+					if (!event.ctrlKey) {
+						return;
+					}
+
+					var direction = Math.sign(event.deltaY);
+					if (!direction) {
+						return;
+					}
+
+					event.preventDefault();
+					adjustZoom(direction < 0 ? zoomStep : -zoomStep);
+				}
+
+				function init() {
+					applyZoom();
+					ensureIndicator();
+					window.addEventListener('wheel', handleWheel, { passive: false });
+				}
+
+				if (document.readyState === 'loading') {
+					document.addEventListener('DOMContentLoaded', init, { once: true });
+				} else {
+					init();
+				}
+			})();
+		</script>
+	"}
+
+/client/proc/acquire_dpi(max_retries = 3, retry_delay = 2 SECONDS, retrying = FALSE)
+	if(!retrying)
+		window_scaling_retry_count = 0
+
+	var/new_scaling = text2num(winget(src, null, "dpi"))
+	if(isnum(new_scaling) && new_scaling > 0)
+		window_scaling = new_scaling
+		window_scaling_retry_count = 0
+		return TRUE
+
+	window_scaling = 1
+
+	if(window_scaling_retry_count >= max_retries)
+		return FALSE
+
+	window_scaling_retry_count++
+	addtimer(CALLBACK(src, PROC_REF(acquire_dpi), max_retries, retry_delay, TRUE), retry_delay, TIMER_UNIQUE | TIMER_OVERRIDE)
+	return FALSE
+
+/client/proc/normalize_ui_layout(force = TRUE)
+	if(!force)
+		return
+	// Reset splitter state to sane defaults; stale per-client values can break layout on DPI changes.
+	winset(src, "mainwindow.split", "splitter=53")
+	winset(src, "infowindow.info", "splitter=32")
+	winset(src, "legacy_output_selector", "left=output_browser")
+	// Ensure critical panes are not left minimized by stale skin state.
+	winset(src, "mainwindow", "is-minimized=false")
+	winset(src, "mapwindow", "is-minimized=false")
+	winset(src, "infowindow", "is-minimized=false")
+	winset(src, "outputwindow", "is-minimized=false")
+	winset(src, "statwindow", "is-minimized=false")
 
 /client/Del()
 	if(!gc_destroyed)
@@ -544,8 +964,17 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 	GLOB.clients -= src
 	GLOB.directory -= ckey
 	log_access("Logout: [key_name(src)]")
-	GLOB.ahelp_tickets.ClientLogout(src)
-	SSserver_maint.UpdateHubStatus()
+	// Tear down listed-turf signals and any queued icon work so we don't leak refs through the signal subsystem.
+	if(listed_turf_watched || mob?.listed_turf)
+		clear_listed_turf(send_output = FALSE)
+	if(SSstatpanels)
+		SSstatpanels.icon_queue -= src
+		SSstatpanels.icon_run -= src
+		SSstatpanels.ping_run -= src
+		SSstatpanels.currentrun -= src
+	if(GLOB.ahelp_tickets)
+		GLOB.ahelp_tickets.ClientLogout(src)
+
 	if(credits)
 		QDEL_LIST(credits)
 	if(holder)
@@ -569,10 +998,11 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 			)
 
 			send2adminchat("Server", "[cheesy_message] (No admins online)")
-	QDEL_LIST_ASSOC_VAL(char_render_holders)
+	clear_character_previews()
 	// seen_messages = null
 	Master.UpdateTickRate()
 	. = ..() //Even though we're going to be hard deleted there are still some things that want to know the destroy is happening
+	screen.Cut()
 	return QDEL_HINT_HARDDEL_NOW
 
 /client/proc/set_client_age_from_db(connectiontopic)
@@ -715,7 +1145,7 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 	query_log_connection.Execute()
 	qdel(query_log_connection)
 
-	SSserver_maint.UpdateHubStatus()
+
 
 	if(new_player)
 		player_age = -1
@@ -735,6 +1165,9 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 			CRASH("Age check regex failed for [src.ckey]")
 
 /client/proc/validate_key_in_db()
+	// Slow path does world.Export("http://byond.com/members/...") — must not block /client/New().
+	// Return value is unused at the only callsite (client_procs.dm), so fire-and-forget is safe.
+	set waitfor = FALSE
 	var/sql_key
 	var/datum/db_query/query_check_byond_key = SSdbcore.NewQuery(
 		"SELECT byond_key FROM [format_table_name("player")] WHERE ckey = :ckey",
@@ -995,17 +1428,40 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 		//load info on what assets the client has
 		src << browse('code/modules/asset_cache/validate_assets.html', "window=asset_cache_browser")
 
-		//Precache the client with all other assets slowly, so as to not block other browse() calls
-		if (CONFIG_GET(flag/asset_simple_preload))
-			addtimer(CALLBACK(SSassets.transport, TYPE_PROC_REF(/datum/asset_transport, send_assets_slow), src, SSassets.transport.preload), 5 SECONDS)
+		// BLUEMOON EDIT: defer the heavyweight preload (asset cache + VOX, multi-MB) until the
+		// statbrowser is up. The BYOND browse() queue is single-threaded per client; if we
+		// enqueue megabytes ahead of statbrowser.html, clients sit on "Downloading resources"
+		// while critical UI never arrives and players perceive a disconnect.
+		INVOKE_ASYNC(src, PROC_REF(preload_resources_when_ui_ready))
 
-		#if (PRELOAD_RSC == 0)
-		for (var/type in GLOB.vox_types)
-			for(var/word in GLOB.vox_types[type])
-				var/file = GLOB.vox_types[type][word]
-				Export("##action=load_rsc", file)
-				stoplag()
-		#endif
+/// BLUEMOON EDIT: heavyweight preload (asset cache + VOX) that fires AFTER the statbrowser
+/// is loaded so the UI reaches the player first. Has a hard timeout so clients whose
+/// statbrowser never reports ready still get their resources eventually.
+/client/proc/preload_resources_when_ui_ready()
+	set waitfor = FALSE
+	var/deadline = world.time + 60 SECONDS
+	while(world.time < deadline && !statbrowser_ready)
+		if(QDELETED(src))
+			return
+		sleep(1 SECONDS)
+	if(QDELETED(src))
+		return
+
+	//Precache the client with all other assets slowly, so as to not block other browse() calls
+	if (CONFIG_GET(flag/asset_simple_preload))
+		addtimer(CALLBACK(SSassets.transport, TYPE_PROC_REF(/datum/asset_transport, send_assets_slow), src, SSassets.transport.preload), 5 SECONDS)
+
+	#if (PRELOAD_RSC == 0)
+	for (var/type in GLOB.vox_types)
+		if(QDELETED(src))
+			return
+		for(var/word in GLOB.vox_types[type])
+			if(QDELETED(src))
+				return
+			var/file = GLOB.vox_types[type][word]
+			Export("##action=load_rsc", file)
+			stoplag()
+	#endif
 
 
 //Hook, override it to run code when dir changes
@@ -1056,8 +1512,8 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 	view = new_size
 	var/list/actualview = getviewsize(view)
 	update_clickcatcher()
-	parallax_holder.Reset()
-	mob.hud_used.screentip_text.update_view()
+	parallax_holder?.Reset()
+	mob?.hud_used?.screentip_text?.update_view()
 	mob.reload_fullscreen()
 	if (isliving(mob))
 		var/mob/living/M = mob
@@ -1095,6 +1551,12 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 			plane_master.backdrop(mob)
 			screen |= plane_master
 			plane_master.screen_loc = "character_preview_map:0,CENTER"
+		// Disable lighting on the preview — no lighting objects exist there,
+		// and the blur edge-fix filter would force the empty plane opaque black
+		var/atom/movable/screen/plane_master/lighting_pm = char_render_holders["plane_master-[LIGHTING_PLANE]"]
+		if(lighting_pm)
+			lighting_pm.alpha = LIGHTING_PLANE_ALPHA_INVISIBLE
+			lighting_pm.filters = null
 
 	var/pos = 0
 	for(var/dir in GLOB.cardinals)
@@ -1109,11 +1571,25 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 		preview.screen_loc = "character_preview_map:0,[pos]"
 
 /client/proc/clear_character_previews()
-	for(var/index in char_render_holders)
-		var/atom/movable/screen/S = char_render_holders[index]
+	if(!LAZYLEN(char_render_holders))
+		char_render_holders = null
+		return
+
+	var/list/char_render_holders_copy = char_render_holders.Copy()
+	char_render_holders = null
+
+	for(var/index in char_render_holders_copy)
+		var/atom/movable/screen/S = char_render_holders_copy[index]
+		S.vis_contents.Cut()
+		S.overlays.Cut()
+		S.underlays.Cut()
+		S.filters = null
+		S.maptext = null
+		S.icon = null
+		S.screen_loc = null
+		S.appearance = null
 		screen -= S
 		qdel(S)
-	char_render_holders = null
 
 /client/proc/can_have_part(part_name)
 	return prefs.pref_species.mutant_bodyparts[part_name] || (part_name in GLOB.unlocked_mutant_parts)
@@ -1141,6 +1617,7 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 /client/proc/init_verbs()
 	if(IsAdminAdvancedProcCall())
 		return
+	src << output(get_ui_zoom("statbrowser"), "statbrowser:set_zoom_pref")
 	var/list/verblist = list()
 	var/list/verbstoprocess = verbs.Copy()
 	if(mob)
@@ -1165,6 +1642,11 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 	if(statbrowser_ready)
 		return
 	to_chat(src, span_userdanger("Statpanel failed to load, click <a href='?src=[REF(src)];reload_statbrowser=1'>here</a> to reload the panel "))
+	// Fallback for clients where Panel-Ready bridge callback is delayed/missing.
+	statbrowser_ready = TRUE
+	init_verbs()
+	if(mob?.listed_turf)
+		open_listed_turf(mob.listed_turf)
 
 //increment progress for an unlockable loadout item
 /client/proc/increment_progress(key, amount)

@@ -377,6 +377,9 @@ It's fairly easy to fix if dealing with single letters but not so much with comp
 			if("apprentice")
 				if(M.mind in SSticker.mode.apprentices)
 					return 2
+			if("alive_bones")
+				if(M.mind.has_antag_datum(/datum/antagonist/alive_bones, TRUE))
+					return 2
 			if("monkey")
 				if(isliving(M))
 					var/mob/living/L = M
@@ -486,7 +489,7 @@ It's fairly easy to fix if dealing with single letters but not so much with comp
 		var/datum/antagonist/A = M.mind.has_antag_datum(/datum/antagonist/)
 		if(A)
 			poll_message = "[poll_message] Status:[A.name]."
-	var/list/mob/candidates = pollCandidatesForMob(poll_message, ROLE_PAI, null, FALSE, 100, M, ignore_category)
+	var/list/mob/candidates = pollCandidatesForMob(poll_message, ROLE_PAI, null, FALSE, 100, M, ignore_category, priority_check = FALSE)
 
 	if(LAZYLEN(candidates))
 		var/mob/C = pick(candidates)
@@ -517,6 +520,8 @@ It's fairly easy to fix if dealing with single letters but not so much with comp
 
 // Logs a message in a mob's individual log, and in the global logs as well if log_globally is true
 /mob/log_message(message, message_type, color=null, log_globally = TRUE)
+	if(QDELETED(src))
+		return
 	if(!LAZYLEN(message))
 		stack_trace("Empty message")
 		return
@@ -609,7 +614,7 @@ It's fairly easy to fix if dealing with single letters but not so much with comp
 
 //Can the mob see reagents inside of containers?
 /mob/proc/can_see_reagents()
-	return stat == DEAD || silicon_privileges || HAS_TRAIT(src, TRAIT_REAGENT_SCANNER) //Dead guys and silicons can always see reagents
+	return isobserver(src) || stat == DEAD || silicon_privileges || HAS_TRAIT(src, TRAIT_REAGENT_SCANNER) //Ghosts, dead guys and silicons can always see reagents
 
 /mob/proc/is_blind()
 	SHOULD_BE_PURE(TRUE)
@@ -627,12 +632,15 @@ It's fairly easy to fix if dealing with single letters but not so much with comp
 /mob/living/carbon/human/proc/load_client_appearance(client/client, quirks = TRUE)
 	if(!client)
 		client = src.client
+	if(!client)
+		return
 	var/old_name = real_name
 	SEND_SOUND(src, 'sound/misc/server-ready.ogg')
-	// BLUEMOON ADD START - загрузка татуировок для ghost roles
+	client.prefs.copy_to(src)
+	client.prefs.apply_prefs_modified_limbs(src)
+	// BLUEMOON ADD START - загрузка татуировок для ghost roles (после copy_to, чтобы set_species() не уничтожил данные)
 	client.prefs.apply_tattoos_to_human(src)
 	// BLUEMOON ADD END
-	client.prefs.copy_to(src)
 	if(quirks)
 		load_client_quirks(client)
 	var/obj/item/card/id/id_card = get_idcard() //Time to change their ID card as well if they have one.

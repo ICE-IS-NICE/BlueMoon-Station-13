@@ -185,6 +185,16 @@
 	category = list("Equipment")
 	departmental_flags = DEPARTMENTAL_FLAG_SERVICE
 
+/datum/design/flora_gun
+	name = "Floral Somatoray"
+	desc = "A tool that discharges controlled radiation which induces mutation in plant cells. Harmless to other organic life."
+	id = "flora_gun"
+	build_type = PROTOLATHE
+	materials = list(/datum/material/iron = 2000, /datum/material/glass = 500, /datum/material/uranium = 2000)
+	build_path = /obj/item/gun/energy/floragun
+	category = list("Tool Designs")
+	departmental_flags = DEPARTMENTAL_FLAG_SERVICE | DEPARTMENTAL_FLAG_SCIENCE
+
 /datum/design/emptybottle
 	name = "Glass Bottle"
 	desc = "A small, empty bottle for storing liquids."
@@ -391,7 +401,7 @@
 	desc = "An advanced trash bag with bluespace properties; capable of holding a plethora of garbage."
 	id = "blutrash"
 	build_type = PROTOLATHE
-	materials = list(/datum/material/gold = 1500, /datum/material/uranium = 250, /datum/material/plasma = 1500)
+	materials = list(/datum/material/gold = 1500, /datum/material/uranium = 250, /datum/material/bluespace = 1200)
 	build_path = /obj/item/storage/bag/trash/bluespace
 	category = list("Equipment")
 	departmental_flags = DEPARTMENTAL_FLAG_SERVICE
@@ -424,16 +434,6 @@
 	materials = list(/datum/material/iron = 1000)
 	reagents_list = list(/datum/reagent/acetone = 60)
 	build_path = /obj/item/paint/paint_remover
-	category = list("Equipment")
-	departmental_flags = DEPARTMENTAL_FLAG_SERVICE
-
-/datum/design/spraybottle
-	name = "Spray Bottle"
-	desc = "A spray bottle, with an unscrewable top."
-	id = "spraybottle"
-	build_type = PROTOLATHE
-	materials = list(/datum/material/iron = 3000, /datum/material/glass = 200)
-	build_path = /obj/item/reagent_containers/spray
 	category = list("Equipment")
 	departmental_flags = DEPARTMENTAL_FLAG_SERVICE
 
@@ -520,16 +520,6 @@
 	build_path = /obj/item/forcefield_projector
 	category = list("Tool Designs")
 	departmental_flags = DEPARTMENTAL_FLAG_ENGINEERING
-
-/datum/design/holobarrier_med
-	name = "PENLITE holobarrier projector"
-	desc = "PENLITE holobarriers, a device that halts individuals with malicious diseases."
-	build_type = PROTOLATHE
-	build_path = /obj/item/holosign_creator/medical
-	materials = list(/datum/material/iron = 500, /datum/material/glass = 500, /datum/material/silver = 100) //a hint of silver since it can troll 2 antags (bad viros and sentient disease)
-	id = "holobarrier_med"
-	category = list("Medical Designs")
-	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL
 
 ///////////////////////////////
 ////////////Tools//////////////
@@ -846,7 +836,9 @@
 	category = list("Equipment")
 	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE | DEPARTMENTAL_FLAG_ENGINEERING
 
-// Ключи Связи для наушников.
+///////////////////////////////////
+/////Headset Encryption////////////
+///////////////////////////////////
 
 /datum/design/encryptionkey_sec
 	name = "Security Radio Encryption Key"

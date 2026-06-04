@@ -268,13 +268,14 @@
 		HandleRandomHardcoreScore(C)
 
 	var/popcount = gather_roundend_feedback()
+	SSmetadollars?.apply_round_end_rewards()
 	display_report(popcount)
 
 	CHECK_TICK
 
 	// Add AntagHUD to everyone, see who was really evil the whole time!
 	if(CONFIG_GET(flag/reveal_everything))
-		for(var/datum/atom_hud/antag/H in GLOB.huds)
+		for(var/datum/atom_hud/antag/H in GLOB.all_huds)
 			for(var/m in GLOB.player_list)
 				var/mob/M = m
 				H.add_hud_to(M)
@@ -526,6 +527,7 @@
 	parts += "<br>"
 	parts += GLOB.survivor_report
 	parts += "</div>"
+	parts += SSmetadollars?.personal_roundend_html(C) || ""
 
 	return parts.Join()
 

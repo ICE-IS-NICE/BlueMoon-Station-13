@@ -281,7 +281,7 @@
 	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR|HIDEFACIALHAIR
 	unique_reskin = null
 
-/obj/item/clothing/head/blueshield/mu88_horns
+/obj/item/clothing/head/donator/bm/mu88_horns
 	name = "M.U. 88 New hope horns"
 	desc = "Ещё один элемент комплекта 'New hope'. Несмотря на то, что данная вещь скорее носит декоративный характер, имеет в себе скрытые и важные функции. Сами рога выполнены из прочного сплава металлов неизвестного образца. В основную часть встроены антенны для перехвата сигналов с системой датчиков жизнеобеспечения костюмов и скафандров поблизости. Также излучают небольшую сферу сильного магнитного поля, покрывающее пространство головы и 25 сантиметров по радиусу вокруг. Поле имеет защитный функционал, останавливающие все попадающие объекты со скоростью выше выставленного порога, благодаря чему по защитных характеристикам не уступает обычному баллистическому шлему. Не смотря на встроенные механизмы не требует внешней подзарядки. Под креплением расположен небольшой логотип в виде чёрной розы, а также надпись - Black Rose atelier."
 	icon_state = "mu88_horns"
@@ -437,3 +437,105 @@
 	clothing_flags = ALLOWINTERNALS
 	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR|HIDEFACIALHAIR
 	unique_reskin = null
+
+///////////////////////////////////////////////
+
+/obj/item/clothing/head/donator/bm/chetky_cap
+	name = "sport cap"
+	desc = "krutaya kepka."
+	icon_state = "chetky_cap"
+	item_state = "chetky_cap"
+	icon = 'modular_bluemoon/fluffs/icons/obj/clothing/head.dmi'
+	mob_overlay_icon = 'modular_bluemoon/fluffs/icons/mob/clothing/head.dmi'
+	lefthand_file = 'modular_bluemoon/fluffs/icons/mob/inhands/clothing_left.dmi'
+	righthand_file = 'modular_bluemoon/fluffs/icons/mob/inhands/clothing_right.dmi'
+	mutantrace_variation = STYLE_DIGITIGRADE | STYLE_NO_ANTHRO_ICON
+	var/flipped = FALSE
+
+/obj/item/clothing/head/donator/bm/chetky_cap/AltClick(mob/user)
+	. = ..()
+	if(!user.canUseTopic(src, BE_CLOSE, ismonkey(user)))
+		return
+	flip(user)
+	return TRUE
+
+/obj/item/clothing/head/donator/bm/chetky_cap/dropped(mob/user)
+	. = ..()
+	icon_state = "chetky_cap"
+	item_state = "chetky_cap"
+	flipped = FALSE
+
+/obj/item/clothing/head/donator/bm/chetky_cap/proc/flip(mob/user)
+	if(!user.incapacitated())
+		flipped = !flipped
+		if(flipped)
+			icon_state = "chetky_cap_flipped"
+			item_state = "chetky_cap_flipped"
+			to_chat(user, span_notice("Вы развернули кепку козырьком назад."))
+		else
+			icon_state = "chetky_cap"
+			item_state = "chetky_cap"
+			to_chat(user, span_notice("Вы надели кепку как обычно."))
+		user.update_inv_head()
+
+/obj/item/clothing/head/donator/bm/chetky_cap/examine(mob/user)
+	. = ..()
+	. += span_notice("Alt-click, чтобы развернуть кепку [flipped ? "вперёд" : "назад"].")
+
+///////////////////////////////////////////////
+
+/obj/item/clothing/head/donator/bm/fire_blossom
+	name = "Fire blossom"
+	desc = "Огненный цветок, растущий в дальних участках лаваленда при определённых условиях, не повторимых искусственно"
+	w_class = WEIGHT_CLASS_SMALL
+	icon_state = "fire_blossom"
+	light_color = "#ff6929"
+	light_power = 0.5
+	light_range = 0.75
+
+/obj/item/clothing/head/donator/bm/fire_blossom/Initialize(mapload)
+	. = ..()
+	set_light()
+
+///////////////////////////////////////////////
+
+/obj/item/clothing/head/helmet/sec/sallet
+	name = "Helmet with visor"
+	desc = "Standard helmet with a protective visor. When girls want to save face!"
+	icon = 'modular_bluemoon/fluffs/icons/obj/clothing/head.dmi'
+	mob_overlay_icon = 'modular_bluemoon/fluffs/icons/mob/clothing/head.dmi'
+	icon_state = "sec_helmet_zabralo"
+	item_state = "sec_helmet_zabralo"
+	mutantrace_variation = STYLE_DIGITIGRADE|STYLE_NO_ANTHRO_ICON
+
+/obj/item/clothing/head/helmet/sec/officer_hat
+	name = "Officer’s beret"
+	desc = "Want to stand out from the crowd? Grab this beret off an officer’s corpse!"
+	icon = 'modular_bluemoon/fluffs/icons/obj/clothing/head.dmi'
+	mob_overlay_icon = 'modular_bluemoon/fluffs/icons/mob/clothing/head.dmi'
+	icon_state = "officer_hat"
+	item_state = "officer_hat"
+	flags_inv = HIDEEARS //перезапись, чтобы берет не скрывал волосы
+	mutantrace_variation = STYLE_DIGITIGRADE|STYLE_NO_ANTHRO_ICON
+
+///////////////////////////////////////////////
+
+/obj/item/clothing/head/donator/bm/kila_mask
+	name = "Mask-1Щ 'Killa edition'"
+	desc = "It's a strange helmet, doesn't protect you from anything."
+	icon_state = "killa_mask"
+	item_state = "killa_mask"
+	lefthand_file = 'modular_bluemoon/fluffs/icons/mob/inhands/clothing_left.dmi'
+	righthand_file = 'modular_bluemoon/fluffs/icons/mob/inhands/clothing_right.dmi'
+	flags_inv = HIDEFACIALHAIR|HIDEFACE|HIDEEYES|HIDEEARS|HIDEHAIR
+
+///////////////////////////////////////////////
+
+/obj/item/clothing/head/donator/bm/renory_helmet
+	name = "Motorcycle Helmet"
+	desc = "Ярко-жёлтый мотоциклетный шлем с кошачьими ушками."
+	icon = 'modular_bluemoon/fluffs/icons/obj/clothing/head.dmi'
+	mob_overlay_icon = 'modular_bluemoon/fluffs/icons/mob/clothing/head.dmi'
+	icon_state = "renory_helmet"
+	item_state = "ygloves"
+	flags_inv = HIDEFACIALHAIR|HIDEFACE|HIDEEYES|HIDEEARS|HIDEHAIR

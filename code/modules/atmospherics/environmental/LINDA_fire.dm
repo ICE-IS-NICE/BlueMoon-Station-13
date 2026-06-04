@@ -2,6 +2,25 @@
 #define IGNITE_TURF_LOW_POWER 8
 #define IGNITE_TURF_HIGH_POWER 22
 
+/// Lavaland/mining Z: auxmos get_fuel_amount() still counts N2 — block air-only fuel so N2+O2 cannot sustain hotspots (matches genericfire N2 skip in reactions.dm).
+/proc/turf_has_fire_fuel(datum/gas_mixture/air, temp, z_level)
+	if(!air)
+		return FALSE
+	if(air.get_moles(GAS_PLASMA) > 0.5 || air.get_moles(GAS_TRITIUM) > 0.5)
+		return TRUE
+	if(air.get_fuel_amount(temp) < 0.5)
+		return FALSE
+	if(!is_mining_level(z_level))
+		return TRUE
+	for(var/gas_id in GLOB.gas_data.fire_temperatures)
+		if(gas_id == GAS_N2)
+			continue
+		if(!GLOB.gas_data.fire_temperatures[gas_id])
+			continue
+		if(air.get_moles(gas_id) > 0.5)
+			return TRUE
+	return FALSE
+
 /atom/proc/temperature_expose(datum/gas_mixture/air, exposed_temperature, exposed_volume)
 	return null
 
@@ -21,7 +40,7 @@
 
 	if (air.get_oxidation_power(exposed_temperature) < 0.5 || air.get_moles(GAS_HYPERNOB) > 5)
 		return
-	var/has_fuel = air.get_moles(GAS_PLASMA) > 0.5 || air.get_moles(GAS_TRITIUM) > 0.5 || air.get_fuel_amount(exposed_temperature) > 0.5
+	var/has_fuel = turf_has_fire_fuel(air, exposed_temperature, z)
 	if(active_hotspot)
 		if(soh)
 			if(has_fuel)
@@ -91,6 +110,7 @@
 			temperature = affected.return_temperature()
 			volume = affected.reaction_results["fire"]*FIRE_GROWTH_RATE
 			location.assume_air(affected)
+			qdel(affected)
 
 	for(var/A in location)
 		var/atom/AT = A
@@ -114,14 +134,14 @@
 
 	if(temperature < 5000) //This is where fire is very orange, we turn it into the normal fire texture here.
 		var/normal_amt = gauss_lerp(temperature, 1000, 3000)
-		heat_r = LERP(heat_r,255,normal_amt)
-		heat_g = LERP(heat_g,255,normal_amt)
-		heat_b = LERP(heat_b,255,normal_amt)
+		heat_r = lerp(heat_r,255,normal_amt)
+		heat_g = lerp(heat_g,255,normal_amt)
+		heat_b = lerp(heat_b,255,normal_amt)
 		heat_a -= gauss_lerp(temperature, -5000, 5000) * 128
 		greyscale_fire -= normal_amt
 	if(temperature > 40000) //Past this temperature the fire will gradually turn a bright purple
-		var/purple_amt = temperature < LERP(40000,200000,0.5) ? gauss_lerp(temperature, 40000, 200000) : 1
-		heat_r = LERP(heat_r,255,purple_amt)
+		var/purple_amt = temperature < lerp(40000,200000,0.5) ? gauss_lerp(temperature, 40000, 200000) : 1
+		heat_r = lerp(heat_r,255,purple_amt)
 	if(temperature > 200000 && temperature < 500000) //Somewhere at this temperature nitryl happens.
 		var/sparkle_amt = gauss_lerp(temperature, 200000, 500000)
 		var/mutable_appearance/sparkle_overlay = mutable_appearance('icons/effects/effects.dmi', "shieldsparkles")
@@ -133,7 +153,7 @@
 		lightning_overlay.blend_mode = BLEND_ADD
 		add_overlay(lightning_overlay)
 	if(temperature > 4500000) //This is where noblium happens. Some fusion-y effects.
-		var/fusion_amt = temperature < LERP(4500000,12000000,0.5) ? gauss_lerp(temperature, 4500000, 12000000) : 1
+		var/fusion_amt = temperature < lerp(4500000,12000000,0.5) ? gauss_lerp(temperature, 4500000, 12000000) : 1
 		var/mutable_appearance/fusion_overlay = mutable_appearance('icons/effects/atmospherics.dmi', "fusion_gas")
 		fusion_overlay.blend_mode = BLEND_ADD
 		fusion_overlay.alpha = fusion_amt * 255
@@ -141,19 +161,19 @@
 		rainbow_overlay.blend_mode = BLEND_ADD
 		rainbow_overlay.alpha = fusion_amt * 255
 		rainbow_overlay.appearance_flags = RESET_COLOR
-		heat_r = LERP(heat_r,150,fusion_amt)
-		heat_g = LERP(heat_g,150,fusion_amt)
-		heat_b = LERP(heat_b,150,fusion_amt)
+		heat_r = lerp(heat_r,150,fusion_amt)
+		heat_g = lerp(heat_g,150,fusion_amt)
+		heat_b = lerp(heat_b,150,fusion_amt)
 		add_overlay(fusion_overlay)
 		add_overlay(rainbow_overlay)
 
-	set_light_color(rgb(LERP(250, heat_r, greyscale_fire), LERP(160, heat_g, greyscale_fire), LERP(25, heat_b, greyscale_fire)))
+	set_light_color(rgb(lerp(250, heat_r, greyscale_fire), lerp(160, heat_g, greyscale_fire), lerp(25, heat_b, greyscale_fire)))
 
 	heat_r /= 255
 	heat_g /= 255
 	heat_b /= 255
 
-	color = list(LERP(0.3, 1, 1-greyscale_fire) * heat_r,0.3 * heat_g * greyscale_fire,0.3 * heat_b * greyscale_fire, 0.59 * heat_r * greyscale_fire,LERP(0.59, 1, 1-greyscale_fire) * heat_g,0.59 * heat_b * greyscale_fire, 0.11 * heat_r * greyscale_fire,0.11 * heat_g * greyscale_fire,LERP(0.11, 1, 1-greyscale_fire) * heat_b, 0,0,0)
+	color = list(lerp(0.3, 1, 1-greyscale_fire) * heat_r,0.3 * heat_g * greyscale_fire,0.3 * heat_b * greyscale_fire, 0.59 * heat_r * greyscale_fire,lerp(0.59, 1, 1-greyscale_fire) * heat_g,0.59 * heat_b * greyscale_fire, 0.11 * heat_r * greyscale_fire,0.11 * heat_g * greyscale_fire,lerp(0.11, 1, 1-greyscale_fire) * heat_b, 0,0,0)
 	alpha = heat_a
 
 #define INSUFFICIENT(path) (location.air.get_moles(path) < 0.5)
@@ -168,7 +188,7 @@
 	if((temperature < FIRE_MINIMUM_TEMPERATURE_TO_EXIST) || (volume <= 1))
 		qdel(src)
 		return
-	if(!location.air || location.air.get_moles(GAS_HYPERNOB) > 5 || location.air.get_oxidation_power() < 0.5 || (INSUFFICIENT(GAS_PLASMA) && INSUFFICIENT(GAS_TRITIUM) && location.air.get_fuel_amount() < 0.5))
+	if(!location.air || location.air.get_moles(GAS_HYPERNOB) > 5 || location.air.get_oxidation_power() < 0.5 || !turf_has_fire_fuel(location.air, temperature, location.z))
 		qdel(src)
 		return
 

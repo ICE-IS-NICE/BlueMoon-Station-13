@@ -25,14 +25,6 @@
 	category = list ("Engineering Machinery")
 	departmental_flags = DEPARTMENTAL_FLAG_ENGINEERING
 
-/datum/design/board/announcement_system
-	name = "Machine Design (Automated Announcement System Board)"
-	desc = "The circuit board for an automated announcement system."
-	id = "automated_announcement"
-	build_path = /obj/item/circuitboard/machine/announcement_system
-	category = list("Subspace Telecomms")
-	departmental_flags = DEPARTMENTAL_FLAG_ENGINEERING
-
 /datum/design/board/turbine_computer
 	name = "Computer Design (Power Turbine Console Board)"
 	desc = "The circuit board for a power turbine console."
@@ -70,7 +62,7 @@
 	desc = "The circuit board for a tesla coil."
 	id = "tesla_coil"
 	build_path = /obj/item/circuitboard/machine/tesla_coil
-	category = list ("Misc. Machinery")
+	category = list ("Engineering Machinery")
 	departmental_flags = DEPARTMENTAL_FLAG_ENGINEERING | DEPARTMENTAL_FLAG_SCIENCE
 
 /datum/design/board/rad_collector
@@ -78,7 +70,7 @@
 	desc = "The circuit board for a radiation collector array."
 	id = "rad_collector"
 	build_path = /obj/item/circuitboard/machine/rad_collector
-	category = list ("Misc. Machinery")
+	category = list ("Engineering Machinery")
 	departmental_flags = DEPARTMENTAL_FLAG_ENGINEERING | DEPARTMENTAL_FLAG_SCIENCE
 
 /datum/design/board/grounding_rod
@@ -86,16 +78,10 @@
 	desc = "The circuit board for a grounding rod."
 	id = "grounding_rod"
 	build_path = /obj/item/circuitboard/machine/grounding_rod
-	category = list ("Misc. Machinery")
+	category = list ("Engineering Machinery")
 	departmental_flags = DEPARTMENTAL_FLAG_ENGINEERING | DEPARTMENTAL_FLAG_SCIENCE
 
-/datum/design/board/ntnet_relay
-	name = "Machine Design (NTNet Relay Board)"
-	desc = "The circuit board for a wireless network relay."
-	id = "ntnet_relay"
-	build_path = /obj/item/circuitboard/machine/ntnet_relay
-	category = list("Subspace Telecomms")
-	departmental_flags = DEPARTMENTAL_FLAG_ENGINEERING | DEPARTMENTAL_FLAG_SCIENCE
+
 
 /datum/design/board/thermomachine
 	name = "Machine Design (Freezer/Heater Board)"
@@ -130,3 +116,11 @@
 	build_path = /obj/item/circuitboard/machine/spaceship_navigation_beacon
 	category = list ("Teleportation Machinery")
 	departmental_flags = DEPARTMENTAL_FLAG_ENGINEERING | DEPARTMENTAL_FLAG_SCIENCE
+
+/datum/design/board/circuit_imprinter
+	name = "Machine Design (Circuit Imprinter Board)"
+	desc = "The circuit board for a circuit imprinter."
+	id = "circuit_imprinter"
+	build_path = /obj/item/circuitboard/machine/circuit_imprinter
+	category = list("Production Machinery")
+	departmental_flags = DEPARTMENTAL_FLAG_ENGINEERING

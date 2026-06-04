@@ -327,7 +327,7 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 			playsound(src, 'sound/machines/engine_alert1.ogg', 100, FALSE, 30, 30, falloff_distance = 10)
 		if(SUPERMATTER_DANGER)
 			playsound(src, 'sound/machines/engine_alert2.ogg', 100, FALSE, 30, 30, falloff_distance = 10)
-			SSsecurity_level.minimum_security_level(SEC_LEVEL_ORANGE, TRUE, FALSE)
+			SSsecurity_level.minimum_security_level(SEC_LEVEL_ORANGE, FALSE)
 		if(SUPERMATTER_WARNING)
 			playsound(src, 'sound/machines/terminal_alert.ogg', 75)
 
@@ -739,6 +739,7 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 		if(damage > explosion_point)
 			countdown()
 
+	qdel(removed)
 	return TRUE
 
 /obj/machinery/power/supermatter_crystal/bullet_act(obj/item/projectile/Proj)
@@ -878,7 +879,6 @@ GLOBAL_DATUM(main_supermatter_engine, /obj/machinery/power/supermatter_crystal)
 			else
 				add_overlay(mutable_appearance(icon, "santa_hat", 3))
 			return COMPONENT_CANCEL_ATTACK_CHAIN
-		return NONE
 	if(istype(W, /obj/item/scalpel/supermatter))
 		var/obj/item/scalpel/supermatter/scalpel = W
 		to_chat(user, "<span class='notice'>You carefully begin to scrape \the [src] with \the [W]...</span>")

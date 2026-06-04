@@ -587,10 +587,6 @@
 	spillable = TRUE
 	obj_flags = UNIQUE_RENAME
 
-/obj/item/reagent_containers/food/drinks/bottle/blank/update_icon()
-	..()
-	add_overlay("[initial(icon_state)]shine")
-
 /obj/item/reagent_containers/food/drinks/bottle/blank/Initialize(mapload)
 	. = ..()
 	update_icon()
@@ -603,6 +599,7 @@
 
 /obj/item/reagent_containers/food/drinks/bottle/blank/update_overlays()
 	. = ..()
+	. += mutable_appearance(icon, "[initial(icon_state)]shine")
 	if(!cached_icon)
 		cached_icon = icon_state
 
@@ -687,7 +684,7 @@
 	if(I.get_temperature() && !active)
 		active = 1
 		var/message = "[ADMIN_LOOKUP(user)] has primed a [name] for detonation at [ADMIN_VERBOSEJMP(user)]."
-		GLOB.bombers += message
+		add_bomber_message(message)
 		message_admins(message)
 		log_game("[key_name(user)] has primed a [name] for detonation at [AREACOORD(user)].")
 

@@ -158,6 +158,13 @@
 
 	var/mob/living/carbon/human/master_commander = null //holding var for determining who own/controls a sentient simple animal (for sentience potions).
 
+	/// If TRUE, observers may click this mob to take control when it has no client and is alive.
+	var/playable_by_ghost = FALSE
+	/// Optional [tgui_alert] title when offering ghost control; defaults to capitalized [name].
+	var/ghost_possess_title = null
+	/// Optional question text; defaults to a generic possess prompt with [name].
+	var/ghost_possess_question = null
+
 /mob/living/simple_animal/Initialize(mapload)
 	. = ..()
 	GLOB.simple_animals[AIStatus] += src
@@ -177,7 +184,7 @@
 
 /mob/living/simple_animal/Destroy()
 	GLOB.simple_animals[AIStatus] -= src
-	if (SSnpcpool.state == SS_PAUSED && LAZYLEN(SSnpcpool.currentrun))
+	if (LAZYLEN(SSnpcpool.currentrun))
 		SSnpcpool.currentrun -= src
 
 	if(nest)
@@ -185,8 +192,18 @@
 		nest = null
 
 	var/turf/T = get_turf(src)
-	if (T && AIStatus == AI_Z_OFF)
-		SSidlenpcpool.idle_mobs_by_zlevel[T.z] -= src
+	if (AIStatus == AI_Z_OFF && islist(SSidlenpcpool.idle_mobs_by_zlevel))
+		if (T)
+			var/list/idle_z_list = SSidlenpcpool.idle_mobs_by_zlevel[T.z]
+			if(islist(idle_z_list))
+				idle_z_list -= src
+		else
+			// If we were moved to nullspace before Destroy(), we can no longer resolve our z-level.
+			// Remove from every idle z-list to avoid a dangling subsystem reference blocking GC.
+			for (var/i in 1 to SSidlenpcpool.idle_mobs_by_zlevel.len)
+				var/list/idle_z_list = SSidlenpcpool.idle_mobs_by_zlevel[i]
+				if(islist(idle_z_list))
+					idle_z_list -= src
 
 	return ..()
 
@@ -352,13 +369,13 @@
 		verb_say = pick(speak_emote)
 	. = ..()
 
-/mob/living/simple_animal/emote(act, m_type=1, message = null, intentional = FALSE)
+/mob/living/simple_animal/emote(act, m_type=1, message = null, intentional = FALSE, message_override = null)
 	if(stat)
 		return
 	if(act == "scream")
 		message = "makes a loud and pained whimper." //ugly hack to stop animals screaming when crushed :P
 		act = "me"
-	..(act, m_type, message)
+	..(act, m_type, message, intentional, message_override)
 
 /mob/living/simple_animal/proc/set_varspeed(var_value)
 	speed = var_value
@@ -526,7 +543,7 @@
 	toggle_ai(AI_OFF) // To prevent any weirdness.
 	can_have_ai = FALSE
 
-/mob/living/simple_animal/update_sight()
+/mob/living/simple_animal/update_sight(forced = TRUE)
 	if(!client)
 		return
 	if(stat == DEAD)
@@ -535,9 +552,10 @@
 		see_invisible = SEE_INVISIBLE_OBSERVER
 		return
 
-	see_invisible = initial(see_invisible)
-	see_in_dark = initial(see_in_dark)
-	sight = initial(sight)
+	if(forced)
+		see_invisible = initial(see_invisible)
+		see_in_dark = initial(see_in_dark)
+		sight = initial(sight)
 
 	if(client.eye != src)
 		var/atom/A = client.eye
@@ -608,6 +626,44 @@
 			l_hand.screen_loc = ui_hand_position(get_held_index_of_item(l_hand))
 			client.screen |= l_hand
 
+// Симпл мобы интеракты
+/mob/living/simple_animal/proc/toggle_throw_mode()
+	if(stat)
+		return
+	if(throw_mode)
+		throw_mode_off()
+	else
+		throw_mode_on()
+
+/mob/living/simple_animal/proc/throw_mode_off()
+	throw_mode = FALSE
+	if(client && hud_used && hud_used.throw_icon)
+		hud_used.throw_icon.icon_state = "act_throw_off"
+
+/mob/living/simple_animal/proc/throw_mode_on()
+	throw_mode = TRUE
+	if(client && hud_used && hud_used.throw_icon)
+		hud_used.throw_icon.icon_state = "act_throw_on"
+
+/mob/living/simple_animal/throw_item(atom/target)
+	. = ..()
+	throw_mode_off()
+	update_mouse_pointer()
+	if(!target || !isturf(loc))
+		return FALSE
+	if(istype(target, /atom/movable/screen))
+		return FALSE
+	var/obj/item/held_item = get_active_held_item()
+	if(!held_item)
+		return FALSE
+	visible_message(span_danger("[src] throws [held_item]."))
+	log_message("has thrown [held_item]", LOG_ATTACK)
+	do_attack_animation(target, no_effect = 1)
+	playsound(loc, 'sound/weapons/punchmiss.ogg', 50, 1, -1)
+	newtonian_move(get_dir(target, src))
+	held_item.safe_throw_at(target, held_item.throw_range, held_item.throw_speed, src)
+	DelayNextAction(CLICK_CD_THROW)
+
 //ANIMAL RIDING
 
 /mob/living/simple_animal/user_buckle_mob(mob/living/M, mob/user, check_loc)
@@ -647,6 +703,11 @@
 		else
 			stack_trace("Something attempted to set simple animals AI to an invalid state: [togglestatus]")
 
+/// Returns TRUE if any player is within given distance on the same z-level.
+/// Override: simple_animals use tighter NEARBY_PLAYER_DISTANCE (15) by default
+/mob/living/simple_animal/has_nearby_player(distance = NEARBY_PLAYER_DISTANCE)
+	return ..(distance)
+
 /mob/living/simple_animal/proc/consider_wakeup()
 	if (pulledby || shouldwakeup)
 		toggle_ai(AI_ON)
@@ -654,7 +715,7 @@
 /mob/living/simple_animal/adjustHealth(amount, updating_health = TRUE, forced = FALSE)
 	. = ..()
 	if(!ckey && !stat)//Not unconscious
-		if(AIStatus == AI_IDLE)
+		if(AIStatus == AI_IDLE || AIStatus == AI_Z_OFF)
 			toggle_ai(AI_ON)
 
 
@@ -703,6 +764,34 @@
 	. = ..()
 	if(. && length(src.damaged_sound))
 		playsound(src, pick(src.damaged_sound), 40, 1)
+
+/mob/living/simple_animal/attack_ghost(mob/user)
+	. = ..()
+	if(.)
+		return
+	if(!playable_by_ghost)
+		return
+	ghost_possess_animal(user)
+
+/// Lets a ghost take this mob if it is still free (same idea as gondola / venus trap).
+/mob/living/simple_animal/proc/ghost_possess_animal(mob/user)
+	if(key || stat || QDELETED(src) || !playable_by_ghost)
+		return
+	if(isobserver(user))
+		var/mob/dead/observer/O = user
+		if(!O.can_reenter_round())
+			to_chat(user, span_warning("Вы не можете войти в эту роль."))
+			return
+	var/title = ghost_possess_title || capitalize(name)
+	var/question = ghost_possess_question || "Вселиться в [name]?"
+	var/ghost_ask = tgui_alert(user, question, title, list("Да", "Нет"))
+	if(ghost_ask != "Да" || QDELETED(src))
+		return
+	if(key || stat)
+		to_chat(user, span_warning("Кто-то уже занял это существо!"))
+		return
+	user.transfer_ckey(src, FALSE)
+	log_game("[key_name(src)] took control of [name] ([type]).")
 
 /mob/living/simple_animal/examine(mob/user)
 	var/list/dat = ..()

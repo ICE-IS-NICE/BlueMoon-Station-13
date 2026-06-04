@@ -114,24 +114,21 @@
 	. += "<span class='notice'>Зарядов осталось: <b>[uses ? uses : "0"]</b>.</span>"
 
 /obj/item/card/id/examine_more(mob/user)
-	var/list/msg = list("<span class='notice'><i>Вы осмотрели [src] поближе и заметили следующее...</i></span>")
-
+	. = ..()
 	if(mining_points)
-		msg += "У карты в наличии [mining_points] ед. очков шахтёрского оборудования."
+		. += "У карты в наличии [mining_points] ед. очков шахтёрского оборудования."
 	if(registered_account)
-		msg += "Привязанный к ID-карте аккаунт записан на имя \"[registered_account.account_holder]\" и сообщает о балансе [registered_account.account_balance] кр."
+		. += "Привязанный к ID-карте аккаунт записан на имя \"[registered_account.account_holder]\" и сообщает о балансе [registered_account.account_balance] кр."
 		if(registered_account.account_job)
 			var/datum/bank_account/D = SSeconomy.get_dep_account(registered_account.account_job.paycheck_department)
 			if(D)
-				msg += "На балансе [budget_to_ru_genitive(D.account_holder)] находится [D.account_balance] кр."
-		msg += "<span class='info'>Alt-Click по ID, чтобы достать деньги из аккаунта в форме голочипов.</span>"
-		msg += "<span class='info'>Вы может добавить кредиты на аккаунт, прижимая голочипы, наличные или монеты к ID.</span>"
+				. += "На балансе [vocabulary_to_ru(GLOB.budget_ru_genitive, D.account_holder)] находится [D.account_balance] кр."
+		. += "<span class='info'>Alt-Click по ID, чтобы достать деньги из аккаунта в форме голочипов.</span>"
+		. += "<span class='info'>Вы может добавить кредиты на аккаунт, прижимая голочипы, наличные или монеты к ID.</span>"
 		if(registered_account.account_holder == user.real_name)
-			msg += "<span class='boldnotice'>Если вы потеряете эту ID-карту, вы можете переподключить свой аккаунт путём Alt-Click по пустой карте, держа её и введя свой ID-номер.</span>"
+			. += "<span class='boldnotice'>Если вы потеряете эту ID-карту, вы можете переподключить свой аккаунт путём Alt-Click по пустой карте, держа её и введя свой ID-номер.</span>"
 	else
-		msg += "<span class='info'>У данной карты нет зарегистрированного акканта. Alt-Click, чтобы добавить.</span>"
-
-	return msg
+		. += "<span class='info'>У данной карты нет зарегистрированного акканта. Alt-Click, чтобы добавить.</span>"
 
 /obj/item/card/emag/attackby(obj/item/W, mob/user, params)
 	if(istype(W, /obj/item/emagrecharge))
@@ -221,15 +218,18 @@
 			registered_account = new /datum/bank_account/remote/non_transferable(pick(GLOB.redacted_strings))
 
 /obj/item/card/id/Destroy()
-	if(bank_support == ID_LOCKED_BANK_ACCOUNT)
-		QDEL_NULL(registered_account)
-	else
-		registered_account = null
+	if(registered_account)
+		if(bank_support == ID_LOCKED_BANK_ACCOUNT)
+			QDEL_NULL(registered_account)
+		else
+			registered_account.bank_cards -= src
+			registered_account = null
 	if(my_store)
 		my_store.my_card = null
 		my_store = null
-	cached_flat_icon = null //SPLURT edit
-	QDEL_NULL(access)
+	cached_flat_icon = null
+	access = null
+	sticker = null
 	return ..()
 
 /obj/item/card/id/vv_edit_var(var_name, var_value)
@@ -250,6 +250,13 @@
 	if(istype(W, /obj/item/card_sticker))
 		var/obj/item/card_sticker/card_sticker = W
 		card_sticker.wrap(src, user)
+		return
+	//BLUEMOON ADD END
+	//BLUEMOON ADD метадоллары → лобби-счёт (не станционный банк)
+	if(istype(W, /obj/item/stack/metadollar))
+		var/obj/item/stack/metadollar/M = W
+		if(M.deposit_to_lobby_prefs(user, src))
+			playsound(src, 'sound/machines/terminal_success.ogg', 15, 1)
 		return
 	//BLUEMOON ADD END
 
@@ -336,7 +343,7 @@
 	. = FALSE
 	var/datum/bank_account/old_account = registered_account
 
-	var/new_bank_id = input(user, "Введите номер вашего банковского счета.", "Восстановление аккаунта", 111111) as num | null
+	var/new_bank_id = tgui_input_number(user, "Введите номер вашего банковского счета.", "Восстановление аккаунта", 111111, 999999, 111111, round_value = TRUE)
 
 	if (isnull(new_bank_id))
 		return
@@ -405,7 +412,7 @@
 		registered_account.bank_card_talk("<span class='warning'>ОШИБКА: НЕВОЗМОЖНО ВОЙТИ ВВИДУ ЗАПЛАНИРОВАННОГО ТЕХОБСЛУЖИВАНИЯ. РАБОТЫ ЗАПЛАНИРОВАНЫ К ЗАВЕРШЕНИЮ В ТЕЧЕНИЕ [(registered_account.withdrawDelay - world.time)/10] СЕКУНД.</span>", TRUE)
 		return
 
-	var/amount_to_remove =  input(user, "Как много кредитов вы хотите снять? Текущий баланс: [registered_account.account_balance]", "Снятие средств", 5) as num|null
+	var/amount_to_remove =  tgui_input_number(user, "Как много кредитов вы хотите снять? Текущий баланс: [registered_account.account_balance]", "Снятие средств", 1, min_value = 1, round_value = TRUE)
 
 	if(!amount_to_remove || amount_to_remove < 0)
 		return
@@ -439,7 +446,7 @@
 		if(registered_account.account_job)
 			var/datum/bank_account/D = SSeconomy.get_dep_account(registered_account.account_job.paycheck_department)
 			if(D)
-				. += "На балансе [budget_to_ru_genitive(D.account_holder)] находится [D.account_balance] кр."
+				. += "На балансе [vocabulary_to_ru(GLOB.budget_ru_genitive, D.account_holder)] находится [D.account_balance] кр."
 		. += "<span class='info'>Alt-Click по ID-карте, чтобы снять деньги с аккаунта в форме голочипов.</span>"
 		. += "<span class='info'>Вы можете внести кредиты на аккаунт, приложив голочипы, наличные или монеты к ID-карте.</span>"
 		if(registered_account.civilian_bounty)
@@ -484,7 +491,10 @@
 
 /obj/item/card/id/get_examine_string(mob/user, thats = FALSE)
 	if(uses_overlays)
-		return "[icon2html(get_cached_flat_icon(), user)] [thats? "That's ":""][get_examine_name(user)]" //displays all overlays in chat
+		var/job_tooltip = ""
+		if(assignment && get_assignment_name() != assignment)
+			job_tooltip = " [span_tooltip_fast(html_encode(assignment))]"
+		return "[icon2html(get_cached_flat_icon(), user)] [thats? "That's ":""][get_examine_name(user)][job_tooltip]" //displays all overlays in chat
 	return ..()
 
 /obj/item/card/id/proc/update_label(newname, newjob)
@@ -599,8 +609,8 @@
 		if(!user.canUseTopic(src, BE_CLOSE, FALSE))
 			return
 		if(popup_input == "Forge/Reset" && !forged)
-			var/input_name = stripped_input(user, "Какое имя вы хотите присвоить карте? Оставьте пустым для случайной генерации.", "Имя агентской карточки", registered_name ? registered_name : (ishuman(user) ? user.real_name : user.name), MAX_NAME_LEN)
-			input_name = reject_bad_name(input_name)
+			var/input_name = tgui_input_text(user, "Какое имя вы хотите присвоить карте? Оставьте пустым для случайной генерации.", "Имя агентской карточки", registered_name ? registered_name : (ishuman(user) ? user.real_name : user.name), MAX_NAME_LEN)
+			input_name = reject_bad_name(input_name, TRUE)
 			if(!input_name)
 				// Invalid/blank names give a randomly generated one.
 				if(user.gender == MALE)
@@ -610,7 +620,7 @@
 				else
 					input_name = "[pick(GLOB.first_names)] [pick(GLOB.last_names)]"
 
-			var/target_occupation = stripped_input(user, "Какую должность вы хотите присвоить карте?\nИмейте ввиду: это не даст соответствующих доступов.", "Должность агентской карточки", assignment ? assignment : "Assistant", MAX_MESSAGE_LEN)
+			var/target_occupation = tgui_input_text(user, "Какую должность вы хотите присвоить карте?\nИмейте ввиду: это не даст соответствующих доступов.", "Должность агентской карточки", assignment ? assignment : "Assistant", MAX_MESSAGE_LEN, encode = TRUE)
 			if(!target_occupation)
 				return
 			registered_name = input_name
@@ -760,6 +770,40 @@
 /obj/item/card/id/ert/chaplain/Initialize(mapload)
 	access = get_all_accesses()+get_ert_access("sec")-ACCESS_CHANGE_IDS
 	. = ..()
+
+/obj/item/card/id/ert/hsc
+	name = "\improper HSC Security ID"
+	desc = "Health Safety Control ID card."
+	icon = 'modular_bluemoon/phenyamomota/icon/obj/card.dmi'
+	icon_state = "hsc"
+	registered_name = "Health Safety Control Security"
+	assignment = "Health Safety Control Security"
+	special_assignment = "centcom"
+	var/overlay_state = "idsec"
+
+/obj/item/card/id/ert/hsc/Initialize(mapload)
+	. = ..()
+	update_icon()
+
+/obj/item/card/id/ert/hsc/update_overlays()
+	. = ..()
+	. += mutable_appearance(icon, overlay_state)
+
+/obj/item/card/id/ert/hsc/medic
+	name = "\improper HSC Medical ID"
+	desc = "Health Safety Control ID card."
+	icon_state = "hsc"
+	registered_name = "Health Safety Control Medic"
+	assignment = "Health Safety Control Medic"
+	overlay_state = "idmed"
+
+/obj/item/card/id/ert/hsc/assistant
+	name = "\improper HSC Assistant ID"
+	desc = "Health Safety Control ID card."
+	icon_state = "hsc"
+	registered_name = "Health Safety Control Assistant"
+	assignment = "Health Safety Control Assistant"
+	overlay_state = "idas"
 
 /obj/item/card/id/prisoner
 	name = "prisoner ID card"
@@ -939,13 +983,14 @@
 		if(!B.bank_cards.Find(src))
 			B.bank_cards += src
 		name = "departmental card ([department_name])"
-		desc = "К этой карте привязан [lowertext(budget_to_ru_nominative(department_name))]."
+		desc = "К этой карте привязан [lowertext(vocabulary_to_ru(GLOB.budget_ru_nominative, department_name))]."
 		icon_state = "[lowertext(department_ID)]_budget"
 	SSeconomy.dep_cards += src
 
 /obj/item/card/id/departmental_budget/Destroy()
 	SSeconomy.dep_cards -= src
-	registered_account.bank_cards -= src
+	if(registered_account)
+		registered_account.bank_cards -= src
 	return ..()
 
 /obj/item/card/id/departmental_budget/update_label()

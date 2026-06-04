@@ -49,8 +49,8 @@
 
 /turf/open/floor/wood/remove_tile(mob/user, silent = FALSE, make_tile = TRUE, forced = FALSE)
 	if(broken || burnt)
-		broken = 0
-		burnt = 0
+		broken = FALSE
+		burnt = FALSE
 		if(user && !silent)
 			to_chat(user, "<span class='notice'>You remove the broken planks.</span>")
 	else
@@ -67,7 +67,8 @@
 /turf/open/floor/wood/rust_heretic_act()
 	if(prob(70))
 		new /obj/effect/temp_visual/glowing_rune(src)
-	ChangeTurf(/turf/open/floor/plating/rust)
+	var/turf/after = ChangeTurf(/turf/open/floor/plating/rust)
+	after?.AddElement(/datum/element/heretic_rust)
 
 /turf/open/floor/wood/cold
 	initial_temperature = 255.37
@@ -271,10 +272,6 @@
 	if(!broken && !burnt)
 		if(smooth)
 			queue_smooth(src)
-	else
-		make_plating()
-		if(smooth)
-			queue_smooth_neighbors(src)
 
 /turf/open/floor/carpet/black
 	icon = 'icons/turf/floors/carpet_black.dmi'
@@ -396,12 +393,10 @@
 			A.narsie_act()
 
 /turf/open/floor/carpet/break_tile()
-	broken = TRUE
-	update_icon()
+	make_plating()
 
 /turf/open/floor/carpet/burn_tile()
-	burnt = TRUE
-	update_icon()
+	make_plating()
 
 /turf/open/floor/carpet/get_smooth_underlay_icon(mutable_appearance/underlay_appearance, turf/asking_turf, adjacency_dir)
 	return FALSE
@@ -413,6 +408,7 @@
 	canSmoothWith = list(/turf/open/floor/fakepit)
 	icon = 'icons/turf/floors/Chasms.dmi'
 	icon_state = "smooth"
+	floor_tile = /obj/item/stack/tile/fakepit
 	tiled_dirt = FALSE
 
 /turf/open/floor/fakepit/get_smooth_underlay_icon(mutable_appearance/underlay_appearance, turf/asking_turf, adjacency_dir)

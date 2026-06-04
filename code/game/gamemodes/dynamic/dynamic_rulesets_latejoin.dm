@@ -8,22 +8,35 @@
 	for(var/mob/P in candidates)
 		if(!P.client || !P.mind || !P.mind.assigned_role) // Are they connected?
 			candidates.Remove(P)
-		else if(!mode.check_age(P.client, minimum_required_age))
+			continue
+		if(!mode.check_age(P.client, minimum_required_age))
 			candidates.Remove(P)
-		else if(P.mind.assigned_role in restricted_roles) // Does their job allow for it?
+			continue
+		if(P.mind.assigned_role in restricted_roles) // Does their job allow for it?
 			candidates.Remove(P)
-		else if((exclusive_roles.len > 0) && !(P.mind.assigned_role in exclusive_roles)) // Is the rule exclusive to their job?
+			continue
+		if((exclusive_roles.len > 0) && !(P.mind.assigned_role in exclusive_roles)) // Is the rule exclusive to their job?
 			candidates.Remove(P)
+			continue
 		// BLUEMOON ADD START
-		else if(!(P.client.prefs.toggles & MIDROUND_ANTAG)) // У игрока отключен преф "быть антагонистом посреди раунда"
+		if(!(P.client.prefs.toggles & MIDROUND_ANTAG)) // У игрока отключен преф "быть антагонистом посреди раунда"
 			candidates.Remove(P)
+			continue
 		// BLUEMOON ADD END
-		else if(antag_flag_override)
+		if(antag_flag_override)
 			if(!(HAS_ANTAG_PREF(P.client, antag_flag_override)))
 				candidates.Remove(P)
+				continue
 		else
 			if(!(HAS_ANTAG_PREF(P.client, antag_flag)))
 				candidates.Remove(P)
+				continue
+		var/role_to_bancheck_lj = antag_flag_override ? antag_flag_override : antag_flag
+		if(role_to_bancheck_lj && (jobban_isbanned(P, role_to_bancheck_lj) || QDELETED(P)))
+			candidates.Remove(P)
+			continue
+		if(jobban_isbanned(P, ROLE_INTEQ) || QDELETED(P))
+			candidates.Remove(P)
 
 /datum/dynamic_ruleset/latejoin/ready(forced = 0)
 	if (!forced)
@@ -60,7 +73,7 @@
 	antag_datum = /datum/antagonist/traitor
 	antag_flag = "traitor late"
 	antag_flag_override = ROLE_TRAITOR
-	protected_roles = list("Expeditor", "Shaft Miner", "NanoTrasen Representative", "Internal Affairs Agent", "Blueshield", "Peacekeeper", "Brig Physician", "Security Officer", "Warden", "Detective", "Head of Security","Bridge Officer", "Captain", "Head of Personnel", "Quartermaster", "Chief Engineer", "Chief Medical Officer", "Research Director") //BLUEMOON CHANGES
+	protected_roles = list("NanoTrasen Representative", "Internal Affairs Agent", "Blueshield", "Peacekeeper", "Brig Physician", "Security Officer", "Warden", "Detective", "Head of Security","Bridge Officer", "Captain", "Head of Personnel", "Quartermaster", "Chief Engineer", "Chief Medical Officer", "Research Director") //BLUEMOON CHANGES
 	restricted_roles = list("AI", "Cyborg", "Positronic Brain")
 	required_candidates = 1
 	required_round_type = list(ROUNDTYPE_DYNAMIC_HARD, ROUNDTYPE_DYNAMIC_MEDIUM, ROUNDTYPE_DYNAMIC_LIGHT) // BLUEMOON ADD
@@ -159,7 +172,7 @@
 	antag_datum = /datum/antagonist/heretic
 	antag_flag = "heretic late"
 	antag_flag_override = ROLE_HERETIC
-	protected_roles = list("Expeditor", "Shaft Miner", "NanoTrasen Representative", "Internal Affairs Agent", "Blueshield", "Peacekeeper", "Brig Physician", "Security Officer", "Warden", "Detective", "Head of Security","Bridge Officer", "Captain", "Prisoner", "Head of Personnel", "Quartermaster", "Chief Engineer", "Chief Medical Officer", "Research Director")  //BLUEMOON CHANGES
+	protected_roles = list("NanoTrasen Representative", "Internal Affairs Agent", "Blueshield", "Peacekeeper", "Brig Physician", "Security Officer", "Warden", "Detective", "Head of Security","Bridge Officer", "Captain", "Prisoner", "Head of Personnel", "Quartermaster", "Chief Engineer", "Chief Medical Officer", "Research Director")  //BLUEMOON CHANGES
 	restricted_roles = list("AI", "Cyborg", "Positronic Brain")  //BLUEMOON CHANGES
 	required_round_type = list(ROUNDTYPE_DYNAMIC_HARD, ROUNDTYPE_DYNAMIC_MEDIUM) // BLUEMOON ADD; Существовал в тимбазе до удаления.
 	required_candidates = 1
@@ -180,9 +193,9 @@
 	antag_flag = "changeling late"
 	antag_flag_override = ROLE_CHANGELING
 	antag_datum = /datum/antagonist/changeling
-	protected_roles = list("Expeditor", "Prisoner", "Shaft Miner", "NanoTrasen Representative", "Internal Affairs Agent", "Security Officer", "Blueshield", "Peacekeeper", "Brig Physician", "Warden", "Detective", "Head of Security","Bridge Officer", "Captain", "Head of Personnel", "Quartermaster", "Chief Engineer", "Chief Medical Officer", "Research Director")
+	protected_roles = list("Expeditor", "Prisoner", "NanoTrasen Representative", "Internal Affairs Agent", "Security Officer", "Blueshield", "Peacekeeper", "Brig Physician", "Warden", "Detective", "Head of Security","Bridge Officer", "Captain", "Head of Personnel", "Quartermaster", "Chief Engineer", "Chief Medical Officer", "Research Director")
 	restricted_roles = list("AI", "Cyborg", "Positronic Brain")
-	required_round_type = list(ROUNDTYPE_DYNAMIC_HARD, ROUNDTYPE_DYNAMIC_MEDIUM, ROUNDTYPE_DYNAMIC_LIGHT) // BLUEMOON ADD
+	required_round_type = list(ROUNDTYPE_DYNAMIC_HARD, ROUNDTYPE_DYNAMIC_MEDIUM) // BLUEMOON ADD
 	required_candidates = 1
 	weight = 4
 	cost = 10
@@ -207,12 +220,12 @@
 	antag_flag = "bloodsucker late"
 	antag_flag_override = ROLE_BLOODSUCKER
 	antag_datum = /datum/antagonist/bloodsucker
-	protected_roles = list("Expeditor", "Prisoner", "Shaft Miner", "NanoTrasen Representative", "Internal Affairs Agent", "Security Officer", "Blueshield", "Peacekeeper", "Brig Physician", "Warden", "Detective", "Head of Security","Bridge Officer", "Captain", "Head of Personnel", "Quartermaster", "Chief Engineer", "Chief Medical Officer", "Research Director")
+	protected_roles = list("Expeditor", "Prisoner", "NanoTrasen Representative", "Internal Affairs Agent", "Security Officer", "Blueshield", "Peacekeeper", "Brig Physician", "Warden", "Detective", "Head of Security","Bridge Officer", "Captain", "Head of Personnel", "Quartermaster", "Chief Engineer", "Chief Medical Officer", "Research Director")
 	restricted_roles = list("AI", "Cyborg", "Positronic Brain")
 	enemy_roles = list("Blueshield", "Peacekeeper", "Brig Physician", "Security Officer", "Warden", "Detective", "Head of Security","Bridge Officer", "Captain") //BLUEMOON CHANGES
 	required_enemies = list(2,2,1,1,1,1,1,0,0,0)
 	required_candidates = 1
-	required_round_type = list(ROUNDTYPE_DYNAMIC_LIGHT) // BLUEMOON ADD
+	required_round_type = list(ROUNDTYPE_DYNAMIC_TEAMBASED) // BLUEMOON ADD
 	weight = 4
 	cost = 5
 	scaling_cost = 10

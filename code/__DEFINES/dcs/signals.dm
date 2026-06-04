@@ -236,7 +236,7 @@
 // /atom/movable signals
 #define COMSIG_MOVABLE_PRE_MOVE "movable_pre_move"					///from base of atom/movable/Moved(): (/atom)
 	#define COMPONENT_MOVABLE_BLOCK_PRE_MOVE 1
-#define COMSIG_MOVABLE_MOVED "movable_moved"					//from base of atom/movable/Moved(): (/atom, dir)
+#define COMSIG_MOVABLE_MOVED "movable_moved"					//from base of atom/movable/Moved(): (/atom, /atom/OldLoc, Dir, Forced)
 #define COMSIG_MOVABLE_CROSS "movable_cross"					//from base of atom/movable/Cross(): (/atom/movable)
 #define COMSIG_MOVABLE_CROSSED "movable_crossed"                //from base of atom/movable/Crossed(): (/atom/movable)
 #define COMSIG_MOVABLE_UNCROSS "movable_uncross"				//from base of atom/movable/Uncross(): (/atom/movable)
@@ -363,6 +363,10 @@
 #define COMSIG_ATOM_SET_LIGHT_FLAGS "atom_set_light_flags"
 ///Called right after the atom changes the value of light_flags to a different one, from base of [/atom/proc/set_light_flags]: (old_flags)
 #define COMSIG_ATOM_UPDATE_LIGHT_FLAGS "atom_update_light_flags"
+///Called right before the atom changes the value of light_height to a different one, from base [atom/proc/set_light_height]: (new_height)
+#define COMSIG_ATOM_SET_LIGHT_HEIGHT "atom_set_light_height"
+///Called right after the atom changes the value of light_height to a different one, from base of [/atom/proc/set_light_height]: (old_height)
+#define COMSIG_ATOM_UPDATE_LIGHT_HEIGHT "atom_update_light_height"
 
 // /client signals
 #define COMSIG_MOB_CLIENT_LOGOUT "mob_client_logout"				//sent when a mob/logout() starts: (client)
@@ -447,7 +451,7 @@
 #define COMSIG_CARBON_TACKLED "carbon_tackled"						//sends from tackle.dm on tackle completion
 #define COMSIG_CARBON_EMBED_RIP "item_embed_start_rip"						// defined twice, in carbon and human's topics, fired when interacting with a valid embedded_object to pull it out (mob/living/carbon/target, /obj/item, /obj/item/bodypart/L)
 #define COMSIG_CARBON_EMBED_REMOVAL "item_embed_remove_safe"		// called when removing a given item from a mob, from mob/living/carbon/remove_embedded_object(mob/living/carbon/target, /obj/item)
-
+#define COMSIG_CARBON_UPDATEHEALTH "comsig_carbon_updatehealth"		// called from /mob/living/carbon/updatehealth()
 // /mob/living/silicon signals
 #define COMSIG_ROBOT_UPDATE_ICONS "robot_update_icons"			//from base of robot/update_icons(): ()
 
@@ -517,6 +521,8 @@
 #define COMPONENT_MICROWAVE_SUCCESS (1<<0)
 ///called on item when created through microwaving (): (obj/machinery/microwave/M, cooking_efficiency)
 #define COMSIG_ITEM_MICROWAVE_COOKED "microwave_cooked"
+///called on the ingredient through microwawing: (result)
+#define COMSIG_ITEM_MICROWAVE_COOKED_FROM "item_microwave_cooked_from"
 /// Returned on "failure" - an item was produced but it was the default fail recipe
 #define COMPONENT_MICROWAVE_BAD_RECIPE (1<<1)
 // /obj/item signals for economy
@@ -570,9 +576,8 @@
 	//This uses all return values of COMSIG_IMPLANT_OTHER
 #define COMSIG_IMPLANT_REMOVING "implant_removing"				//from base of /obj/item/implant/proc/removed() (list/args)
 
-// /obj/item/pda signals
+// /obj/item/modular_computer/pda signals
 #define COMSIG_PDA_CHANGE_RINGTONE "pda_change_ringtone"		//called on pda when the user changes the ringtone: (mob/living/user, new_ringtone)
-	#define COMPONENT_STOP_RINGTONE_CHANGE 1
 
 // /obj/item/radio signals
 #define COMSIG_RADIO_NEW_FREQUENCY "radio_new_frequency"		//called from base of /obj/item/radio/proc/set_frequency(): (list/args)
@@ -848,3 +853,11 @@
 // BLUEMOON ADD — pregnancy signals
 #define COMSIG_PREGNANCY_STARTED "pregnancy_started"
 #define COMSIG_PREGNANCY_ENDED "pregnancy_ended"
+
+// interaction signals
+#define COMSIG_INTERACTION_ADJACENT "interaction_adjacent"
+#define COMSIG_INTERACTION_KISS		"interaction_kiss"
+
+// Research signals
+#define COMSIG_GLOB_RESEARCH_NODE_UNLOCKED "global_research_node_unlocked"	// Изучение любого научного узла, сигнализирующее о необходимости синхронизации
+#define COMSIG_GLOB_RESEARCH_BATCH_COMPLETE	"global_research_batch_complete"	// Успешная упаковка и отправка пакета научных нод рецепиентам

@@ -6,13 +6,14 @@
 	category = PROGRAM_CATEGORY_MISC
 	ui_header = "borg_mon.gif"
 	program_icon_state = "generic"
-	extended_desc = "This program allows access to standard security camera networks."
+	extended_desc = "Предоставляет доступ к стандартным сетям охранных камер станции."
 	requires_ntnet = TRUE
 	transfer_access = ACCESS_SECURITY
-	usage_flags = PROGRAM_CONSOLE | PROGRAM_LAPTOP
+	usage_flags = PROGRAM_CONSOLE | PROGRAM_LAPTOP | PROGRAM_PDA
 	size = 5
 	tgui_id = "NtosSecurEye"
 	program_icon = "eye"
+	available_on_ntnet = FALSE
 
 	var/list/network = list("ss13")
 	var/obj/machinery/camera/active_camera
@@ -54,7 +55,11 @@
 	cam_background.del_on_map_removal = FALSE
 
 /datum/computer_file/program/secureye/Destroy()
-	qdel(cam_screen)
+	if(cam_screen)
+		cam_screen.screen_loc = null
+		qdel(cam_screen)
+	for(var/atom/movable/screen/P in cam_plane_masters)
+		P.screen_loc = null
 	QDEL_LIST(cam_plane_masters)
 	qdel(cam_background)
 	return ..()

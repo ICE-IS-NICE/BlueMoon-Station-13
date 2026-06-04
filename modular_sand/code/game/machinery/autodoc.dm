@@ -164,6 +164,8 @@
 
 /obj/machinery/autodoc/attackby(obj/item/I, mob/user, params)
 	if(istype(I, organ_type))
+		if(processing)
+			return
 		if(!user.temporarilyRemoveItemFromInventory(I))
 			return
 		if(stored_organ)
@@ -176,7 +178,7 @@
 	else
 		return ..()
 
-/obj/machinery/autodoc/tool_act(mob/living/user, obj/item/I, tool_type)
+/obj/machinery/autodoc/tool_act(mob/living/user, obj/item/I)
 	if(user == occupant)
 		return FALSE
 	else

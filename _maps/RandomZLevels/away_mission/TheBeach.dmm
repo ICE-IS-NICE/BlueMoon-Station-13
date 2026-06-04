@@ -103,7 +103,7 @@
 	name = "Treasure Chest"
 	},
 /obj/item/clothing/head/pirate,
-/obj/item/clothing/glasses/eyepatch,
+/obj/item/clothing/glasses/cover/eyepatch,
 /obj/item/clothing/suit/pirate,
 /obj/item/melee/sabre{
 	desc = "This isn't real however it can trick someone into thinking you have something real..";
@@ -3358,7 +3358,7 @@
 /area/awaymission/beach)
 "uB" = (
 /obj/structure/rack/shelf,
-/obj/item/pda/neko,
+/obj/item/modular_computer/pda/neko,
 /turf/open/floor/wood/wood_parquet,
 /area/awaymission/beach)
 "uE" = (
@@ -5956,7 +5956,7 @@
 /area/awaymission/beach)
 "NQ" = (
 /obj/structure/rack/shelf,
-/obj/item/pda/chameleon/broken,
+/obj/item/modular_computer/pda/chameleon/broken,
 /turf/open/floor/wood/wood_parquet,
 /area/awaymission/beach)
 "NS" = (

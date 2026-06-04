@@ -14,14 +14,30 @@
 	exp_type = EXP_TYPE_SECURITY
 	considered_combat_role = TRUE //Brigger then shit yes it is
 	exp_type_department = EXP_TYPE_SECURITY
-	alt_titles = list("NT Management Defender", "Syndicate Prime-Defender", "Command Security", "Command Guard", "Command Bodyguard", "Sweet Boy", "Sweet Girl", "Combat Maid", "Syndicate Combat Maid", "Penis Case", "Blueguard", "Blueshit", "Captain Mattress", "Blueslut", "Red Shield")
 	custom_spawn_text = "офицер Синего Щита является представителем сторон отдела по защите Главенствующего Персонала в соответствии приоритету - от <b>секретаря мостика</b> до <b>капитана</b>. Офицер Синего Щита подчиняется <b>ВрИО капитана</b>, <b>капитану</b> и Центральному Командованию."
+	alt_titles = list(
+		"Prime-Defender",
+		"Blueguard",
+		"Blueshit",
+		"Blueslut",
+		"Captain Mattress",
+		"Combat Maid",
+		"Command Bodyguard",
+		"Command Guard",
+		"Command Security",
+		"Henchman",
+		"Management Defender",
+		"Penis Case",
+		"Red Shield",
+		"Sweet Boy",
+		"Sweet Girl"
+		)
 
 	outfit = /datum/outfit/job/blueshield
 	plasma_outfit = /datum/outfit/plasmaman/blueshield
 
-	access = list(ACCESS_SECURITY, ACCESS_SEC_DOORS, ACCESS_RESEARCH,  ACCESS_COURT, ACCESS_MAINT_TUNNELS, ACCESS_MORGUE, ACCESS_MEDICAL, ACCESS_WEAPONS, ACCESS_ENTER_GENPOP, ACCESS_LEAVE_GENPOP, ACCESS_MINERAL_STOREROOM, ACCESS_CARGO, ACCESS_HEADS, ACCESS_MAILSORTING, ACCESS_ENGINE, ACCESS_HOS, ACCESS_CE, ACCESS_CMO, ACCESS_QM, ACCESS_RD, ACCESS_BLUESHIELD)
-	minimal_access = list(ACCESS_SECURITY, ACCESS_SEC_DOORS, ACCESS_RESEARCH,  ACCESS_COURT, ACCESS_MAINT_TUNNELS, ACCESS_MORGUE, ACCESS_MEDICAL, ACCESS_WEAPONS, ACCESS_ENTER_GENPOP, ACCESS_LEAVE_GENPOP, ACCESS_MINERAL_STOREROOM, ACCESS_CARGO, ACCESS_HEADS, ACCESS_MAILSORTING, ACCESS_ENGINE, ACCESS_HOS, ACCESS_CE, ACCESS_CMO, ACCESS_QM, ACCESS_RD, ACCESS_BLUESHIELD)
+	access = list(ACCESS_SECURITY, ACCESS_SEC_DOORS, ACCESS_RESEARCH,  ACCESS_COURT, ACCESS_MAINT_TUNNELS, ACCESS_MORGUE, ACCESS_MEDICAL, ACCESS_WEAPONS, ACCESS_ENTER_GENPOP, ACCESS_LEAVE_GENPOP, ACCESS_MINERAL_STOREROOM, ACCESS_CARGO, ACCESS_HEADS, ACCESS_MAILSORTING, ACCESS_ENGINE,ACCESS_BLUESHIELD, ACCESS_PRODUCTION_SECURITY)
+	minimal_access = list(ACCESS_SECURITY, ACCESS_SEC_DOORS, ACCESS_RESEARCH,  ACCESS_COURT, ACCESS_MAINT_TUNNELS, ACCESS_MORGUE, ACCESS_MEDICAL, ACCESS_WEAPONS, ACCESS_ENTER_GENPOP, ACCESS_LEAVE_GENPOP, ACCESS_MINERAL_STOREROOM, ACCESS_CARGO, ACCESS_HEADS, ACCESS_MAILSORTING, ACCESS_ENGINE, ACCESS_BLUESHIELD, ACCESS_PRODUCTION_SECURITY)
 	paycheck = PAYCHECK_COMMAND
 	paycheck_department = ACCOUNT_SEC
 
@@ -37,13 +53,13 @@
 	name = "Blueshield"
 	jobtype = /datum/job/blueshield
 
-	belt = /obj/item/pda/security
+	belt = /obj/item/modular_computer/pda/security
 	ears = /obj/item/radio/headset/headset_blueshield
 	uniform = /obj/item/clothing/under/rank/blueshield
 	head = /obj/item/clothing/head/helmet/sec/blueshield
 	gloves = /obj/item/clothing/gloves/tackler/combat/insulated
 	glasses = /obj/item/clothing/glasses/hud/blueshield
-	suit = /obj/item/clothing/suit/armor/vest/bluesheid
+	suit = /obj/item/clothing/suit/armor/vest/blueshield
 	shoes = /obj/item/clothing/shoes/jackboots
 	suit_store = /obj/item/kitchen/knife/combat
 	r_pocket = /obj/item/sensor_device_command
@@ -63,13 +79,13 @@
 	name = "Syndicate Blueshield"
 	jobtype = /datum/job/blueshield
 
-	//belt = /obj/item/pda/syndicate/no_deto
+	//belt = /obj/item/modular_computer/pda/syndicate/no_deto
 	ears = /obj/item/radio/headset/headset_blueshield
 	uniform = /obj/item/clothing/under/rank/blueshield
 	head = /obj/item/clothing/head/helmet/sec/blueshield
 	gloves = /obj/item/clothing/gloves/tackler/combat/insulated
 	glasses = /obj/item/clothing/glasses/hud/blueshield
-	suit = /obj/item/clothing/suit/armor/vest/bluesheid
+	suit = /obj/item/clothing/suit/armor/vest/blueshield
 	shoes = /obj/item/clothing/shoes/jackboots/tall_default
 	suit_store = /obj/item/kitchen/knife/combat
 	l_pocket = /obj/item/sensor_device_command

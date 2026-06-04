@@ -61,8 +61,9 @@
 		dat += "No personality installed.<br>"
 		dat += "Searching for a personality... Press view available personalities to notify potential candidates."
 		dat += "<A href='byond://?src=[REF(src)];request=1'>\[View available personalities\]</a><br>"
-	user << browse(dat, "window=paicard")
-	onclose(user, "paicard")
+	var/datum/browser/popup = new(user, "paicard", "pAI Card")
+	popup.set_content(dat)
+	popup.open()
 	return
 
 /obj/item/paicard/Topic(href, href_list)
@@ -164,6 +165,11 @@
 
 /obj/item/paicard/proc/alertUpdate()
 	visible_message("<span class ='info'>[src] flashes a message across its screen, \"Additional personalities available for download.\"", "<span class='notice'>[src] bleeps electronically.</span>")
+
+/obj/item/paicard/syndicate
+	name = "Syndicate personal AI device"
+	desc = "A Syndicate-modified personal AI device. It seems to be deactivated."
+	icon_state = "pai"
 
 /obj/item/paicard/emp_act(severity)
 	. = ..()

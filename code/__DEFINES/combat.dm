@@ -107,6 +107,7 @@
 //click cooldowns, in tenths of a second, used for various combat actions
 #define CLICK_CD_MELEE 8
 #define CLICK_CD_RANGE 4
+#define CLICK_CD_THROW 8
 #define CLICK_CD_RAPID 2
 #define CLICK_CD_CLICK_ABILITY 6
 #define CLICK_CD_HANDCUFFED 10
@@ -260,6 +261,8 @@
 #define BODY_ZONE_PRECISE_R_HAND	"r_hand"
 #define BODY_ZONE_PRECISE_L_FOOT	"l_foot"
 #define BODY_ZONE_PRECISE_R_FOOT	"r_foot"
+
+#define BODY_ZONE_LIST_ALL list(BODY_ZONE_HEAD, BODY_ZONE_PRECISE_EYES, BODY_ZONE_PRECISE_MOUTH, BODY_ZONE_CHEST, BODY_ZONE_PRECISE_GROIN, BODY_ZONE_R_ARM, BODY_ZONE_L_ARM, BODY_ZONE_R_LEG, BODY_ZONE_L_LEG)
 
 //We will round to this value in damage calculations.
 #define DAMAGE_PRECISION 0.01

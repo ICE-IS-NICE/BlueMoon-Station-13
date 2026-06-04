@@ -42,6 +42,8 @@ GLOBAL_PROTECT(admin_verbs_admin)
 	/datum/admins/proc/toggleaooc,		/*toggles antag ooc on/off*/
 	/datum/admins/proc/toggleenter,		/*toggles whether people can join the current game*/
 	/datum/admins/proc/toggleguests,	/*toggles whether guests can join the current game*/
+	/datum/admins/proc/togglenightshift,	/*toggles night shift lighting on/off/auto*/
+	/datum/admins/proc/setsolartime,	/*sets solar time for nightshift verification*/
 	/datum/admins/proc/announce,		/*priority announce something to all clients.*/
 	/datum/admins/proc/set_admin_notice, /*announcement all clients see when joining the server.*/
 	/client/proc/admin_ghost,			/*allows us to ghost/reenter body at will*/
@@ -55,18 +57,11 @@ GLOBAL_PROTECT(admin_verbs_admin)
 	/client/proc/centcom_podlauncher,/*Open a window to launch a Supplypod and configure it or it's contents*/
 	/client/proc/check_antagonists,		/*shows all antags*/
 	/datum/admins/proc/access_news_network,	/*allows access of newscasters*/
-	/client/proc/jumptocoord,			/*we ghost and jump to a coordinate*/
+	/client/proc/admin_jump_to,			/*jump to interface*/
 	/client/proc/Getmob,				/*teleports a mob to our location*/
 	/client/proc/Getkey,				/*teleports a mob with a certain ckey to our location*/
-	/client/proc/game_panel,			/*game panel, allows to change game-mode etc*/
-	/client/proc/mail_panel,			/*BLUEMOON ADD - панель управления почтой*/
-	/client/proc/show_admin_ticket_stats, /*BLUEMOON ADD - панель статистики тикетов*/
 	/client/proc/fax_panel, /*send a paper to fax*/
 //	/client/proc/sendmob,				/*sends a mob somewhere*/ -Removed due to it needing two sorting procs to work, which were executed every time an admin right-clicked. ~Errorage
-	/client/proc/jumptoarea,
-	/client/proc/jumptokey,				/*allows us to jump to the location of a mob with a certain ckey*/
-	/client/proc/jumptomob,				/*allows us to jump to a specific mob*/
-	/client/proc/jumptoturf,			/*allows us to jump to a specific turf*/
 	/client/proc/admin_end_shift,		/*allows us to end the shift properly, also logs it*/
 	/client/proc/admin_call_shuttle,	/*allows us to call the emergency shuttle*/
 	/client/proc/admin_cancel_shuttle,	/*allows us to cancel the emergency shuttle, sending it back to centcom*/
@@ -85,6 +80,7 @@ GLOBAL_PROTECT(admin_verbs_admin)
 	/client/proc/toggle_AI_interact, /*toggle admin ability to interact with machines as an AI*/
 	/datum/admins/proc/open_shuttlepanel, /* Opens shuttle manipulator UI */
 	/datum/admins/proc/station_traits_panel, /* Opens station traits UI */
+	/client/proc/cmd_admin_set_birthday_person, /* Set birthday person for the birthday station trait */
 	/client/proc/deadchat,
 	/client/proc/toggleprayers,
 	// /client/proc/toggle_prayer_sound,
@@ -103,8 +99,10 @@ GLOBAL_PROTECT(admin_verbs_admin)
 	/datum/admins/proc/open_borgopanel,
 	/datum/admins/proc/change_laws,	//change AI laws
 	/datum/admins/proc/display_tags,
+	/client/proc/cmd_admin_set_starlight,	//BLUEMOON ADD dynamic starlight color
+	/client/proc/cmd_admin_toggle_falloff,	//BLUEMOON ADD runtime falloff toggle
 	)
-GLOBAL_LIST_INIT(admin_verbs_ban, list(/client/proc/unban_panel, /client/proc/DB_ban_panel, /client/proc/stickybanpanel))
+GLOBAL_LIST_INIT(admin_verbs_ban, list(/client/proc/DB_ban_panel, /client/proc/stickybanpanel))
 GLOBAL_PROTECT(admin_verbs_ban)
 GLOBAL_LIST_INIT(admin_verbs_sounds, list(/client/proc/play_local_sound, /client/proc/play_sound, /client/proc/manual_play_web_sound, /client/proc/set_round_end_sound))
 GLOBAL_PROTECT(admin_verbs_sounds)
@@ -137,9 +135,13 @@ GLOBAL_LIST_INIT(admin_verbs_fun, list(
 	/client/proc/roll_dices,					//CIT CHANGE - Adds dice verb
 	/client/proc/override_sm_delam, //SPLURT change - Adds SM toggle
 	/client/proc/thunderome,		//BLUEMOON ADD thunderome for ghosts
+	/client/proc/bm_admin_change_lobby_image,	//BLUEMOON LOBBY
+	/client/proc/bm_admin_set_lobby_notice,		//BLUEMOON LOBBY
+	/client/proc/bm_admin_set_lobby_video,		//BLUEMOON LOBBY
+	/client/proc/bm_admin_reload_lobby_html,	//BLUEMOON LOBBY
 	))
 GLOBAL_PROTECT(admin_verbs_fun)
-GLOBAL_LIST_INIT(admin_verbs_spawn, list(/datum/admins/proc/spawn_atom, /datum/admins/proc/podspawn_atom, /datum/admins/proc/spawn_cargo, /datum/admins/proc/spawn_objasmob, /client/proc/respawn_character))
+GLOBAL_LIST_INIT(admin_verbs_spawn, list(/datum/admins/proc/spawn_atom, /datum/admins/proc/podspawn_atom, /datum/admins/proc/spawn_cargo, /datum/admins/proc/spawn_objasmob, /client/proc/respawn_character, /client/proc/spawn_panel_verb))
 GLOBAL_PROTECT(admin_verbs_spawn)
 GLOBAL_LIST_INIT(admin_verbs_sensitive, list(
 	/client/proc/investigate_show		/*various admintools for investigation. Such as a singulo grief-log*/
@@ -176,6 +178,7 @@ GLOBAL_PROTECT(admin_verbs_debug)
 	/client/proc/restart_controller,
 	/client/proc/cmd_admin_list_open_jobs,
 	/client/proc/Debug2,
+	/client/proc/toggle_ntnet_debug,
 	/client/proc/cmd_debug_make_powernets,
 	/client/proc/cmd_debug_mob_lists,
 	/client/proc/cmd_admin_delete,
@@ -195,6 +198,8 @@ GLOBAL_PROTECT(admin_verbs_debug)
 	/client/proc/get_dynex_range,		//*debug verbs for dynex explosions.
 	/client/proc/set_dynex_scale,
 	/client/proc/cmd_display_del_log,
+	/client/proc/cmd_display_gc_queue,
+	/client/proc/cmd_gc_health_panel,
 	/client/proc/create_outfits,
 	/client/proc/modify_goals,
 	/client/proc/debug_huds,
@@ -204,6 +209,7 @@ GLOBAL_PROTECT(admin_verbs_debug)
 	/client/proc/clear_dynamic_transit,
 	/client/proc/toggle_medal_disable,
 	/client/proc/view_runtimes,
+	/client/proc/view_gc_failures,
 	/client/proc/pump_random_event,
 	/client/proc/cmd_display_init_log,
 	/client/proc/cmd_display_overlay_log,
@@ -223,7 +229,8 @@ GLOBAL_PROTECT(admin_verbs_debug)
 	// /client/proc/check_timer_sources,
 	/client/proc/toggle_cdn,
 	/client/proc/discordnulls,
-	/client/proc/generate_wikichem_list //DO NOT PRESS UNLESS YOU WANT SUPERLAG
+	/client/proc/generate_wikichem_list, //DO NOT PRESS UNLESS YOU WANT SUPERLAG
+	/client/proc/allow_browser_inspect
 	)
 GLOBAL_LIST_INIT(admin_verbs_possess, list(/proc/possess, /proc/release))
 GLOBAL_PROTECT(admin_verbs_possess)
@@ -287,6 +294,7 @@ GLOBAL_LIST_INIT(admin_verbs_hideable, list(
 	/client/proc/callproc,
 	/client/proc/callproc_datum,
 	/client/proc/Debug2,
+	/client/proc/toggle_ntnet_debug,
 	/client/proc/reload_admins,
 	/client/proc/cmd_debug_make_powernets,
 	/client/proc/startSinglo, // tg removed this
@@ -309,10 +317,13 @@ GLOBAL_LIST_INIT(admin_verbs_hideable, list(
 	/client/proc/admin_change_sec_level,
 	/client/proc/toggle_nuke,
 	/client/proc/cmd_display_del_log,
+	/client/proc/cmd_display_gc_queue,
+	/client/proc/cmd_gc_health_panel,
 	/client/proc/toggle_combo_hud,
 	/client/proc/debug_huds,
 	/client/proc/cmd_admin_man_up, //CIT CHANGE - adds man up verb
-	/client/proc/cmd_admin_man_up_global //CIT CHANGE - ditto
+	/client/proc/cmd_admin_man_up_global, //CIT CHANGE - ditto
+	/client/proc/allow_browser_inspect
 	))
 GLOBAL_PROTECT(admin_verbs_hideable)
 
@@ -444,9 +455,15 @@ GLOBAL_PROTECT(admin_verbs_hideable)
 	if(holder && mob)
 		if(mob.invisibility == INVISIBILITY_OBSERVER)
 			mob.invisibility = initial(mob.invisibility)
+			if(isliving(mob))
+				var/mob/living/L = mob
+				L.update_invisimin_data_huds(FALSE)
 			to_chat(mob, "<span class='boldannounce'>Invisimin off. Invisibility reset.</span>", confidential = TRUE)
 		else
 			mob.invisibility = INVISIBILITY_OBSERVER
+			if(isliving(mob))
+				var/mob/living/L = mob
+				L.update_invisimin_data_huds(TRUE)
 			to_chat(mob, "<span class='adminnotice'><b>Invisimin on. You are now as invisible as a ghost.</b></span>", confidential = TRUE)
 
 /client/proc/check_antagonists()
@@ -458,18 +475,6 @@ GLOBAL_PROTECT(admin_verbs_hideable)
 		if(!isobserver(usr) && SSticker.HasRoundStarted())
 			message_admins("[key_name_admin(usr)] checked antagonists.")
 	SSblackbox.record_feedback("tally", "admin_verb", 1, "Check Antagonists") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
-
-/client/proc/unban_panel()
-	set name = "Unbanning Panel"
-	set category = "Admin"
-	if(!check_rights(R_BAN))
-		return
-	if(holder)
-		if(CONFIG_GET(flag/ban_legacy_system))
-			holder.unbanpanel()
-		else
-			holder.DB_ban_panel()
-	SSblackbox.record_feedback("tally", "admin_verb", 1, "Unban Panel") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 
 // /client/proc/ban_panel()
 // 	set name = "Banning Panel"
@@ -485,6 +490,16 @@ GLOBAL_PROTECT(admin_verbs_hideable)
 	if(holder)
 		holder.Game()
 	SSblackbox.record_feedback("tally", "admin_verb", 1, "Game Panel") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
+
+/client/proc/spawn_panel_verb()
+	set name = "Spawn Panel"
+	set category = "Admin.Game"
+	if(!check_rights(R_SPAWN))
+		return
+	if(!holder.spawn_panel_instance)
+		holder.spawn_panel_instance = new /datum/spawnpanel(mob)
+	holder.spawn_panel_instance.ui_interact(mob)
+	SSblackbox.record_feedback("tally", "admin_verb", 1, "Spawn Panel")
 
 // /client/proc/poll_panel()
 // 	set name = "Server Poll Management"
@@ -645,7 +660,7 @@ GLOBAL_PROTECT(admin_verbs_hideable)
 		SSblackbox.record_feedback("tally", "admin_verb", 1, "Drop Dynamic Bomb") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 
 /client/proc/get_dynex_range()
-	set category = "Debug"
+	set category = "Debug.2) Info"
 	set name = "Get DynEx Range"
 	set desc = "Get the estimated range of a bomb, using explosive power."
 
@@ -656,7 +671,7 @@ GLOBAL_PROTECT(admin_verbs_hideable)
 	to_chat(usr, "Estimated Explosive Range: (Devastation: [round(range*0.25)], Heavy: [round(range*0.5)], Light: [round(range)])", confidential = TRUE)
 
 /client/proc/get_dynex_power()
-	set category = "Debug"
+	set category = "Debug.2) Info"
 	set name = "Get DynEx Power"
 	set desc = "Get the estimated required power of a bomb, to reach a specific range."
 
@@ -667,7 +682,7 @@ GLOBAL_PROTECT(admin_verbs_hideable)
 	to_chat(usr, "Estimated Explosive Power: [power]", confidential = TRUE)
 
 /client/proc/set_dynex_scale()
-	set category = "Debug"
+	set category = "Debug.6) Tweak"
 	set name = "Set DynEx Scale"
 	set desc = "Set the scale multiplier of dynex explosions. The default is 0.5."
 
@@ -851,7 +866,7 @@ GLOBAL_PROTECT(admin_verbs_hideable)
 
 /client/proc/populate_world(amount = 50 as num)
 	set name = "Populate World"
-	set category = "Debug"
+	set category = "Debug.7) Testing"
 	set desc = "(\"Amount of mobs to create\") Populate the world with test mobs."
 
 	if (amount > 0)
@@ -897,6 +912,6 @@ GLOBAL_PROTECT(admin_verbs_hideable)
 
 /client/proc/debugstatpanel()
 	set name = "Debug Stat Panel"
-	set category = "Debug"
+	set category = "Debug.2) Info"
 
 	src << output("", "statbrowser:create_debug")

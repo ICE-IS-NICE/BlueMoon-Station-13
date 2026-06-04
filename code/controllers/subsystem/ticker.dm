@@ -52,7 +52,7 @@ SUBSYSTEM_DEF(ticker)
 	var/queue_delay = 0
 	var/list/queued_players = list()		//used for join queues when the server exceeds the hard population cap
 
-	var/maprotatechecked = 0
+	var/maprotatechecked = FALSE
 
 	var/news_report
 
@@ -189,10 +189,6 @@ SUBSYSTEM_DEF(ticker)
 			else
 				send2chat(new /datum/tgs_message_content("Новый раунд начинается на [SSmapping.config.map_name], голосование за режим полным ходом!"), CONFIG_GET(string/chat_announce_new_game))
 			current_state = GAME_STATE_PREGAME
-			//SPLURT EDIT - Bring back old panel
-			//Everyone who wants to be an observer is now spawned
-			create_observers()
-			//SPLURT EDIT
 			SEND_SIGNAL(src, COMSIG_TICKER_ENTER_PREGAME)
 
 			fire()
@@ -207,7 +203,7 @@ SUBSYSTEM_DEF(ticker)
 				start_immediately = FALSE
 				mapvote_restarter_in_progress = TRUE
 				var/vote_type = CONFIG_GET(string/map_vote_type)
-				SSvote.initiate_vote("map","server", display = SHOW_RESULTS, votesystem = vote_type)
+				SSvote.initiate_vote("map","server", display = SHOW_RESULTS, votesystem = vote_type, forced = TRUE)
 				to_chat(world, span_boldwarning("Активировано голосование за смену карты из-за неудачного завершения прошлого раунда. После его окончания сервер будет перезапущен."))
 				return
 			#endif
@@ -216,12 +212,12 @@ SUBSYSTEM_DEF(ticker)
 			//lobby stats for statpanels
 			if(isnull(timeLeft))
 				timeLeft = max(0,start_at - world.time)
-			totalPlayers = 0
-			totalPlayersReady = 0
-			for(var/mob/dead/new_player/player in GLOB.player_list)
-				++totalPlayers
-				if(player.ready == PLAYER_READY_TO_PLAY)
-					++totalPlayersReady
+			totalPlayers = length(GLOB.new_player_list)
+			var/readied = 0
+			for(var/mob/dead/new_player/np as anything in GLOB.new_player_list)
+				if(np.ready)
+					readied++
+			totalPlayersReady = readied
 
 			if(start_immediately)
 				timeLeft = 0
@@ -249,9 +245,10 @@ SUBSYSTEM_DEF(ticker)
 				if(SSvote.mode && (SSvote.mode == "roundtype" || SSvote.mode == "dynamic" || SSvote.mode == "mode tiers"))
 					SSvote.result()
 					SSpersistence.SaveSavedVotes()
-					for(var/client/C in SSvote.voting)
-						C << browse(null, "window=vote;can_close=0")
-					SSvote.reset()
+					if(!SSvote.mode)
+						for(var/client/C in SSvote.voting)
+							C << browse(null, "window=vote;can_close=0")
+						SSvote.reset()
 				SEND_SIGNAL(src, COMSIG_TICKER_ENTER_SETTING_UP)
 				current_state = GAME_STATE_SETTING_UP
 				Master.SetRunLevel(RUNLEVEL_SETUP)
@@ -275,7 +272,7 @@ SUBSYSTEM_DEF(ticker)
 		if(GAME_STATE_PLAYING)
 			mode.process(wait * 0.1)
 			check_queue()
-			check_maprotate()
+			//check_maprotate()
 			scripture_states = scripture_unlock_alert(scripture_states)
 			//SSshuttle.autoEnd()
 
@@ -284,6 +281,7 @@ SUBSYSTEM_DEF(ticker)
 				toggle_ooc(TRUE) // Turn it on
 				toggle_aooc(TRUE) // Turn it on
 				toggle_dooc(TRUE)
+				check_maprotate()
 				declare_completion(force_ending)
 				Master.SetRunLevel(RUNLEVEL_POSTGAME)
 
@@ -449,8 +447,6 @@ SUBSYSTEM_DEF(ticker)
 				LAZYOR(player.client.prefs.characters_joined_as, player.new_character.real_name)
 			else
 				stack_trace("WARNING: Either a player did not have a new_character, did not have a client, or did not have preferences. This is VERY bad.")
-		else if(!(player.client?.prefs.toggles & TG_PLAYER_PANEL))
-			player.new_player_panel()
 		CHECK_TICK
 
 /datum/controller/subsystem/ticker/proc/collect_minds()
@@ -548,23 +544,23 @@ SUBSYSTEM_DEF(ticker)
 			queue_delay = 0
 
 /datum/controller/subsystem/ticker/proc/check_maprotate()
-	if (!CONFIG_GET(flag/maprotation))
+	if(!CONFIG_GET(flag/maprotation))
 		return
-	if (SSshuttle.emergency && SSshuttle.emergency.mode != SHUTTLE_ESCAPE || SSshuttle.canRecall())
-		return
-	if (maprotatechecked)
+	//if(SSshuttle.emergency && SSshuttle.emergency.mode != SHUTTLE_ESCAPE || SSshuttle.canRecall())
+	//	return
+	if(maprotatechecked)
 		return
 
-	maprotatechecked = 1
+	maprotatechecked = TRUE
 
 	//map rotate chance defaults to 75% of the length of the round (in minutes)
-	if (!prob((world.time/600)*CONFIG_GET(number/maprotatechancedelta)) && CONFIG_GET(flag/tgstyle_maprotation))
+	if(!prob((world.time/600)*CONFIG_GET(number/maprotatechancedelta)) && CONFIG_GET(flag/tgstyle_maprotation))
 		return
 	if(CONFIG_GET(flag/tgstyle_maprotation))
 		INVOKE_ASYNC(SSmapping, TYPE_PROC_REF(/datum/controller/subsystem/mapping, maprotate))
 	else
 		var/vote_type = CONFIG_GET(string/map_vote_type)
-		SSvote.initiate_vote("map","server", display = SHOW_RESULTS, votesystem = vote_type)
+		SSvote.initiate_vote("map","server", display = SHOW_RESULTS, votesystem = vote_type, forced = TRUE)
 
 /datum/controller/subsystem/ticker/proc/HasRoundStarted()
 	return current_state >= GAME_STATE_PLAYING
@@ -805,6 +801,9 @@ SUBSYSTEM_DEF(ticker)
 		'sound/roundend/gandon.ogg',
 		'sound/roundend/approachingbaystation.ogg'\
 		)
+
+	if(SSmetadollars?.metadollar_burn_round_notice)
+		to_chat(world, span_boldannounce("[SSmetadollars.metadollar_burn_round_notice]"))
 
 	SEND_SOUND(world, sound(round_end_sound))
 	text2file(login_music, "data/last_round_lobby_music.txt")

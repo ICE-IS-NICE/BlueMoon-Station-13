@@ -5,7 +5,7 @@
 		real_name = name
 	var/datum/atom_hud/data/human/medical/advanced/medhud = GLOB.huds[DATA_HUD_MEDICAL_ADVANCED]
 	medhud.add_to_hud(src)
-	for(var/datum/atom_hud/data/diagnostic/diag_hud in GLOB.huds)
+	for(var/datum/atom_hud/data/diagnostic/diag_hud in GLOB.all_huds)
 		diag_hud.add_to_hud(src)
 	faction += "[REF(src)]"
 	stamina_buffer = INFINITY
@@ -15,6 +15,21 @@
 /mob/living/prepare_huds()
 	..()
 	prepare_data_huds()
+
+/// Removes or restores med/sec/diag atom HUDs (floating icons) for admin invisimin stealth.
+/mob/living/proc/update_invisimin_data_huds(invisible)
+	if(invisible)
+		remove_from_all_data_huds()
+	else
+		if(ishuman(src))
+			var/mob/living/carbon/human/H = src
+			H.prepare_data_huds()
+		else
+			var/datum/atom_hud/data/human/medical/advanced/medhud = GLOB.huds[DATA_HUD_MEDICAL_ADVANCED]
+			medhud.add_to_hud(src)
+			for(var/datum/atom_hud/data/diagnostic/diag_hud in GLOB.all_huds)
+				diag_hud.add_to_hud(src)
+			prepare_data_huds()
 
 /mob/living/proc/prepare_data_huds()
 	med_hud_set_health()
@@ -41,6 +56,7 @@
 	cleanse_trait_datums()
 	GLOB.mob_living_list -= src
 	GLOB.ssd_mob_list -= src
+	SSmobs.currentrun -= src
 	QDEL_LIST(diseases)
 	return ..()
 
@@ -584,6 +600,11 @@
 /mob/living/proc/can_inject(mob/user, error_msg, target_zone, penetrate_thick = FALSE, bypass_immunity = FALSE)
 	return TRUE
 
+// Syringe-specific gate. Non-human mobs don't have human clothing layers, so this is a
+// thin wrapper around can_inject() that only converts pierce_level to penetrate_thick.
+/mob/living/proc/can_inject_syringe(mob/user, error_msg, target_zone, pierce_level = SYRINGE_PIERCE_NONE)
+	return can_inject(user, error_msg, target_zone, pierce_level >= SYRINGE_PIERCE_ALL)
+
 /mob/living/is_injectable(allowmobs = TRUE)
 	return (allowmobs && reagents && can_inject())
 
@@ -677,6 +698,10 @@
 			for(var/S in mind.spell_list)
 				var/obj/effect/proc_holder/spell/spell = S
 				spell.UpdateButton()
+
+		// Play a local revive sound for the revived mob with a small chance
+		if(prob(5))
+			SEND_SOUND(src, 'modular_bluemoon/sound/effects/re-zero.ogg')
 
 //proc used to remove all immobilisation effects + reset stamina
 /mob/living/proc/remove_CC(should_update_mobility = TRUE)
@@ -1066,15 +1091,13 @@
 	else if(!src.mob_negates_gravity())
 		step_towards(src,S)
 
-/mob/living/proc/do_jitter_animation(jitteriness)
-	var/amplitude = min(4, (jitteriness/100) + 1)
-	var/pixel_x_diff = rand(-amplitude, amplitude)
-	var/pixel_y_diff = rand(-amplitude/3, amplitude/3)
-	var/final_pixel_x = get_standard_pixel_x_offset(lying)
-	var/final_pixel_y = get_standard_pixel_y_offset(lying)
-	animate(src, pixel_x = pixel_x_diff, pixel_y = pixel_y_diff , time = 2, loop = 6, flags = ANIMATION_PARALLEL | ANIMATION_RELATIVE)
-	animate(pixel_x = final_pixel_x , pixel_y = final_pixel_y , time = 2)
-	floating_need_update = TRUE
+/// Helper proc that causes the mob to do a jittering animation by jitter_amount.
+/mob/living/proc/do_jitter_animation(jitter_amount = 100)
+	var/amplitude = min(4, (jitter_amount / 100) + 1)
+	var/pixel_w_diff = rand(-amplitude, amplitude)
+	var/pixel_z_diff = rand(-amplitude / 3, amplitude / 3)
+	animate(src, pixel_w = pixel_w_diff, pixel_z = pixel_z_diff , time = 0.2 SECONDS, loop = 6, flags = ANIMATION_RELATIVE|ANIMATION_PARALLEL)
+	animate(pixel_w = -pixel_w_diff , pixel_z = -pixel_z_diff , time = 0.2 SECONDS, flags = ANIMATION_RELATIVE)
 
 /mob/living/proc/get_temperature(datum/gas_mixture/environment)
 	var/loc_temp = environment ? environment.return_temperature() : T0C

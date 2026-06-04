@@ -28,6 +28,11 @@
 	var/max_stack_path = null
 	// BLUEMOON ADD END
 
+/obj/item/clothing/accessory/Destroy()
+	current_uniform = null
+	detached_pockets = null
+	return ..()
+
 /obj/item/clothing/accessory/proc/attach(obj/item/clothing/under/U, user)
 	var/datum/component/storage/storage = GetComponent(/datum/component/storage)
 	if(storage)
@@ -382,6 +387,8 @@
 						if(input)
 							SSblackbox.record_feedback("associative", "commendation", 1, list("commender" = "[user.real_name]", "commendee" = "[M.real_name]", "medal" = "[src]", "reason" = input))
 							GLOB.commendations += "[user.real_name] awarded <b>[M.real_name]</b> the <span class='medaltext'>[name]</span>! \n- [input]"
+							if(length(GLOB.commendations) > 500)
+								GLOB.commendations.Cut(1, length(GLOB.commendations) - 300)
 							commended = TRUE
 							desc += "<br>The inscription reads: [input] - [user.real_name]"
 							log_game("<b>[key_name(M)]</b> was given the following commendation by <b>[key_name(user)]</b>: [input]")
@@ -551,8 +558,8 @@
 	desc = "Armpatch one of superior forces of Federal Agencies on territory of SolGov. This one belongs to Agent."
 	icon_state = "sfp_patch"
 	item_state = "sfp_patch"
-	icon = 'modular_bluemoon/SmiLeY/icons/sfp_armpatch_obj.dmi'
-	mob_overlay_icon = 'modular_bluemoon/SmiLeY/icons/sfp_armpatch.dmi'
+	icon = 'modular_bluemoon/icons/obj/sfp_armpatch_obj.dmi'
+	mob_overlay_icon = 'modular_bluemoon/icons/mob/sfp_armpatch.dmi'
 	strip_delay = 60
 	dog_fashion = null
 

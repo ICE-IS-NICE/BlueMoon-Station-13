@@ -43,6 +43,10 @@
 	var/datum/tgui/parent_ui
 	/// Children of this UI
 	var/list/children = list()
+	/// The id of any ByondUi elements that we have opened
+	var/list/open_byondui_elements
+	/// Sequence number of the last processed act (dedup guard for WebView2 double-delivery)
+	var/last_act_seq = 0
 
 /**
  * public
@@ -86,7 +90,9 @@
  * return bool - TRUE if a new pooled window is opened, FALSE in all other situations including if a new pooled window didn't open because one already exists.
  */
 /datum/tgui/proc/open()
-	if(!user.client)
+	if(!user?.client)
+		return FALSE
+	if(!src_object || QDELETED(src_object))
 		return FALSE
 	if(window)
 		return FALSE
@@ -111,6 +117,8 @@
 	flush_queue |= window.send_asset(get_asset_datum(
 		/datum/asset/simple/namespaced/tgfont))
 	for(var/datum/asset/asset in src_object.ui_assets(user))
+		if(!asset)
+			continue
 		flush_queue |= window.send_asset(asset)
 	if (flush_queue)
 		user.client.browse_queue_flush()
@@ -141,14 +149,33 @@
 		// and we want to keep them around, to allow user to read
 		// the error message properly.
 		window.release_lock()
-		window.close(can_be_suspended)
+		window.close(can_be_suspended, logout)
 		src_object.ui_close(user)
 		SStgui.on_close(src)
+		if(user.client)
+			terminate_byondui_elements()
 	state = null
 	if(parent_ui && parent_ui != 500)
 		parent_ui.children -= src
 	parent_ui = null
 	qdel(src)
+
+/**
+ * public
+ *
+ * Closes all ByondUI elements, left dangling by a forceful TGUI exit,
+ * such as via Alt+F4, closing in non-fancy mode, or terminating the process
+ */
+/datum/tgui/proc/terminate_byondui_elements()
+	set waitfor = FALSE
+
+	var/client/owner = user?.client
+	if(!owner || !LAZYLEN(open_byondui_elements))
+		return
+
+	for(var/byondui_element in open_byondui_elements)
+		winset(owner, byondui_element, list("parent" = ""))
+	open_byondui_elements = null
 
 /**
  * public
@@ -245,6 +272,7 @@
 			"size" = window_size,
 			"fancy" = user.client.prefs.tgui_fancy,
 			"locked" = user.client.prefs.tgui_lock,
+			"scale" = user.client.get_window_scaling(),
 		),
 		"client" = list(
 			"ckey" = user.client.ckey,
@@ -322,6 +350,12 @@
 	// Pass act type messages to ui_act
 	if(type && copytext(type, 1, 5) == "act/")
 		var/act_type = copytext(type, 5)
+		// Dedup: WebView2 can deliver the same Topic() call twice
+		var/seq = text2num(href_list["seq"])
+		if(seq && seq == last_act_seq)
+			return FALSE
+		if(seq)
+			last_act_seq = seq
 		#ifdef TGUI_DEBUGGING
 		log_tgui(user, "Action: [act_type] [href_list["payload"]], Window: [window.id], Source: [src_object]")
 		#endif
@@ -350,6 +384,18 @@
 			LAZYINITLIST(src_object.tgui_shared_states)
 			src_object.tgui_shared_states[href_list["key"]] = href_list["value"]
 			SStgui.update_uis(src_object)
+		if("renderByondUi")
+			var/byond_ui_id = payload ? payload["renderByondUi"] : null
+			if(!byond_ui_id || LAZYLEN(open_byondui_elements) >= TGUI_MANAGED_BYONDUI_LIMIT)
+				return
+
+			LAZYOR(open_byondui_elements, byond_ui_id)
+		if("unmountByondUi")
+			var/byond_ui_id = payload ? payload["renderByondUi"] : null
+			if(!byond_ui_id)
+				return
+
+			LAZYREMOVE(open_byondui_elements, byond_ui_id)
 		if("fallback")
 			#ifdef TGUI_DEBUGGING
 			log_tgui(user, "Fallback Triggered: [href_list["payload"]], Window: [window.id], Source: [src_object]")
