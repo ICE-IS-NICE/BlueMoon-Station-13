@@ -884,9 +884,11 @@
 			if(ishuman(parent_mob))
 				var/mob/living/carbon/human/H = parent_mob
 				H.force_naked_flavor = !H.force_naked_flavor
+				if(H.force_naked_flavor)
+					H.balloon_alert_to_viewers("Доступно описание голого тела")
 				return TRUE
 			else
-				to_chat(parent_mob, span_warning("Unavailable for non-human mob."))
+				to_chat(parent_mob, span_warning("Unavailable for non-humanoid mob."))
 				return FALSE
 
 #undef INTERACTION_UNHOLY //SPLURT Edit
