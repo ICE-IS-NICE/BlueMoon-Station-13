@@ -112,6 +112,8 @@
 						span_userdanger("[user] пытается нацепить использованный презерватив тебе на [choice.name]."))
 		if(!do_after(user, 5 SECONDS, choice, progress_loc = user))
 			return
+		if(QDELETED(src) || QDELETED(M))
+			return
 	cc = choice.GetComponent(/datum/component/condom_clipping)
 	cc.clip_condom(choice, src, user, M)
 
