@@ -25,6 +25,8 @@
 		CRASH("condom_clipping component has been assigned to incompatable atom for some reason.")
 	switch(attached_condoms)
 		if(1)
+			if(istype(condom_overlay))
+				return
 			condom_overlay = new /mutable_appearance(condom)
 			condom_overlay.layer = -UNIFORM_LAYER
 			condom_overlay.transform *= 0.5
