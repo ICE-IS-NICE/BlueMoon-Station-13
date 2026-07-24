@@ -28656,7 +28656,6 @@
 /area/ruin/lavaland/powered)
 "knX" = (
 /obj/structure/grille,
-/obj/structure/grille,
 /turf/open/misc/grass,
 /area/security/prison/workout)
 "kox" = (
@@ -40021,7 +40020,7 @@
 "okh" = (
 /obj/structure/table,
 /obj/effect/decal/cleanable/dirt,
-/obj/item/organ/cyberimp/chest/reviver,
+/obj/item/organ/cyberimp/chest/reviver/sec_level,
 /obj/item/stack/sheet/mineral/gold{
 	amount = 3
 	},
@@ -54456,7 +54455,6 @@
 /area/ruin/lavaland/powered)
 "tqX" = (
 /obj/structure/window/plastitanium,
-/obj/structure/grille,
 /obj/structure/grille,
 /obj/structure/cable{
 	icon_state = "0-4"

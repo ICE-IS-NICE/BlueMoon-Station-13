@@ -11,7 +11,7 @@
 	exp_type = EXP_TYPE_CREW
 	exp_requirements = 60
 	alt_titles = list(
-		"Genetist Intern", //Стажер выше, для удобства
+		"Geneticist Intern", //Стажер выше, для удобства
 		"Bioengineer",
 		"Gene Tailor",
 		"Gene Therapist",
@@ -79,6 +79,7 @@
 	duffelbag = /obj/item/storage/backpack/duffelbag/syndie/med
 	box = /obj/item/storage/box/survival/syndie
 	pda_slot = ITEM_SLOT_BELT
-	backpack_contents = list(/obj/item/syndicate_uplink=1)
+	backpack_contents = list(/obj/item/syndicate_uplink/station=1)
+	accessory = list(/obj/item/clothing/accessory/permit/special/syndie_station)
 
 

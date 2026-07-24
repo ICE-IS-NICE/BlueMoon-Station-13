@@ -72,12 +72,14 @@
 /obj/item/clothing/head/helmet/space/hardsuit/rad_act(severity)
 	. = ..()
 	rad_count += severity
+	START_PROCESSING(SSobj, src) //гейгер спит вне радиации - будим на счёт
 
 /obj/item/clothing/head/helmet/space/hardsuit/process()
 	if(!rad_count)
 		grace_count++
-		if(grace_count == 2)
+		if(grace_count >= 2)
 			soundloop.last_radiation = 0
+			return PROCESS_KILL //декэить нечего: спим до следующего rad_act
 		return
 
 	grace_count = 0
@@ -563,7 +565,7 @@
 	item_state = "medical_hardsuit"
 	tail_state = "syndicate-winter"
 	slowdown = 0.35
-	allowed = list(/obj/item/flashlight, /obj/item/tank/internals, /obj/item/storage/firstaid, /obj/item/healthanalyzer, /obj/item/stack/medical)
+	allowed = list(/obj/item/flashlight, /obj/item/tank/internals, /obj/item/storage/firstaid, /obj/item/healthanalyzer, /obj/item/stack/medical, /obj/item/gun/medbeam)
 	armor = list(MELEE = 30, BULLET = 5, LASER = 10, ENERGY = 5, BOMB = 10, BIO = 100, RAD = 60, FIRE = 60, ACID = 75, WOUND = 15)
 	helmettype = /obj/item/clothing/head/helmet/space/hardsuit/medical
 	mutantrace_variation = STYLE_DIGITIGRADE|STYLE_ALL_TAURIC

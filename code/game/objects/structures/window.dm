@@ -213,12 +213,9 @@
 		balloon_alert_to_viewers("СТУК!!!")
 		take_damage(20, BRUTE, MELEE, 0)
 		var/mob/living/carbon/human/pro_user = user
-		if(user.active_hand_index == 1)
-			pro_user.apply_damage(10, BRUTE, BODY_ZONE_L_ARM, wound_bonus = 10)
-		else
-			pro_user.apply_damage(10, BRUTE, BODY_ZONE_R_ARM, wound_bonus = 10)
+		pro_user.apply_damage(11, BRUTE, user.active_hand_index == 1 ? BODY_ZONE_L_ARM : BODY_ZONE_R_ARM, wound_bonus = 10)
 		playsound(src, 'sound/effects/Glassknock.ogg', 100, 1)
-	else if(user.a_intent != INTENT_HARM)
+	else
 		user.visible_message("[user] стучится в [src].")
 		balloon_alert_to_viewers("Тук-тук!")
 		playsound(src, 'sound/effects/Glassknock.ogg', 50, 1)
@@ -729,6 +726,7 @@
 		/turf/closed/wall/rust,
 		/turf/closed/wall/r_wall/rust,
 		/turf/closed/wall/clockwork,
+		/turf/closed/indestructible/riveted,
 		/obj/structure/window/fulltile,
 		/obj/structure/window/reinforced/fulltile,
 		/obj/structure/window/reinforced/tinted/fulltile,
@@ -757,6 +755,7 @@
 		/turf/closed/wall/rust,
 		/turf/closed/wall/r_wall/rust,
 		/turf/closed/wall/clockwork,
+		/turf/closed/indestructible/riveted,
 		/obj/structure/window/fulltile,
 		/obj/structure/window/reinforced/fulltile,
 		/obj/structure/window/reinforced/tinted/fulltile,
@@ -786,6 +785,7 @@
 		/turf/closed/wall/rust,
 		/turf/closed/wall/r_wall/rust,
 		/turf/closed/wall/clockwork,
+		/turf/closed/indestructible/riveted,
 		/obj/structure/window/fulltile,
 		/obj/structure/window/reinforced/fulltile,
 		/obj/structure/window/reinforced/tinted/fulltile,
@@ -845,6 +845,7 @@
 		/turf/closed/wall/rust,
 		/turf/closed/wall/r_wall/rust,
 		/turf/closed/wall/clockwork,
+		/turf/closed/indestructible/riveted,
 		/obj/structure/window/fulltile,
 		/obj/structure/window/reinforced/fulltile,
 		/obj/structure/window/reinforced/tinted/fulltile,
@@ -858,7 +859,7 @@
 	icon = 'icons/obj/smooth_structures/rice_window.dmi'
 	icon_state = "ice_window"
 	max_integrity = 150
-	canSmoothWith = list(/obj/structure/window/fulltile, /obj/structure/window/reinforced/fulltile, /obj/structure/window/reinforced/tinted/fulltile, /obj/structure/window/plasma/fulltile, /obj/structure/window/plasma/reinforced/fulltile)
+	canSmoothWith = list(/obj/structure/window/fulltile, /obj/structure/window/reinforced/fulltile, /obj/structure/window/reinforced/tinted/fulltile, /obj/structure/window/plasma/fulltile, /obj/structure/window/plasma/reinforced/fulltile, /turf/closed/indestructible/riveted)
 	level = 3
 	glass_amount = 2
 
@@ -875,8 +876,8 @@
 	reinf = TRUE
 	heat_resistance = 1600
 	armor = list(MELEE = 50, BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 50, BIO = 100, RAD = 100, FIRE = 80, ACID = 100)
-	smooth = SMOOTH_TRUE
-	canSmoothWith = null
+	smooth = SMOOTH_MORE|SMOOTH_TRUE
+	canSmoothWith = list(/turf/closed/wall/mineral/titanium, /obj/machinery/door/airlock/shuttle, /obj/machinery/door/airlock, /obj/structure/window/shuttle, /obj/structure/shuttle/engine/heater, /obj/structure/falsewall/titanium, /turf/closed/indestructible/riveted)
 	explosion_block = 3
 	level = 3
 	glass_type = /obj/item/stack/sheet/titaniumglass
@@ -908,8 +909,8 @@
 	extra_reinforced = TRUE
 	heat_resistance = 1600
 	armor = list(MELEE = 50, BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 50, BIO = 100, RAD = 100, FIRE = 80, ACID = 100)
-	smooth = SMOOTH_TRUE
-	canSmoothWith = list(/turf/closed/wall/r_wall/syndicate, /turf/closed/wall/mineral/plastitanium, /obj/machinery/door/airlock/shuttle, /obj/machinery/door/airlock, /obj/structure/window/plastitanium, /obj/structure/shuttle/engine, /obj/structure/falsewall/plastitanium)
+	smooth = SMOOTH_MORE|SMOOTH_TRUE
+	canSmoothWith = list(/turf/closed/wall/r_wall/syndicate, /turf/closed/wall/mineral/plastitanium, /obj/machinery/door/airlock/shuttle, /obj/machinery/door/airlock, /obj/structure/window/plastitanium, /obj/structure/shuttle/engine, /obj/structure/falsewall/plastitanium, /turf/closed/indestructible/riveted)
 	explosion_block = 3
 	level = 3
 	glass_type = /obj/item/stack/sheet/plastitaniumglass
@@ -986,7 +987,7 @@
 /obj/structure/window/reinforced/clockwork/fulltile
 	icon_state = "clockwork_window"
 	smooth = SMOOTH_TRUE
-	canSmoothWith = null
+	canSmoothWith = list(/obj/structure/window/reinforced/clockwork/fulltile, /turf/closed/indestructible/riveted)
 	fulltile = TRUE
 	flags_1 = PREVENT_CLICK_UNDER_1
 	dir = FULLTILE_WINDOW_DIR
@@ -1014,7 +1015,7 @@
 	fulltile = TRUE
 	flags_1 = PREVENT_CLICK_UNDER_1
 	smooth = SMOOTH_TRUE
-	canSmoothWith = list(/obj/structure/window/paperframe, /obj/structure/mineral_door/paperframe)
+	canSmoothWith = list(/obj/structure/window/paperframe, /obj/structure/mineral_door/paperframe, /turf/closed/indestructible/riveted)
 	glass_amount = 2
 	glass_type = /obj/item/stack/sheet/paperframes
 	heat_resistance = 233
@@ -1090,7 +1091,7 @@
 
 /obj/structure/window/bronze/fulltile
 	icon_state = "clockwork_window"
-	canSmoothWith = null
+	canSmoothWith = list(/obj/structure/window/bronze/fulltile, /turf/closed/indestructible/riveted)
 	smooth = SMOOTH_TRUE
 	fulltile = TRUE
 	flags_1 = PREVENT_CLICK_UNDER_1

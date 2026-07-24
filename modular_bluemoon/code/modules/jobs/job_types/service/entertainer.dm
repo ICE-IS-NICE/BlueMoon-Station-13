@@ -34,6 +34,7 @@
 		"Bard",
 		"Beautician",
 		"Belly Massager",
+		"Body Massager",
 		"Cosmetologist",
 		"Cosplayer",
 		"Guide",
@@ -46,7 +47,7 @@
 		"Fortuneteller",
 		"Instructor",
 		"Manual Laborer",
-		"Massage therapist",
+		"Massage Therapist",
 		"Masseur",
 		"Musician",
 		"Palmist",
@@ -94,4 +95,4 @@
 	duffelbag = /obj/item/storage/backpack/duffelbag/syndie
 	box = /obj/item/storage/box/survival/syndie
 	pda_slot = ITEM_SLOT_BELT
-	backpack_contents = list(/obj/item/syndicate_uplink=1)
+	backpack_contents = list(/obj/item/syndicate_uplink/station=1)

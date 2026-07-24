@@ -133,7 +133,7 @@
 		/obj/item/organ/cyberimp/chest/chem_implant/plus,
 		/obj/item/organ/cyberimp/arm/shield,
 		/obj/item/organ/cyberimp/arm/esword{zone=BODY_ZONE_L_ARM},
-		/obj/item/organ/eyes/robotic/thermals,
+		/obj/item/organ/eyes/robotic/toggled/thermals,
 		/obj/item/organ/cyberimp/chest/thrusters,
 		/obj/item/organ/heart/bioaegis/t3,
 		/obj/item/organ/liver/bioaegis/t3,
@@ -145,7 +145,7 @@
 	mask = /obj/item/clothing/mask/gas/sechailer/swat
 	suit_store = /obj/item/gun/energy/modular_laser_rifle/zealstar
 	l_pocket = /obj/item/gun/energy/pulse/pistol/loyalpin
-	shoes = /obj/item/clothing/shoes/magboots/advance/debug
+	shoes = /obj/item/clothing/shoes/magboots/syndie/advance
 
 	backpack_contents = list(/obj/item/storage/box/survival/centcom_max=1,\
 		/obj/item/storage/box/ert_commander=1,
@@ -160,7 +160,7 @@
 		/obj/item/organ/cyberimp/chest/chem_implant/plus,
 		/obj/item/organ/cyberimp/arm/gun/laser,
 		/obj/item/organ/cyberimp/arm/combat{zone=BODY_ZONE_L_ARM},
-		/obj/item/organ/eyes/robotic/thermals,
+		/obj/item/organ/eyes/robotic/toggled/thermals,
 		/obj/item/organ/cyberimp/chest/thrusters,
 		/obj/item/organ/heart/bioaegis/t3/antag,
 		/obj/item/organ/liver/bioaegis/t3/antag,
@@ -204,7 +204,8 @@
 		/obj/item/storage/firstaid/brute=1,\
 		/obj/item/storage/firstaid/fire=1,\
 		/obj/item/storage/box/ammo/wt=1,\
-		/obj/item/gun/energy/e_gun/dragnet=1,
+		/obj/item/gun/energy/e_gun/dragnet=1,\
+		/obj/item/gun/energy/e_gun/nuclear/ert=1,\
 		)
 
 	cybernetic_implants = list(
@@ -232,6 +233,7 @@
 	suit_store = /obj/item/gun/energy/modular_laser_rifle
 	l_pocket = /obj/item/gun/ballistic/revolver/requiem
 	belt = /obj/item/storage/belt/military/ert_max
+	shoes = /obj/item/clothing/shoes/magboots/syndie/advance
 
 
 	backpack_contents = list(/obj/item/storage/box/survival/centcom=1,\
@@ -250,7 +252,7 @@
 		/obj/item/organ/cyberimp/chest/chem_implant/plus,
 		/obj/item/organ/cyberimp/arm/shield,
 		/obj/item/organ/cyberimp/arm/esword{zone=BODY_ZONE_L_ARM},
-		/obj/item/organ/eyes/robotic/thermals,
+		/obj/item/organ/eyes/robotic/toggled/thermals,
 		/obj/item/organ/cyberimp/chest/thrusters,
 		/obj/item/organ/heart/bioaegis/t3,
 		/obj/item/organ/liver/bioaegis/t3,
@@ -278,7 +280,7 @@
 		/obj/item/organ/cyberimp/chest/chem_implant/plus,
 		/obj/item/organ/cyberimp/arm/gun/laser,
 		/obj/item/organ/cyberimp/arm/combat{zone=BODY_ZONE_L_ARM},
-		/obj/item/organ/eyes/robotic/thermals,
+		/obj/item/organ/eyes/robotic/toggled/thermals,
 		/obj/item/organ/cyberimp/chest/thrusters,
 		/obj/item/organ/heart/bioaegis/t3/antag,
 		/obj/item/organ/liver/bioaegis/t3/antag,
@@ -362,6 +364,7 @@
 	suit = /obj/item/clothing/suit/space/hardsuit/ert/alert/med
 	suit_store = /obj/item/gun/energy/modular_laser_rifle
 	l_pocket = /obj/item/gun/ballistic/revolver/requiem
+	shoes = /obj/item/clothing/shoes/magboots/syndie/advance
 
 	backpack_contents = list(/obj/item/storage/box/survival/centcom=1,
 		/obj/item/gun/energy/e_gun/nuclear/ert=1,
@@ -411,7 +414,7 @@
 		/obj/item/organ/cyberimp/chest/chem_implant/plus,
 		/obj/item/organ/cyberimp/arm/surgery/advanced,
 		/obj/item/organ/cyberimp/arm/combat{zone=BODY_ZONE_L_ARM},
-		/obj/item/organ/eyes/robotic/thermals,
+		/obj/item/organ/eyes/robotic/toggled/thermals,
 		/obj/item/organ/cyberimp/chest/thrusters,
 		/obj/item/organ/heart/bioaegis/t3/antag,
 		/obj/item/organ/liver/bioaegis/t3/antag,
@@ -439,7 +442,7 @@
 
 	cybernetic_implants = list(
 		/obj/item/organ/cyberimp/eyes/hud/security,
-		/obj/item/organ/eyes/robotic/shield,
+		/obj/item/organ/eyes/robotic/toggled/w_shield,
 		/obj/item/organ/cyberimp/chest/nutrimentextreme,
 		/obj/item/organ/cyberimp/chest/chem_implant,
 		/obj/item/organ/cyberimp/arm/toolset,
@@ -469,7 +472,7 @@
 
 	cybernetic_implants = list(
 		/obj/item/organ/cyberimp/eyes/hud/security,
-		/obj/item/organ/eyes/robotic/shield,
+		/obj/item/organ/eyes/robotic/toggled/w_shield,
 		/obj/item/organ/cyberimp/chest/nutrimentextreme,
 		/obj/item/organ/cyberimp/chest/chem_implant,
 		/obj/item/organ/cyberimp/arm/toolset/advanced,
@@ -491,6 +494,7 @@
 	suit = /obj/item/clothing/suit/space/hardsuit/ert/alert/engi
 	suit_store = /obj/item/gun/energy/modular_laser_rifle
 	l_pocket = /obj/item/gun/ballistic/revolver/requiem
+	shoes = /obj/item/clothing/shoes/magboots/syndie/advance
 
 
 	backpack_contents = list(/obj/item/storage/box/survival/centcom=1,\
@@ -506,7 +510,7 @@
 
 	cybernetic_implants = list(
 		/obj/item/organ/cyberimp/eyes/hud/security,
-		/obj/item/organ/eyes/robotic/shield,
+		/obj/item/organ/eyes/robotic/toggled/w_shield,
 		/obj/item/organ/cyberimp/chest/nutrimentextreme,
 		/obj/item/organ/cyberimp/chest/chem_implant,
 		/obj/item/organ/cyberimp/arm/toolset/advanced,
@@ -539,7 +543,7 @@
 		/obj/item/organ/cyberimp/chest/chem_implant/plus,
 		/obj/item/organ/cyberimp/arm/toolset/advanced,
 		/obj/item/organ/cyberimp/arm/combat{zone=BODY_ZONE_L_ARM},
-		/obj/item/organ/eyes/robotic/thermals,
+		/obj/item/organ/eyes/robotic/toggled/thermals,
 		/obj/item/organ/cyberimp/chest/thrusters,
 		/obj/item/organ/heart/bioaegis/t3/antag,
 		/obj/item/organ/liver/bioaegis/t3/antag,
@@ -647,7 +651,7 @@
 		/obj/item/organ/cyberimp/chest/chem_implant/plus,
 		/obj/item/organ/cyberimp/arm/shield,
 		/obj/item/organ/cyberimp/arm/esword{zone=BODY_ZONE_L_ARM},
-		/obj/item/organ/eyes/robotic/thermals,
+		/obj/item/organ/eyes/robotic/toggled/thermals,
 		/obj/item/organ/cyberimp/chest/thrusters,
 	)
 
@@ -679,7 +683,7 @@
 		/obj/item/organ/cyberimp/chest/chem_implant/plus,
 		/obj/item/organ/cyberimp/arm/shield,
 		/obj/item/organ/cyberimp/arm/esword{zone=BODY_ZONE_L_ARM},
-		/obj/item/organ/eyes/robotic/thermals,
+		/obj/item/organ/eyes/robotic/toggled/thermals,
 		/obj/item/organ/cyberimp/chest/thrusters,
 	)
 
@@ -745,7 +749,7 @@
 		/obj/item/organ/cyberimp/eyes/hud/security,
 		/obj/item/organ/cyberimp/chest/nutrimentextreme,
 		/obj/item/organ/cyberimp/chest/chem_implant/plus,
-		/obj/item/organ/eyes/robotic/thermals,
+		/obj/item/organ/eyes/robotic/toggled/thermals,
 		/obj/item/organ/cyberimp/mouth/breathing_tube,
 	)
 

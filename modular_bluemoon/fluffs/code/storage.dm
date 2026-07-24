@@ -47,6 +47,14 @@
 	for(var/i in 1 to 4)
 		new /obj/item/modkit/twilight_spike(src)
 
+/obj/item/storage/backpack/krieg
+	name = "Рюкзак Крига"
+	desc = "Подоходный рюкзак Корпуса Смерти \"КРИГ\". Выглядит потёртым, на нём зияет золотая эмблема."
+	icon_state = "krieg_backpack"
+	item_state = "krieg_backpack"
+	icon = 'modular_bluemoon/fluffs/icons/obj/clothing/accessories.dmi'
+	mob_overlay_icon = 'modular_bluemoon/fluffs/icons/mob/clothing/accessories.dmi'
+
 /obj/item/storage/backpack/martian
 	name = "Martian Backpack"
 	desc = "Некий Марсианский Артефакт, использующийся в качестве рюкзака. Ткань ощущается довольно прочной. Это точно можно использовать в качестве оружия!"
@@ -262,9 +270,15 @@
 	new /obj/item/modkit/katana_kit(src)
 	new /obj/item/modkit/nebular_t_kit(src)
 	new /obj/item/modkit/supernova_kit(src)
-	new /obj/item/modkit/pulsar_kit(src)
+	new /obj/item/modkit/pulsar_knife_kit(src)
 	new /obj/item/clothing/under/donator/bm/concord(src)
-
+	new /obj/item/modkit/quasar_kit(src)
+	new /obj/item/modkit/comet_kit(src)
+	new /obj/item/modkit/neutron_kit(src)
+	new /obj/item/modkit/spectral_kit(src)
+	new /obj/item/modkit/pulsar_kit(src)
+	new /obj/item/modkit/lapkee_arm_shield_kit(src)
+	new /obj/item/modkit/white_belt_kit(src)
 //////////////////////////////////////////////////
 
 /obj/item/storage/backpack/satchel/sport_abibas_bag
@@ -274,3 +288,36 @@
 	mob_overlay_icon = 'modular_bluemoon/fluffs/icons/mob/clothing/storage.dmi'
 	icon_state = "abibas_back"
 	item_state = "abibas_back"
+
+/obj/item/modkit/white_belt_kit
+	name = "White security belt Kit"
+	desc = "A modkit for making a brig officer webbing into a White security belt."
+	product = /obj/item/storage/belt/security/webbing/ds/lapkee_belt
+	fromitem = list(/obj/item/storage/belt/security/webbing/ds)
+
+/obj/item/storage/belt/security/webbing/ds/lapkee_belt
+	DONATE_ITEM_TOOLTIP_PARENT
+	name = "White security belt"
+	icon = 'modular_bluemoon/fluffs/icons/obj/clothing/belts.dmi'
+	mob_overlay_icon = 'modular_bluemoon/fluffs/icons/mob/clothing/belt.dmi'
+	icon_state = "lapkee_belt"
+	item_state = "lapkee_belt"
+	content_overlays = TRUE
+
+/obj/item/melee/baton/get_belt_overlay()
+	if(istype(loc, /obj/item/storage/belt/security/webbing/ds/lapkee_belt))
+		return mutable_appearance('modular_bluemoon/fluffs/icons/obj/clothing/belts.dmi', "lapkee_baton")
+
+	return ..()
+
+/obj/item/melee/baton/stunsword/get_belt_overlay()
+	if(istype(loc, /obj/item/storage/belt/security/webbing/ds/lapkee_belt))
+		return mutable_appearance('modular_bluemoon/fluffs/icons/obj/clothing/belts.dmi',"lapkee_stunsword")
+
+	return ..()
+
+/obj/item/melee/baton/stunsword/stunkatana/get_belt_overlay()
+	if(istype(loc, /obj/item/storage/belt/security/webbing/ds/lapkee_belt))
+		return mutable_appearance('modular_bluemoon/fluffs/icons/obj/clothing/belts.dmi',"lapkee_stunsword")
+
+	return ..()

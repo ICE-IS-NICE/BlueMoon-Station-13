@@ -47,7 +47,7 @@
 	wound_resistance = 10
 	scars_covered_by_clothes = FALSE
 
-/obj/item/bodypart/head/can_dismember(obj/item/I)
+/obj/item/bodypart/head/can_dismembered()
 	if(owner && !((owner.stat == DEAD) || owner.InFullCritical()))
 		return FALSE
 	return ..()
@@ -80,6 +80,9 @@
 		C = source
 	else
 		C = owner
+
+	if(!C)
+		return
 
 	real_name = C.real_name
 	if(HAS_TRAIT(C, TRAIT_HUSK))

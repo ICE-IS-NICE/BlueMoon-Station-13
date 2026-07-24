@@ -24,8 +24,8 @@ Difficulty: Very Hard
 /mob/living/simple_animal/hostile/megafauna/colossus
 	name = "colossus"
 	desc = "A monstrous creature protected by heavy shielding."
-	health = 2500
-	maxHealth = 2500
+	health = 3000
+	maxHealth = 3000
 	attack_verb_continuous = "judges"
 	attack_verb_simple = "judge"
 	attack_sound = 'sound/magic/clockwork/ratvar_attack.ogg'
@@ -213,7 +213,7 @@ Difficulty: Very Hard
 /obj/item/projectile/colossus
 	name ="death bolt"
 	icon_state= "chronobolt"
-	damage = 25
+	damage = 35
 	armour_penetration = 100
 	pixels_per_second = TILES_TO_PIXELS(5)
 	eyeblur = 0
@@ -735,6 +735,7 @@ GLOBAL_VAR(blackbox_smartfridge)
 	START_PROCESSING(SSobj, src)
 
 /obj/structure/closet/stasis/Entered(atom/A)
+	. = ..() //родитель ведёт important_recursive_contents (слух/клиент внутри шкафа)
 	if(isliving(A) && holder_animal)
 		var/mob/living/L = A
 		L.mob_transforming = 1

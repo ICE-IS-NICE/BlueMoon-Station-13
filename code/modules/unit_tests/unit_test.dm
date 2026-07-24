@@ -47,7 +47,16 @@ GLOBAL_VAR_INIT(focused_tests, focused_tests())
 	var/focus = FALSE
 	var/succeeded = TRUE
 	var/list/allocated
+	/// Allocated instances whose Destroy() refuses non-forced deletion (e.g. lighting_object);
+	/// cleaned up with qdel(force = TRUE) so they don't leak into subsequent tests
+	var/list/allocated_force_qdel
 	var/list/fail_reasons
+	/// This test validates production-map content and is excluded from the
+	/// LOWMEMORYMODE hermetic profile. The full-map profile runs only these tests.
+	var/requires_full_map = FALSE
+	/// Подстроки рантаймов, которые тест ОЖИДАЕТ (канарейки-гварды со stack_trace):
+	/// совпавший рантайм не проваливает тест. Матч по findtext с текстом ошибки.
+	var/list/allowed_runtime_patterns
 
 	var/static/datum/turf_reservation/reservation
 
@@ -60,20 +69,31 @@ GLOBAL_VAR_INIT(focused_tests, focused_tests())
 	if (isnull(reservation))
 		reservation = SSmapping.RequestBlockReservation(5, 5)
 
-	for (var/turf/reserved_turf in reservation.reserved_turfs)
-		reserved_turf.ChangeTurf(/turf/open/floor/plasteel)
-
 	allocated = new
+	allocated_force_qdel = new
 	run_loc_floor_bottom_left = locate(reservation.bottom_left_coords[1], reservation.bottom_left_coords[2], reservation.bottom_left_coords[3])
 	run_loc_floor_top_right = locate(reservation.top_right_coords[1], reservation.top_right_coords[2], reservation.top_right_coords[3])
 
+	// Свет СТРОГО до сброса зоны: create_lighting_for_zlevel может уйти в полный краул z
+	// с CHECK_TICK-снами (self-heal гард видит недофлашенную отложку конкурентного краула,
+	// например шаттлового on-demand инита транзитного z на раундстарте). Если спать ПОСЛЕ
+	// сброса турфов, за время сна успевает отработать SSair: края зоны граничат с космосом
+	// резервного z и вентилируются, по зоне расползаются градиенты - и воздухочувствительные
+	// тесты (atmos_stalled_turf_rests и родня) флачат в зависимости от таймингов раннера.
+	// Сброс зоны - последний шаг, между ним и Run() снов нет.
 	create_lighting_for_zlevel(run_loc_floor_bottom_left.z)
+
+	for (var/turf/reserved_turf in reservation.reserved_turfs)
+		reserved_turf.ChangeTurf(/turf/open/floor/plasteel)
 
 	TEST_ASSERT(isfloorturf(run_loc_floor_bottom_left), "run_loc_floor_bottom_left was not a floor ([run_loc_floor_bottom_left])")
 	TEST_ASSERT(isfloorturf(run_loc_floor_top_right), "run_loc_floor_top_right was not a floor ([run_loc_floor_top_right])")
 
 /datum/unit_test/Destroy()
 	QDEL_LIST(allocated)
+	for(var/thing in allocated_force_qdel)
+		qdel(thing, force = TRUE)
+	allocated_force_qdel.Cut()
 	// clear the test area
 	for (var/turf/turf in block(locate(1, 1, run_loc_floor_bottom_left.z), locate(world.maxx, world.maxy, run_loc_floor_bottom_left.z)))
 		for (var/content in turf.contents)
@@ -84,6 +104,13 @@ GLOBAL_VAR_INIT(focused_tests, focused_tests())
 
 /datum/unit_test/proc/Run()
 	TEST_FAIL("Run() called parent or not implemented")
+
+/// TRUE = этот рантайм ожидаем тестом (проверка канарейки) и не должен его валить.
+/datum/unit_test/proc/runtime_allowed(exception/E)
+	for(var/pattern in allowed_runtime_patterns)
+		if(findtext("[E]", pattern))
+			return TRUE
+	return FALSE
 
 /datum/unit_test/proc/Fail(reason = "No reason", file = "OUTDATED_TEST", line = 1)
 	succeeded = FALSE
@@ -220,18 +247,44 @@ GLOBAL_VAR_INIT(focused_tests, focused_tests())
 /proc/RunUnitTests()
 	CHECK_TICK
 
+	// Поздний посев станционных комнат (ticker.dm, addtimer +60с после раундстарта)
+	// иначе идёт параллельно тестам: immediate-GC тесты с нулевыми таймаутами доводят
+	// его qdel-нутые атомы до del() прямо из списка InitializeAtoms - шторм
+	// world-обходов и фантомные warnfail в счётчиках. Сеем синхронно до первого
+	// теста; таймер потом отработает вхолостую по пустому списку лендмарков.
+	SSmapping.seedStation(TRUE)
+
 	var/list/tests_to_run = subtypesof(/datum/unit_test)
 	var/list/focused_tests = list()
+	var/list/test_results = list()
 	for (var/_test_to_run in tests_to_run)
 		var/datum/unit_test/test_to_run = _test_to_run
 		if (initial(test_to_run.focus))
 			focused_tests += test_to_run
 	if(length(focused_tests))
 		tests_to_run = focused_tests
+	else
+		var/list/profile_tests = list()
+		for(var/_test_to_run in tests_to_run)
+			var/datum/unit_test/test_to_run = _test_to_run
+			var/include_test = TRUE
+			#ifdef UNIT_TEST_PROFILE_HERMETIC
+			include_test = !initial(test_to_run.requires_full_map)
+			#endif
+			#ifdef UNIT_TEST_PROFILE_FULL_MAP
+			include_test = initial(test_to_run.requires_full_map)
+			#endif
+			if(include_test)
+				profile_tests += test_to_run
+			else
+				test_results[test_to_run] = list(
+					"status" = UNIT_TEST_SKIPPED,
+					"message" = "Skipped by unit test profile",
+					"name" = test_to_run,
+				)
+		tests_to_run = profile_tests
 
 	tests_to_run = sortTim(tests_to_run, GLOBAL_PROC_REF(cmp_unit_test_priority))
-
-	var/list/test_results = list()
 
 	for(var/unit_path in tests_to_run)
 		CHECK_TICK //We check tick first because the unit test we run last may be so expensive that checking tick will lock up this loop forever
@@ -252,6 +305,19 @@ GLOBAL_VAR_INIT(focused_tests, focused_tests())
 	//We have to call this manually because del_text can preceed us, and SSticker doesn't fire in the post game
 	SSticker.ready_for_reboot = TRUE
 	SSticker.standard_reboot()
+
+/// Roundstart callbacks run before ticker flips to PLAYING and PostSetup is
+/// asynchronous. Poll those explicit readiness conditions instead of sleeping
+/// an arbitrary ten seconds before every test run.
+/proc/RunUnitTestsWhenReady(deadline)
+	if(isnull(deadline))
+		deadline = world.time + 2 MINUTES
+	if(world.time > deadline)
+		CRASH("Unit test round bootstrap did not finish ticker PostSetup within two minutes")
+	if(!SSticker.HasRoundStarted() || !SSticker.setup_done)
+		addtimer(CALLBACK(GLOBAL_PROC, GLOBAL_PROC_REF(RunUnitTestsWhenReady), deadline), world.tick_lag)
+		return
+	RunUnitTests()
 
 // /datum/map_template/unit_tests
 // 	name = "Unit Tests Zone"

@@ -1,8 +1,13 @@
 //Vars that will not be copied when using /DuplicateObject
+//signal_procs/active_timers: шальная копия рождает "регистрации", которых никто
+//не делал (подвисшие ключи-датумы), а Destroy клона гасит таймеры оригинала.
+//important_recursive_contents/spatial_grid_key/client_mobs_in_contents: клон
+//объявил бы себя держателем чужого содержимого и травил ячейки спатиал-грида
 GLOBAL_LIST_INIT(duplicate_forbidden_vars,list(
 	"tag", "datum_components", "area", "type", "loc", "locs", "vars", "parent", "parent_type", "verbs", "ckey", "key",
 	"power_supply", "contents", "reagents", "stat", "x", "y", "z", "group", "atmos_adjacent_turfs", "comp_lookup",
-	"pixloc"
+	"pixloc", "signal_procs", "signal_enabled", "active_timers", "important_recursive_contents", "spatial_grid_key",
+	"client_mobs_in_contents"
 	))
 
 GLOBAL_LIST_INIT(duplicate_forbidden_vars_by_type, typecacheof_assoc_list(list(
@@ -117,15 +122,20 @@ GLOBAL_LIST_INIT(duplicate_forbidden_vars_by_type, typecacheof_assoc_list(list(
 		B.icon_state = old_icon_state1
 
 		for(var/obj/O in T)
+			// Proximity checkers are spawned by proximity_monitor datums; copying them orphans them (no monitor ref).
+			if(istype(O, /obj/effect/abstract/proximity_checker))
+				continue
 			var/obj/O2 = DuplicateObject(O , perfectcopy=TRUE, newloc = B, nerf=nerf_weapons, holoitem=TRUE)
 			if(!O2)
 				continue
+			copiedobjs += O2
 			copiedobjs += O2.GetAllContents()
 
 		for(var/mob/M in T)
 			if(iscameramob(M))
 				continue // If we need to check for more mobs, I'll add a variable
 			var/mob/SM = DuplicateObject(M , perfectcopy=TRUE, newloc = B, holoitem=TRUE)
+			copiedobjs += SM
 			copiedobjs += SM.GetAllContents()
 
 		for(var/V in T.vars - GLOB.duplicate_forbidden_vars)
@@ -141,5 +151,6 @@ GLOBAL_LIST_INIT(duplicate_forbidden_vars_by_type, typecacheof_assoc_list(list(
 		for(var/turf/T1 in toupdate)
 			CALCULATE_ADJACENT_TURFS(T1)
 
+	rebuild_duplicated_proximity_monitors(copiedobjs)
 
 	return copiedobjs

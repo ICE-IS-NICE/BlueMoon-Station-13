@@ -42,6 +42,10 @@ GLOBAL_LIST_EMPTY(station_turfs)
 	/// If there's a tile over a basic floor that can be ripped out
 	var/overfloor_placed = FALSE
 
+	///ухо спатиал-грида, назначенное на этот турф текущим запросом
+	///get_hearers_in_view(); живёт только внутри одного вызова
+	var/mob/oranges_ear/assigned_oranges_ear
+
 /turf/vv_edit_var(var_name, new_value)
 	var/static/list/banned_edits = list("x", "y", "z")
 	if(var_name in banned_edits)
@@ -61,6 +65,11 @@ GLOBAL_LIST_EMPTY(station_turfs)
 
 	// by default, vis_contents is inherited from the turf that was here before
 	vis_contents.Cut()
+	// Маплоадер (initTemplateBounds) инициализирует турфы ПОСЛЕ того, как ChangeTurf
+	// привязал lighting_object к vis_contents - возвращаем ссылку, чтобы vis-канал
+	// гибридного рендера (loc + vis_contents) оставался согласованным на шаблонных турфах
+	if(lighting_object)
+		vis_contents += lighting_object
 
 	if(color) // is this being used? This is here because parent isn't being called
 		add_atom_colour(color, FIXED_COLOUR_PRIORITY)
@@ -736,7 +745,7 @@ GLOBAL_LIST_EMPTY(station_turfs)
 
 /// Called when attempting to set fire to a turf
 /turf/proc/IgniteTurf(power, fire_color="red")
-	return
+	return FALSE
 
 /// Returns adjacent turfs in cardinal directions that are reachable via atmos
 /turf/proc/reachableAdjacentAtmosTurfs()

@@ -176,9 +176,11 @@
 	if(on)
 		darkness_view = 8
 		lighting_alpha = LIGHTING_PLANE_ALPHA_MOSTLY_INVISIBLE
+		color_cutoffs = list(10, 25, 10)
 	else
 		darkness_view = 2
 		lighting_alpha = null
+		color_cutoffs = null
 	H.update_sight()
 	update_action_buttons()
 
@@ -973,7 +975,7 @@
 	return FALSE
 
 /obj/attacked_by(obj/item/I, mob/living/user)
-	if(I.force && I.damtype == BRUTE && ishuman(user) && user.mind.has_martialart(MARTIALART_NANOSUIT))
+	if(I.force && I.damtype == BRUTE && ishuman(user) && user.mind?.has_martialart(MARTIALART_NANOSUIT)) // у NPC/дамми mind нет
 		visible_message(span_danger("[user] бьёт [src] с невероятной силой при помощи [I.name]!") , null, null, COMBAT_MESSAGE_RANGE)
 		take_damage(I.force*1.75, I.damtype, "melee", TRUE)//take 75% more damage with strength on
 		return

@@ -3,6 +3,7 @@
 	desc = "A strong door."
 	icon = 'icons/obj/doors/windoor.dmi'
 	icon_state = "left"
+	opens_with_door_remote = TRUE
 	layer = ABOVE_WINDOW_LAYER
 	closingLayer = ABOVE_WINDOW_LAYER
 	resistance_flags = ACID_PROOF
@@ -288,6 +289,7 @@
 
 /obj/machinery/door/window/narsie_act()
 	add_atom_colour("#7D1919", FIXED_COLOUR_PRIORITY)
+	open(2)
 
 /obj/machinery/door/window/ratvar_act()
 	var/obj/machinery/door/window/clockwork/C = new(loc, dir)

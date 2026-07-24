@@ -80,6 +80,8 @@
 	targets_from = null
 	target = null
 	friends = null
+	for(var/atom/movable/the_foe in foes)
+		UnregisterSignal(the_foe, COMSIG_PARENT_QDELETING)
 	foes = null
 	for(var/atom/movable/the_enemy in enemies)
 		UnregisterSignal(the_enemy, COMSIG_PARENT_QDELETING)
@@ -94,11 +96,25 @@
 
 /mob/living/simple_animal/hostile/proc/remove_enemy(atom/movable/the_enemy)
 	enemies -= the_enemy
-	UnregisterSignal(the_enemy, COMSIG_PARENT_QDELETING)
+	//сигнал держим, пока цель числится хотя бы в одном списке обид:
+	//foes живёт дольше enemies (тот чистится по stat в Found)
+	if(!foes || !foes[the_enemy])
+		UnregisterSignal(the_enemy, COMSIG_PARENT_QDELETING)
 
 /mob/living/simple_animal/hostile/proc/on_enemy_qdeleting(datum/source)
 	SIGNAL_HANDLER
 	enemies -= source
+	if(foes)
+		foes -= source
+
+/// Clears remembered targets and grudges without changing the mob's faction behavior.
+/mob/living/simple_animal/hostile/proc/clear_hostile_aggro()
+	LoseTarget()
+	for(var/atom/movable/old_target as anything in (foes | enemies))
+		UnregisterSignal(old_target, COMSIG_PARENT_QDELETING)
+	friends.Cut()
+	foes.Cut()
+	enemies.Cut()
 
 /mob/living/simple_animal/hostile/BiologicalLife(delta_time, times_fired)
 	if(!(. = ..()))
@@ -150,21 +166,58 @@
 		face_atom(target) //Looks better if they keep looking at you when dodging
 
 /mob/living/simple_animal/hostile/attacked_by(obj/item/I, mob/living/user, attackchain_flags = NONE, damage_multiplier = 1)
-	if(stat == CONSCIOUS && !target && AIStatus != AI_OFF && !client && user)
-		FindTarget(list(user), 1)
+	if(stat == CONSCIOUS && user && AIStatus != AI_OFF && !client)
+		RetaliateAgainst(user)
 	return ..()
 
 /mob/living/simple_animal/hostile/bullet_act(obj/item/projectile/P)
-	if(stat == CONSCIOUS && !target && AIStatus != AI_OFF && !client)
-		if(P.firer && get_dist(src, P.firer) <= aggro_vision_range)
-			FindTarget(list(P.firer), 1)
+	if(stat == CONSCIOUS && AIStatus != AI_OFF && !client && P.firer)
+		if(get_dist(src, P.firer) <= aggro_vision_range)
+			RetaliateAgainst(P.firer)
 		Goto(P.starting, move_to_delay, 3)
 	return ..()
 
+/// Focus aggro on whoever just hurt us, even if we already had another target.
+/mob/living/simple_animal/hostile/proc/RetaliateAgainst(atom/movable/the_attacker)
+	if(!the_attacker || QDELETED(the_attacker))
+		return
+	if(isliving(the_attacker))
+		add_enemy(the_attacker)
+		foes[the_attacker] = 1
+	if(CanAttack(the_attacker))
+		GiveTarget(the_attacker)
+	else if(!target)
+		FindTarget(list(the_attacker), 1)
+	if(AIStatus != AI_ON && AIStatus != AI_OFF)
+		toggle_ai(AI_ON)
+
 //////////////HOSTILE MOB TARGETTING AND AGGRESSION////////////
+
+/// Гейт по спатиал-хэшу фракций (SSchunks) применим только к обычному
+/// фракционному охотнику: хэш не хранит мёртвых, свою фракцию и персональные
+/// обиды, поэтому охотники на трупы (headslug, гриб), attack_same-мобы (гусь)
+/// и retaliate с накопленными врагами обязаны идти мимо него.
+/// ВАЖНО: сабтип, чьи Found()/CanAttack() целятся в мобов СВОЕЙ фракции
+/// (artificer лечит союзных конструктов, короли крыс враждебны друг другу)
+/// или только в машины, обязан переопределить этот прок в FALSE - иначе гейт
+/// вернёт пустой ListTargets() до появления чужой фракции в радиусе.
+/mob/living/simple_animal/hostile/proc/can_use_faction_hash()
+	if(stat_attack != CONSCIOUS) //ищет бессознательных/мёртвых - их в хэше нет
+		return FALSE
+	if(attack_same) //бьёт свою фракцию - хэш видит только чужие
+		return FALSE
+	if(length(enemies) || length(foes)) //персональные цели могут быть своей фракции
+		return FALSE
+	return TRUE
 
 /mob/living/simple_animal/hostile/proc/ListTargets()//Step 1, find out what we can see
 	if(!search_objects)
+		// Spatial faction hash (SSchunks): skip the expensive hearers() scan
+		// entirely when no mob of a foreign faction is anywhere in range.
+		// This also skips the hostile-machine sweep: an unmanned turret near
+		// a lone AI mob goes unnoticed until any foreign-faction mob comes near.
+		if(can_use_faction_hash() && !SSchunks.has_enemy_faction(targets_from, faction, vision_range))
+			return list()
 		. = hearers(vision_range, targets_from) - src //Remove self, so we don't suicide
 
 		var/static/hostile_machines = typecacheof(list(/obj/machinery/porta_turret, /obj/vehicle/sealed/mecha, /obj/structure/destructible/clockwork/ocular_warden,/obj/item/electronic_assembly))
@@ -214,6 +267,8 @@
 	return
 
 /mob/living/simple_animal/hostile/proc/PickTarget(list/Targets)//Step 3, pick amongst the possible, attackable targets
+	if(target != null && (target in Targets) && CanAttack(target))
+		return target
 	if(target != null)//If we already have a target, but are told to pick again, calculate the lowest distance between all possible, and pick from the lowest distance targets
 		for(var/pos_targ in Targets)
 			var/atom/A = pos_targ
@@ -319,6 +374,10 @@
 	if(!target || !CanAttack(target))
 		LoseTarget()
 		return FALSE
+	if(!(target in possible_targets))
+		var/turf/mob_turf = get_turf(src)
+		if(mob_turf && target.z == mob_turf.z && get_dist(targets_from, target) <= aggro_vision_range)
+			possible_targets += target
 	if(target in possible_targets)
 		var/turf/T = get_turf(src)
 		if(target.z != T.z)
@@ -380,8 +439,10 @@
 		if(AIStatus != AI_ON && AIStatus != AI_OFF)
 			toggle_ai(AI_ON)
 			FindTarget()
-		else if(target != null && prob(40))//No more pulling a mob forever and having a second player attack it, it can switch targets now if it finds a more suitable one
+		else if(!target || !CanAttack(target))
 			FindTarget()
+		else if(. > 0)
+			GainPatience()
 
 
 /mob/living/simple_animal/hostile/proc/AttackingTarget()
