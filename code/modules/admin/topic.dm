@@ -200,9 +200,18 @@
 					message_admins("[key_name_admin(usr)] tried to create a revenant. Unfortunately, there were no candidates available.")
 					log_admin("[key_name(usr)] failed to create a revenant.")
 			if("massshooter")
-				if(src.makeMassShooter())
-					message_admins("[key_name(usr)] created a Mass Shooter.")
-					log_admin("[key_name(usr)] created a Mass Shooter.")
+				var/mob/mob_for_role
+				if(alert(usr, "Вы уверены, что собираетесь создать мажорного антагониста?", , "Да.", "Ой, я случайно...") != "Да.")
+					return
+				if(alert(usr, "Вырать случайного или конкретного призрака?", , "Случайный", "Конкретный") == "Конкретный")
+					var/list/cand = get_all_ghost_role_eligible(TRUE, TRUE)
+					mob_for_role = tgui_input_list(usr, "Кто?", , cand, null)
+					if(QDELETED(mob_for_role) || !isobserver(mob_for_role) || !mob_for_role.client)
+						to_chat(usr, span_warning("Этот кандидат недоступен."))
+						return
+				if(src.makeMassShooter(mob_for_role))
+					message_admins("[key_name(usr)] created a Mass Shooter.[mob_for_role ? " Admin granted role to player <b>[mob_for_role.ckey]</b>" : ""]")
+					log_admin("[key_name(usr)] created a Mass Shooter.[mob_for_role ? " Admin granted role to player <b>[mob_for_role.ckey]</b>" : ""]")
 				else
 					message_admins("[key_name_admin(usr)] tried to create a Mass Shooter. Unfortunately, there were no candidates available.")
 					log_admin("[key_name(usr)] failed to create a Mass Shooter.")
