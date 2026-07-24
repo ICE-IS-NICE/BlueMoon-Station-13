@@ -11,11 +11,9 @@
 
 /**
  * 		TODO NOW
- * убрать комменты клиентов
  *
  * 		TODO LATER
- * новое оружие - super shotgun двустволка  /obj/item/gun/ballistic/revolver/doublebarrel/super
- * !двустволка=револьвер не заряжается клипсами
+ * ?новое оружие - super shotgun двустволка  /obj/item/gun/ballistic/revolver/doublebarrel/super
  * hazard immune high gear
  * что-то выбивающее для пистолетов
  * жига?
@@ -23,6 +21,9 @@
  * 		DONE
  *
  */
+
+#define HATRED_ANTAG "hatred"
+
 
 /datum/antagonist/hatred
 	name = "Mass Shooter"
@@ -98,7 +99,7 @@
 	greet_text += "Твоё [span_red("Оружие Ненависти")] и неутолимая жажда убивать вознаграждают тебя, ибо завершающий выстрел в упор в голову (рот) исцеляет твои раны, нож добивает быстрее и надежнее.<br>"
 	greet_text += span_red("Обычная медицина бессильна, а чужое оружие бесполезно для тебя.")
 	if(chosen_gun == "Pistols")
-		greet_text += "[span_red("Кобура Ненависти")] всегда готова предоставить тебе особое парное оружие. [span_red("Стрелять с двух рук - в Харме")]. После использования можешь просто выбросить их, ибо их цель была выполнена.<br>"
+		greet_text += "[span_red("Кобура Ненависти")] всегда готова предоставить тебе особое парное оружие. [span_red("Стрелять с двух рук - в харм интенте")]. После использования можешь просто выбросить их, ибо их цель была выполнена.<br>"
 	else
 		greet_text += "[span_red("Cумка для патронов")] сама пополняет пустые магазины/картриджи/клипсы для твоего оружия. Никогда не выбрасывай их!<br>"
 	// if(chosen_gun == "Combat Shotgun")
@@ -133,10 +134,10 @@
 	. = ..()
 	H.add_movespeed_modifier(/datum/movespeed_modifier/hatred)
 	// Unpredictable mood changes makes it diffcult to balance antag's speed.
-	H.add_movespeed_mod_immunities("hatred", list(/datum/movespeed_modifier/damage_slowdown, /datum/movespeed_modifier/damage_slowdown_flying))
-	H.add_movespeed_mod_immunities("hatred", MOVESPEED_ID_SANITY)
+	H.add_movespeed_mod_immunities(HATRED_ANTAG, list(/datum/movespeed_modifier/damage_slowdown, /datum/movespeed_modifier/damage_slowdown_flying))
+	H.add_movespeed_mod_immunities(HATRED_ANTAG, MOVESPEED_ID_SANITY)
 	for(var/ms in typesof(/datum/movespeed_modifier/sanity))
-		H.add_movespeed_mod_immunities("hatred", ms)
+		H.add_movespeed_mod_immunities(HATRED_ANTAG, ms)
 	// just to be sure
 	var/datum/component/mood/mood = H.GetComponent(/datum/component/mood)
 	mood.RemoveComponent()
@@ -145,38 +146,38 @@
 	// сверхскорость и неуловимость страшнее сверхброни и бесконечных патронов
 	for(var/datum/movespeed_modifier/ms in typesof(/datum/movespeed_modifier/reagent))
 		if(ms.multiplicative_slowdown < 0)
-			H.add_movespeed_mod_immunities("hatred", ms)
+			H.add_movespeed_mod_immunities(HATRED_ANTAG, ms)
 	// SPECIAL TRAITS
-	ADD_TRAIT(H, TRAIT_SLEEPIMMUNE, "hatred") // I challenge you to a glorious fight!
-	ADD_TRAIT(H, TRAIT_VIRUSIMMUNE, "hatred")
-	ADD_TRAIT(H, TRAIT_NONATURALHEAL, "hatred")
-	ADD_TRAIT(H, TRAIT_IGNOREDAMAGESLOWDOWN, "hatred")
-	ADD_TRAIT(H, TRAIT_FEARLESS, "hatred")
-	ADD_TRAIT(H, TRAIT_STRONG_GRABBER, "hatred") // This way player will have less problems with his targets run/crawl away during glory kills
-	ADD_TRAIT(H, TRAIT_QUICKER_CARRY, "hatred")
-	ADD_TRAIT(H, TRAIT_NODISMEMBER, "hatred") // if a player loses his arm, he won't be able to shoot nor drop his gun. it would be unplayable.
-	ADD_TRAIT(H, TRAIT_FAST_PUMP, "hatred")
+	ADD_TRAIT(H, TRAIT_SLEEPIMMUNE, HATRED_ANTAG) // I challenge you to a glorious fight!
+	ADD_TRAIT(H, TRAIT_VIRUSIMMUNE, HATRED_ANTAG)
+	ADD_TRAIT(H, TRAIT_NONATURALHEAL, HATRED_ANTAG)
+	ADD_TRAIT(H, TRAIT_IGNOREDAMAGESLOWDOWN, HATRED_ANTAG)
+	ADD_TRAIT(H, TRAIT_FEARLESS, HATRED_ANTAG)
+	ADD_TRAIT(H, TRAIT_STRONG_GRABBER, HATRED_ANTAG) // This way player will have less problems with his targets run/crawl away during glory kills
+	ADD_TRAIT(H, TRAIT_QUICKER_CARRY, HATRED_ANTAG)
+	ADD_TRAIT(H, TRAIT_NODISMEMBER, HATRED_ANTAG) // if a player loses his arm, he won't be able to shoot nor drop his gun. it would be unplayable.
+	ADD_TRAIT(H, TRAIT_FAST_PUMP, HATRED_ANTAG)
 	H.mind.unconvertable = TRUE
 	H.status_flags &= ~CANKNOCKDOWN // пкм батоном = автовин сб
 	//EMP_PROTECT_CONTENTS
-	// ADD_TRAIT(H, TRAIT_DRINKS_BLOOD, "hatred") // why not
-	// ADD_TRAIT(H, TRAIT_NOSOFTCRIT, "hatred")
-	// ADD_TRAIT(H, TRAIT_STUNIMMUNE, "hatred") // Doesn't work against stunbatons anyway :(
+	// ADD_TRAIT(H, TRAIT_DRINKS_BLOOD, HATRED_ANTAG) // why not
+	// ADD_TRAIT(H, TRAIT_NOSOFTCRIT, HATRED_ANTAG)
+	// ADD_TRAIT(H, TRAIT_STUNIMMUNE, HATRED_ANTAG) // Doesn't work against stunbatons anyway :(
 	//  GENERAL QUIRKS
 	H.add_quirk(/datum/quirk/night_vision, FALSE)
 	H.add_quirk(/datum/quirk/tough, FALSE)
 	H.add_quirk(/datum/quirk/freerunning, FALSE)
 	H.add_quirk(/datum/quirk/monochromatic, FALSE)
 	H.add_quirk(/datum/quirk/high_pain_threshold, FALSE)
-	// H.add_quirk(/datum/quirk/jumper, announce = FALSE) // ADD_TRAIT(H, TRAIT_JUMPER, "hatred")
-	// ADD_TRAIT(H, TRAIT_EVIL, "hatred") // H.add_quirk(/datum/quirk/evil, announce = FALSE) // no unwanted post_add() text
+	// H.add_quirk(/datum/quirk/jumper, announce = FALSE) // ADD_TRAIT(H, TRAIT_JUMPER, HATRED_ANTAG)
+	// ADD_TRAIT(H, TRAIT_EVIL, HATRED_ANTAG) // H.add_quirk(/datum/quirk/evil, announce = FALSE) // no unwanted post_add() text
 	tgui_alert(H, "У тебя есть последняя минута, чтобы собраться с мыслями. Ознакомься с инструкциями в чате. Закрой это окошко когда будешь готов...", "Ты готов убивать?", list("Я готов убивать."), timeout = 1 MINUTES, autofocus = FALSE)
 	if(QDELETED(H)) // админы сказали "нет"
 		return
 	// WE ARE READY.
 	UnregisterSignal(H, COMSIG_MOVABLE_PRE_MOVE)
 	RegisterSignal(H, COMSIG_MOB_DEATH, PROC_REF(on_hatred_death))
-	H.fully_heal() // in case of some accidents in spawn room during preparation
+	H.fully_heal(TRUE) // in case of some accidents in spawn room during preparation
 	// mood?.setSanity(SANITY_NEUTRAL)
 	appear_on_station()
 	allowed_z_levels += SSmapping.levels_by_trait(ZTRAIT_CENTCOM)
@@ -233,7 +234,7 @@
 		owner.current.updatehealth()
 
 /datum/movespeed_modifier/hatred
-	multiplicative_slowdown = 0.25
+	multiplicative_slowdown = 0.25 // половина от плохого настроения первой степени
 
 /datum/antagonist/hatred/proc/evaluate_security()
 	var/gear_points = length(SSjob.get_living_sec())
@@ -362,7 +363,7 @@
 	var/is_glory = TRUE
 	// already dead bodies or npcs don't count
 	// if((!target.client && ((world.time - target.lastclienttime) > 10 SECONDS)) || (target.stat == DEAD && ((world.time - target.timeofdeath) > 3 SECONDS)))
-	if(/*!target.client || */target.stat == DEAD)
+	if(!target.client || target.stat == DEAD)
 		is_glory = FALSE
 	else if(COOLDOWN_FINISHED(src, killing_speech_cd))
 		playsound(owner.current, pick(killing_speech), vol = 100, vary = FALSE, ignore_walls = FALSE)
@@ -390,7 +391,7 @@
 	var/is_glory = TRUE
 	// already dead bodies or npcs don't count
 	// if((!target.client && ((world.time - target.lastclienttime) > 10 SECONDS)) || (target.stat == DEAD && ((world.time - target.timeofdeath) > 3 SECONDS)))
-	if(/*!target.client || */target?.stat == DEAD)
+	if(!target.client || target?.stat == DEAD)
 		is_glory = FALSE
 	else if(COOLDOWN_FINISHED(Ha, killing_speech_cd))
 		playsound(user, pick(Ha.killing_speech), vol = 100, vary = FALSE, ignore_walls = FALSE)
@@ -594,7 +595,7 @@
 /obj/item/storage/belt/holster/hatred/equipped(mob/user, slot)
 	. = ..()
 	if(slot in list(ITEM_SLOT_BELT, ITEM_SLOT_SUITSTORE))
-		ADD_TRAIT(src, TRAIT_NODROP, "hatred")
+		ADD_TRAIT(src, TRAIT_NODROP, HATRED_ANTAG)
 
 /obj/item/storage/belt/holster/hatred/dropped(mob/user, silent)
 	. = ..()
@@ -640,7 +641,7 @@
 
 /obj/item/storage/bag/ammo/hatred/equipped(mob/user, slot, initial)
 	. = ..()
-	ADD_TRAIT(src, TRAIT_NODROP, "hatred")
+	ADD_TRAIT(src, TRAIT_NODROP, HATRED_ANTAG)
 
 /obj/item/storage/bag/ammo/hatred/dropped(mob/user, silent)
 	. = ..()
@@ -677,7 +678,7 @@
 
 /obj/item/storage/belt/military/assault/hatred/equipped(mob/user, slot, initial)
 	. = ..()
-	ADD_TRAIT(src, TRAIT_NODROP, "hatred")
+	ADD_TRAIT(src, TRAIT_NODROP, HATRED_ANTAG)
 
 /obj/item/storage/belt/military/assault/hatred/dropped(mob/user, silent)
 	. = ..()
@@ -725,7 +726,7 @@
 
 /obj/item/clothing/head/invisihat/hatred/equipped(mob/user, slot)
 	. = ..()
-	ADD_TRAIT(src, TRAIT_NODROP, "hatred")
+	ADD_TRAIT(src, TRAIT_NODROP, HATRED_ANTAG)
 
 /obj/item/clothing/head/invisihat/hatred/dropped(mob/user)
 	. = ..()
@@ -757,14 +758,14 @@
 	var/datum/antagonist/hatred/Ha = H.mind?.has_antag_datum(/datum/antagonist/hatred)
 	if(!Ha)
 		return
-	Ha.gear_level = tgui_input_list(H, "ЭТО ОКОШКО ДЛЯ ОБМАНА ПОДСЧЕТА ОФИЦЕРОВ В РАУНДЕ И НУЖНО ТОЛЬКО ДЛЯ ДЕБАГА, В ИГРЕ ЕГО НЕ БУДЕТ", "gear level?", list(1, 2), 1)
+	// Ha.gear_level = tgui_input_list(H, "ЭТО ОКОШКО ДЛЯ ОБМАНА ПОДСЧЕТА ОФИЦЕРОВ В РАУНДЕ И НУЖНО ТОЛЬКО ДЛЯ ДЕБАГА, В ИГРЕ ЕГО НЕ БУДЕТ", "gear level?", list(1, 2), 1)
 	var/available_sets = Ha.classic_guns
 	SEND_SOUND(H, 'sound/misc/notice2.ogg')
 	Ha.chosen_gun = tgui_input_list(H, "Выбери стартовое оружие и сделай это БЫСТРО!", "Выбери оружие геноцида", available_sets, available_sets[1], 10 SECONDS)
-	// if(!Ha.chosen_gun)
-	// 	Ha.chosen_gun = available_sets[1]
+	if(!Ha.chosen_gun)
+		Ha.chosen_gun = available_sets[1]
 	switch(Ha.chosen_gun)
-		if("AK47", null)
+		if("AK47")
 			suit_store = /obj/item/gun/ballistic/automatic/ak47/hatred
 			l_pocket = /obj/item/storage/bag/ammo/hatred
 		if("Combat Shotgun")
@@ -773,7 +774,7 @@
 			l_pocket = /obj/item/storage/bag/ammo/hatred
 		if("Pistols")
 			suit_store = /obj/item/storage/belt/holster/hatred
-			ADD_TRAIT(H, TRAIT_DOUBLE_TAP, "hatred")
+			ADD_TRAIT(H, TRAIT_DOUBLE_TAP, HATRED_ANTAG)
 	if(Ha.gear_level >= 2)
 		belt = /obj/item/storage/belt/military/assault/hatred
 		Ha.chosen_high_gear = tgui_input_list(H, "Выбери дополнительную экипировку и сделай это БЫСТРО!", "Выбери оружие геноцида", Ha.high_gear, Ha.high_gear[1], 10 SECONDS)
@@ -790,10 +791,10 @@
 	U.resistance_flags = FIRE_PROOF | ACID_PROOF
 	U.unique_reskin = null
 	U.max_restricted_accessories = 1
-	ADD_TRAIT(U, TRAIT_NODROP, "hatred")
+	ADD_TRAIT(U, TRAIT_NODROP, HATRED_ANTAG)
 
 	var/obj/item/I = H.get_item_by_slot(ITEM_SLOT_OCLOTHING)
-	ADD_TRAIT(I, TRAIT_NODROP, "hatred")
+	ADD_TRAIT(I, TRAIT_NODROP, HATRED_ANTAG)
 
 	I = H.get_item_by_slot(ITEM_SLOT_FEET)
 	I.resistance_flags = FIRE_PROOF
@@ -895,8 +896,8 @@
 	if(!istype(applicant))
 		var/list/mob/candidates = pollGhostCandidates("Do you wish to be considered for the position of a Mass Shooter?", ROLE_MASS_SHOOTER, null, ROLE_MASS_SHOOTER, 30 SECONDS)
 		applicant = pick_n_take(candidates)
-		if(!istype(applicant) || !applicant.client)
-			return FALSE
+	if(!istype(applicant) || !applicant.client)
+		return FALSE
 	// var/turf/entry_spawn_loc
 	// if(length(GLOB.newplayer_start))
 	// 	entry_spawn_loc = pick(GLOB.newplayer_start)
@@ -917,3 +918,6 @@
 		special_role = "Mass Shooter"
 		assigned_role = "Mass Shooter"
 		add_antag_datum(/datum/antagonist/hatred)
+
+
+#undef HATRED_ANTAG
