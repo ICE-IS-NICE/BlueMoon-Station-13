@@ -18,8 +18,6 @@
  * что-то выбивающее для пистолетов
  * жига?
  *
- * 		DONE
- *
  */
 
 #define HATRED_ANTAG "hatred"
@@ -97,16 +95,16 @@
 	greet_text += "У тебя лишь две цели: <u>убивать</u> и <u>умереть славной смертью</u>.<br>"
 	greet_text += "Твое проклятое снаряжение неразлучно с тобою и подстегивает тебя продолжать соврешать геноцид беззащитных гражданских.<br>"
 	greet_text += "Твоё [span_red("Оружие Ненависти")] и неутолимая жажда убивать вознаграждают тебя, ибо завершающий выстрел в упор в голову (рот) исцеляет твои раны, нож добивает быстрее и надежнее.<br>"
-	greet_text += span_red("Обычная медицина бессильна, а чужое оружие бесполезно для тебя.")
+	greet_text += span_red("Обычная медицина бессильна!")
 	if(chosen_gun == "Pistols")
-		greet_text += "[span_red("Кобура Ненависти")] всегда готова предоставить тебе особое парное оружие. [span_red("Стрелять с двух рук - в харм интенте")]. После использования можешь просто выбросить их, ибо их цель была выполнена.<br>"
+		greet_text += "[span_red("Кобура Ненависти")] всегда готова предоставить тебе особое парное оружие. [span_red("Стрелять с двух рук - HARM INTENT")]. После использования можешь просто выбросить их, ибо их цель была выполнена.<br>"
 	else
 		greet_text += "[span_red("Cумка для патронов")] сама пополняет пустые магазины/картриджи/клипсы для твоего оружия. Никогда не выбрасывай их!<br>"
 	// if(chosen_gun == "Combat Shotgun")
 	// 	greet_text += "Ты захватил с собой [span_red("запасной дробовик")], чтобы у тебя всегда под рукой был План Б.<br>"
 	if(!isnull(chosen_high_gear))
 		greet_text += "[span_red("Пояс с гранатами")] пожирает сердца твоих жертв после их добивания и вознаграждает тебя новой взрывоопасной аммуницией.<br>"
-	greet_text += "[span_red(span_bold("Убивай и будь убит!"))] Ибо никто сегодня не защищен от твоей Ненависти.<br>"
+	greet_text += "[span_red(span_bold("Время убивать. Время умирать."))] И пусть ни одна мразь не доживёт до завтра. Ибо никто сегодня не защищен от твоей Ненависти.<br>"
 	to_chat(owner.current, greet_text)
 	antag_memory = greet_text
 	owner.announce_objectives()
@@ -131,6 +129,8 @@
 	RegisterSignal(H, COMSIG_MOB_EQUIPPED_ITEM, PROC_REF(check_equipped_item)) // any knife we pick might be our deadliest weapon. also sets nodrop trait onto some weapons
 	RegisterSignal(H, COMSIG_LIVING_BIOLOGICAL_LIFE, PROC_REF(recover_from_softcrit))
 	H.equipOutfit(/datum/outfit/hatred)
+	if(QDELETED(H)) // админы сказали "нет"
+		return
 	. = ..()
 	H.add_movespeed_modifier(/datum/movespeed_modifier/hatred)
 	// Unpredictable mood changes makes it diffcult to balance antag's speed.
@@ -157,6 +157,7 @@
 	ADD_TRAIT(H, TRAIT_QUICKER_CARRY, HATRED_ANTAG)
 	ADD_TRAIT(H, TRAIT_NODISMEMBER, HATRED_ANTAG) // if a player loses his arm, he won't be able to shoot nor drop his gun. it would be unplayable.
 	ADD_TRAIT(H, TRAIT_FAST_PUMP, HATRED_ANTAG)
+	ADD_TRAIT(H, TRAIT_NOCLONE, HATRED_ANTAG)
 	H.mind.unconvertable = TRUE
 	H.status_flags &= ~CANKNOCKDOWN // пкм батоном = автовин сб
 	//EMP_PROTECT_CONTENTS
@@ -234,7 +235,7 @@
 		owner.current.updatehealth()
 
 /datum/movespeed_modifier/hatred
-	multiplicative_slowdown = 0.25 // половина от плохого настроения первой степени
+	multiplicative_slowdown = 0.5 // плохе настроение первой степени
 
 /datum/antagonist/hatred/proc/evaluate_security()
 	var/gear_points = length(SSjob.get_living_sec())
@@ -462,7 +463,7 @@
 	mag_type = /obj/item/ammo_box/magazine/internal/shot/com/hatred
 	resistance_flags = FIRE_PROOF | ACID_PROOF
 	max_integrity = 400 // will be damaged during antag's death implant detonation
-	// fire_delay = 4
+	fire_delay = 4
 	weapon_weight = WEAPON_HEAVY
 	unique_reskin = null
 	var/quick_empty_flag = FALSE // is user quick emptying it right now
@@ -693,16 +694,16 @@
 	desc = "The shabby leather overcoat with decent armor paddings. Once it has been splashed with blood you can't take it off anymore."
 	resistance_flags = FIRE_PROOF
 	// clueless armor stats.
-	armor = list(MELEE 	= 50, \
-				BULLET 	= 50, \
-				LASER 	= 50, \
-				ENERGY 	= 50, \
-				BOMB 	= 50, \
-				BIO 	= 50, \
+	armor = list(MELEE 	= 40, \
+				BULLET 	= 40, \
+				LASER 	= 40, \
+				ENERGY 	= 40, \
+				BOMB 	= 40, \
+				BIO 	= 40, \
 				RAD 	= 20, \
 				FIRE 	= 70, \
-				ACID 	= 70, \
-				WOUND 	= 50)
+				ACID 	= 40, \
+				WOUND 	= 40)
 
 /obj/item/clothing/suit/jacket/leather/overcoat/hatred/Initialize(mapload)
 	. = ..()
@@ -713,16 +714,16 @@
 	desc = "Once you felt <b><i>that</i></b> urge to commit relentless genocide of civilians, you clearly understood you were cursed... blessed... and... protected by invisible Veil of Hatred."
 	resistance_flags = FIRE_PROOF | ACID_PROOF
 	// clueless armor stats.
-	armor = list(MELEE 	= 50, \
-				BULLET 	= 50, \
-				LASER 	= 50, \
-				ENERGY 	= 50, \
-				BOMB 	= 50, \
-				BIO 	= 50, \
+	armor = list(MELEE 	= 40, \
+				BULLET 	= 40, \
+				LASER 	= 40, \
+				ENERGY 	= 40, \
+				BOMB 	= 40, \
+				BIO 	= 40, \
 				RAD 	= 20, \
 				FIRE 	= 70, \
-				ACID 	= 70, \
-				WOUND 	= 50)
+				ACID 	= 40, \
+				WOUND 	= 40)
 
 /obj/item/clothing/head/invisihat/hatred/equipped(mob/user, slot)
 	. = ..()
@@ -893,8 +894,9 @@
 	return body
 
 /datum/admins/proc/makeMassShooter(mob/dead/observer/applicant)
+	var/mutable_appearance/alert_overlay = mutable_appearance('modular_bluemoon/code/modules/antagonists/hatred/hatred_icon.dmi', "human")
 	if(!istype(applicant))
-		var/list/mob/candidates = pollGhostCandidates("Do you wish to be considered for the position of a Mass Shooter?", ROLE_MASS_SHOOTER, null, ROLE_MASS_SHOOTER, 30 SECONDS)
+		var/list/mob/candidates = pollGhostCandidates("Do you wish to be considered for the position of a Mass Shooter?", "pacifist", null, ROLE_MASS_SHOOTER, 30 SECONDS,/* poll_header = "Mass Shooter",*/ poll_alert_pic = alert_overlay)
 		applicant = pick_n_take(candidates)
 	if(!istype(applicant) || !applicant.client)
 		return FALSE
@@ -908,8 +910,7 @@
 	var/datum/mind/player_mind = new /datum/mind(applicant.key)
 	player_mind.active = TRUE
 	player_mind.transfer_to(body)
-	var/mutable_appearance/alert_overlay = mutable_appearance('modular_bluemoon/code/modules/antagonists/hatred/hatred_icon.dmi', "human")
-	notify_ghosts("Массшутер готовится к геноциду...", 'modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_1.ogg', source = body, alert_overlay = alert_overlay, action = NOTIFY_ORBIT, header = "Mass Shooter")
+	notify_ghosts("Массшутер готовится к геноциду...", 'sound/weapons/autoguninsert.ogg', source = body, alert_overlay = alert_overlay, action = NOTIFY_ORBIT, header = "Mass Shooter")
 	body.mind.make_MassShooter()
 	return TRUE
 

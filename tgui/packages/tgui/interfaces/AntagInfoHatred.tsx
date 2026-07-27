@@ -36,7 +36,7 @@ export const AntagInfoHatred = (props) => {
 	              <br /><br /><span style={{color: '#ff0000'}}>Обычная медицина бессильна!</span>
                 <PistolsInfo />
                 <BeltInfo />
-	              <br /><span style={{color: '#ff0000', fontWeight: 'bold'}}>Убивай и будь убит!</span> Ибо никто сегодня не защищен от твоей Ненависти.
+	              <br /><span style={{color: '#ff0000', fontWeight: 'bold'}}>Время убивать. Время умирать.</span> И пусть ни одна мразь не доживёт до завтра. Ибо никто сегодня не защищен от твоей Ненависти.
               </Section>
             </Stack.Item>
           </Stack>
@@ -52,7 +52,7 @@ const PistolsInfo = (props) => {
   if (pistols) {
     return (
       <Section fill>
-        <span style={{color: '#ff0000'}}>Кобура Ненависти</span> всегда готова предоставить тебе особое парное оружие. <span style={{color: '#ff0000'}}>Стрелять с двух рук - в харм интенте</span>. После использования можешь просто выбросить их, ибо их цель была выполнена.
+        <span style={{color: '#ff0000'}}>Кобура Ненависти</span> всегда готова предоставить тебе особое парное оружие. <span style={{color: '#ff0000'}}>Стрелять с двух рук - HARM INTENT</span>. После использования можешь просто выбросить их, ибо их цель была выполнена.
       </Section>
     );
   }
