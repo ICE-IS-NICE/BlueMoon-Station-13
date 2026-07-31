@@ -535,9 +535,19 @@
 	if(only_organic && !is_organic_limb(FALSE)) //This makes robolimbs and hybridlimbs not healable by chems.
 		return
 
+	var/brute_was = brute_dam
+	var/burn_was = burn_dam
+	var/stamina_was = stamina_dam
+
 	brute_dam	= round(max(brute_dam - brute, 0), DAMAGE_PRECISION)
 	burn_dam	= round(max(burn_dam - burn, 0), DAMAGE_PRECISION)
 	stamina_dam = round(max(stamina_dam - stamina, 0), DAMAGE_PRECISION)
+
+	// Healing an already-whole limb is the common case for regeneration effects
+	// and used to drag the entire owner.updatehealth() cascade along with it.
+	if(brute_dam == brute_was && burn_dam == burn_was && stamina_dam == stamina_was)
+		return FALSE
+
 	if(owner && updating_health)
 		owner.updatehealth()
 	consider_processing()
@@ -1120,8 +1130,12 @@
 		if(!embeddies.isEmbedHarmless())
 			bleed_rate += 0.8
 
-	for(var/thing in wounds)
-		var/datum/wound/W = thing
+	// Та же страховка, что строкой выше у embedded_objects: рана, которую добил del(), оставляет
+	// в списке null, и без чистки каждый тик SSmobs давал бы рантайм на W.blood_flow.
+	// Гард обязателен: wounds ленивый и обычно null, а listclearnulls читает .len сразу.
+	if(wounds)
+		listclearnulls(wounds)
+	for(var/datum/wound/W as anything in wounds)
 		bleed_rate += W.blood_flow
 	if(owner.mobility_flags & ~MOBILITY_STAND)
 		bleed_rate *= 1.2

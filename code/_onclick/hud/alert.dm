@@ -472,6 +472,11 @@ or shoot a gun to move around via Newton's 3rd Law of Motion."
 /atom/movable/screen/alert/give/proc/check_in_range(atom/taker)
 	SIGNAL_HANDLER
 
+	//Предложивший мог уйти из мира вместе с алертом: снимаем предложение молча
+	if(QDELETED(offerer))
+		owner?.clear_alert("[offerer_name]")
+		return
+
 	if(!offerer.CanReach(taker))
 		to_chat(owner, span_warning("You moved out of range of [offerer]!"))
 		owner.clear_alert("[offerer_name]")
@@ -1087,6 +1092,11 @@ so as to remain in compliance with the most up-to-date laws."
 		return
 	L.MarkResistTime()
 	return L.resist_restraints()
+
+/atom/movable/screen/alert/restrained/legcuffed/beartrap/Click()
+	. = ..()
+	var/mob/living/L = usr
+	L.remove_status_effect(/datum/status_effect/beartrap_ensnared)
 
 /atom/movable/screen/alert/buckled/Click()
 	. = ..()

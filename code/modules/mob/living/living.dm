@@ -1,5 +1,11 @@
 /mob/living/Initialize(mapload)
 	. = ..()
+	var/static/next_life_stagger_phase = 0
+	life_stagger_phase = next_life_stagger_phase
+	// Mix higher bits into the default periodic bucket so work selected by the
+	// outer far-Life throttle does not stay permanently synchronized with it.
+	life_periodic_phase = next_life_stagger_phase ^ (next_life_stagger_phase >> 2)
+	next_life_stagger_phase++
 	if(unique_name)
 		name = "[name] ([rand(1, 1000)])"
 		real_name = name
@@ -11,6 +17,8 @@
 	stamina_buffer = INFINITY
 	UpdateStaminaBuffer()
 	GLOB.mob_living_list += src
+	if(stat != DEAD)
+		become_ai_targetable()
 
 /mob/living/prepare_huds()
 	..()
@@ -52,8 +60,17 @@
 	QDEL_LIST_ASSOC_VAL(ability_actions)
 	QDEL_LIST(abilities)
 	QDEL_LIST(implants)
+	// Квирки держат владельца жёстко: quirk_holder плюс запись в SSquirks.quirk_objects.
+	// Снимались они только при явном снятии квирка и при переносе на другого моба, поэтому
+	// удаление тела (админская пересадка, госткафе, возврат в лобби) оставляло висеть и
+	// квирк, и моба - это был самый массовый класс харддела прод-раунда.
+	QDEL_LIST(roundstart_quirks)
+	// Тот же случай: /datum/surgery держит и target, и operated_bodypart, а снимался
+	// только при отрыве конечности. Один незакрытый датум операции = труп плюс его грудь.
+	QDEL_LIST(surgeries)
 	remove_from_all_data_huds()
 	cleanse_trait_datums()
+	QDEL_NULL(ai_controller)
 	GLOB.mob_living_list -= src
 	GLOB.ssd_mob_list -= src
 	//лейтджойнером может быть не только человек (ИИ, борг) - выписываем здесь,
@@ -109,6 +126,15 @@
 
 	if(now_pushing)
 		return TRUE
+
+	//Two AI mobs of the same faction must not shove or swap through each other.
+	//The push made a mob-blocked step "succeed", hiding it from the movement
+	//layer's is_mob_only_blocked_step queue and leaving two shooters endlessly
+	//trading the same tile. A cleanly failed step lets that queue handle them.
+	if(ai_controller && !client && isliving(M))
+		var/mob/living/allied_ai = M
+		if(allied_ai.ai_controller && !allied_ai.client && faction_check_mob(allied_ai))
+			return TRUE
 
 	var/they_can_move = TRUE
 
@@ -1267,6 +1293,7 @@
 /mob/living/proc/IgniteMob()
 	if(fire_stacks > 0 && !on_fire)
 		on_fire = 1
+		wake_life() //горящему мобу handle_fire нужен каждый фаер, бакет снимаем
 		visible_message("<span class='warning'>[src] catches fire!</span>", \
 						"<span class='userdanger'>Вы горите!</span>")
 		new/obj/effect/dummy/lighting_obj/moblight/fire(src)
