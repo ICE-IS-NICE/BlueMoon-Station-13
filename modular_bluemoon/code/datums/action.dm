@@ -66,3 +66,13 @@
 	else
 		background_icon_state = "bg_default"
 	. = ..()
+
+/datum/action/item_action/no_drop_toggle/Remove()
+	if(isitem(target) && !QDELETED(target))
+		REMOVE_TRAIT(target, TRAIT_NODROP, REF(src))
+	. = ..()
+
+/datum/action/item_action/no_drop_toggle/Destroy()
+	if(isitem(target))
+		REMOVE_TRAIT(target, TRAIT_NODROP, REF(src))
+	. = ..()

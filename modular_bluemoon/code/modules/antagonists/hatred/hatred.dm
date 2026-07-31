@@ -140,12 +140,12 @@
 		H.add_movespeed_mod_immunities(HATRED_ANTAG, ms)
 	// just to be sure
 	var/datum/component/mood/mood = H.GetComponent(/datum/component/mood)
-	mood.RemoveComponent()
+	mood?.RemoveComponent()
 	// mood?.mood_modifier = 0 //Basically nothing can change your mood
 	// mood?.setSanity(SANITY_NEUTRAL)
 	// сверхскорость и неуловимость страшнее сверхброни и бесконечных патронов
-	for(var/datum/movespeed_modifier/ms in typesof(/datum/movespeed_modifier/reagent))
-		if(ms.multiplicative_slowdown < 0)
+	for(var/ms as anything in typesof(/datum/movespeed_modifier/reagent))
+		if(initial(ms:multiplicative_slowdown) < 0)
 			H.add_movespeed_mod_immunities(HATRED_ANTAG, ms)
 	// SPECIAL TRAITS
 	ADD_TRAIT(H, TRAIT_SLEEPIMMUNE, HATRED_ANTAG) // I challenge you to a glorious fight!
@@ -192,14 +192,15 @@
 
 /datum/antagonist/hatred/on_removal()
 	var/mob/living/L = owner.current
-	UnregisterSignal(L, COMSIG_MOVABLE_Z_CHANGED)
-	UnregisterSignal(L, COMSIG_MOB_EQUIPPED_ITEM)
-	UnregisterSignal(L, COMSIG_MOB_DEATH)
-	UnregisterSignal(L, COMSIG_MOVABLE_PRE_MOVE)
-	UnregisterSignal(L, COMSIG_LIVING_BIOLOGICAL_LIFE)
-	// UnregisterSignal(L, COMSIG_MOB_TRYING_TO_FIRE_GUN) can_trigger_gun
+	if(istype(L))
+		UnregisterSignal(L, COMSIG_MOVABLE_Z_CHANGED)
+		UnregisterSignal(L, COMSIG_MOB_EQUIPPED_ITEM)
+		UnregisterSignal(L, COMSIG_MOB_DEATH)
+		UnregisterSignal(L, COMSIG_MOVABLE_PRE_MOVE)
+		UnregisterSignal(L, COMSIG_LIVING_BIOLOGICAL_LIFE)
+		// UnregisterSignal(L, COMSIG_MOB_TRYING_TO_FIRE_GUN) can_trigger_gun
 	. = ..()
-	if(!QDELETED(L) && istype(L))
+	if(istype(L) && !QDELETED(L))
 		to_chat(L, span_userdanger("Ненависть покидает твой разум, окончательно поглощая тебя всего..."))
 		L.dust(FALSE, FALSE, TRUE) // from ghosts we come, to ghosts we leave.
 		// deathgasp doesn't appear during dust() so implant doesn't go boom.
@@ -549,12 +550,16 @@
 	// AP = 0
 	// DMG 100% = 25
 	dual_wield_spread = 5
-	var/mob/living/carbon/human/original_owner = null
+	var/datum/weakref/original_owner = null
+
+/obj/item/gun/ballistic/automatic/pistol/m1911/hatred/Destroy()
+	original_owner = null
+	. = ..()
 
 /obj/item/gun/ballistic/automatic/pistol/m1911/hatred/equipped(mob/user, slot, initial)
 	. = ..()
 	if(isnull(original_owner) && ishuman(loc) && slot == ITEM_SLOT_HANDS)
-		original_owner = loc
+		original_owner = WEAKREF(loc)
 
 /obj/item/gun/ballistic/automatic/pistol/m1911/hatred/dropped(mob/user, silent)
 	. = ..()
@@ -562,7 +567,7 @@
 		addtimer(CALLBACK(src, PROC_REF(check_destroy_pistol), user), 3 SECONDS, TIMER_STOPPABLE|TIMER_DELETE_ME)
 
 /obj/item/gun/ballistic/automatic/pistol/m1911/hatred/proc/check_destroy_pistol(mob/user)
-	if(!QDELETED(src) && original_owner != loc)
+	if(!QDELETED(src) && original_owner?.resolve() != loc)
 		visible_message("[src] рассыпается в прах на ваших глазах...")
 		var/obj/effect/decal/cleanable/ash/ash = new /obj/effect/decal/cleanable/ash(get_turf(loc))
 		ash.pixel_z = -5
@@ -790,38 +795,43 @@
 			Ha.chosen_high_gear = Ha.high_gear[1]
 
 /datum/outfit/hatred/post_equip(mob/living/carbon/human/H, visualsOnly, client/preference_source)
+	if(!istype(H) || QDELETED(H))
+		return
 	// var/obj/item/implant/explosive/E = new
 	// E.implant(H)
 	// var/obj/item/organ/cyberimp/brain/anti_drop/ad = new
 	// ad.Insert(H)
 	var/obj/item/clothing/under/U = H.get_item_by_slot(ITEM_SLOT_ICLOTHING)
-	U.has_sensor = NO_SENSORS
-	U.resistance_flags = FIRE_PROOF | ACID_PROOF
-	U.unique_reskin = null
-	U.max_restricted_accessories = 1
-	ADD_TRAIT(U, TRAIT_NODROP, HATRED_ANTAG)
+	if(U)
+		U.has_sensor = NO_SENSORS
+		U.resistance_flags = FIRE_PROOF | ACID_PROOF
+		U.unique_reskin = null
+		U.max_restricted_accessories = 1
+		ADD_TRAIT(U, TRAIT_NODROP, HATRED_ANTAG)
 
 	var/obj/item/I = H.get_item_by_slot(ITEM_SLOT_OCLOTHING)
-	ADD_TRAIT(I, TRAIT_NODROP, HATRED_ANTAG)
+	if(I)
+		ADD_TRAIT(I, TRAIT_NODROP, HATRED_ANTAG)
 
 	I = H.get_item_by_slot(ITEM_SLOT_FEET)
-	I.resistance_flags = FIRE_PROOF
+	I?.resistance_flags = FIRE_PROOF
 
 	I = H.get_item_by_slot(ITEM_SLOT_EYES)
-	I.resistance_flags = FIRE_PROOF
+	I?.resistance_flags = FIRE_PROOF
 
 	I = H.get_item_by_slot(ITEM_SLOT_GLOVES)
-	I.resistance_flags = FIRE_PROOF
+	I?.resistance_flags = FIRE_PROOF
 
 	I = H.get_item_by_slot(ITEM_SLOT_BACK)
-	I.resistance_flags = FIRE_PROOF
+	I?.resistance_flags = FIRE_PROOF
 
 	var/obj/item/storage/belt/B = H.get_item_by_slot(ITEM_SLOT_BELT)
-	new /obj/item/grenade/syndieminibomb/concussion(B)
-	new /obj/item/grenade/frag(B)
-	var/obj/item/reagent_containers/food/drinks/bottle/molotov/mol = new /obj/item/reagent_containers/food/drinks/bottle/molotov(B)
-	mol.reagents.add_reagent(/datum/reagent/consumable/ethanol/vodka, 100)
-	new /obj/item/lighter(B)
+	if(B)
+		new /obj/item/grenade/syndieminibomb/concussion(B)
+		new /obj/item/grenade/frag(B)
+		var/obj/item/reagent_containers/food/drinks/bottle/molotov/mol = new /obj/item/reagent_containers/food/drinks/bottle/molotov(B)
+		mol.reagents.add_reagent(/datum/reagent/consumable/ethanol/vodka, 100)
+		new /obj/item/lighter(B)
 
 	var/datum/antagonist/hatred/Ha = H.mind?.has_antag_datum(/datum/antagonist/hatred)
 	if(!Ha)
@@ -829,32 +839,34 @@
 	switch(Ha.chosen_gun)
 		if("AK47")
 			var/obj/item/storage/bag/ammo/hatred/P = H.get_item_by_slot(ITEM_SLOT_LPOCKET)
-			var/datum/component/storage/STR = P.GetComponent(/datum/component/storage)
-			STR.can_hold = typecacheof(list(/obj/item/ammo_box/magazine/ak47))
-			STR.max_items = 3
-			new /obj/item/ammo_box/magazine/ak47(P)
-			new /obj/item/ammo_box/magazine/ak47(P)
+			if(P)
+				var/datum/component/storage/STR = P.GetComponent(/datum/component/storage)
+				STR.can_hold = typecacheof(list(/obj/item/ammo_box/magazine/ak47))
+				STR.max_items = 3
+				new /obj/item/ammo_box/magazine/ak47(P)
+				new /obj/item/ammo_box/magazine/ak47(P)
 		if("Combat Shotgun")
 			var/obj/item/storage/bag/ammo/hatred/P = H.get_item_by_slot(ITEM_SLOT_LPOCKET)
-			var/datum/component/storage/STR = P.GetComponent(/datum/component/storage)
-			STR.can_hold = typecacheof(list(/obj/item/ammo_box/shotgun/loaded))
-			STR.max_items = 5
-			new /obj/item/ammo_box/shotgun/loaded/buckshot(P)
-			new /obj/item/ammo_box/shotgun/loaded(P)
-			new /obj/item/ammo_box/shotgun/loaded/incendiary(P)
-			// new /obj/item/ammo_casing/shotgun/dragonsbreath(P)
-			new /obj/item/ammo_box/shotgun/loaded/frangible(P)
-			new /obj/item/ammo_box/shotgun/loaded/flechette(P)
+			if(P)
+				var/datum/component/storage/STR = P.GetComponent(/datum/component/storage)
+				STR.can_hold = typecacheof(list(/obj/item/ammo_box/shotgun/loaded))
+				STR.max_items = 5
+				new /obj/item/ammo_box/shotgun/loaded/buckshot(P)
+				new /obj/item/ammo_box/shotgun/loaded(P)
+				new /obj/item/ammo_box/shotgun/loaded/incendiary(P)
+				// new /obj/item/ammo_casing/shotgun/dragonsbreath(P)
+				new /obj/item/ammo_box/shotgun/loaded/frangible(P)
+				new /obj/item/ammo_box/shotgun/loaded/flechette(P)
 		if("Pistols")
 			I = H.get_item_by_slot(ITEM_SLOT_OCLOTHING)
-			I.resistance_flags = FIRE_PROOF | ACID_PROOF // to prevent the holster of Hatred to be dropped and lost forever.
+			I?.resistance_flags = FIRE_PROOF | ACID_PROOF // to prevent the holster of Hatred to be dropped and lost forever.
 
 	switch(Ha.chosen_high_gear)
 		if("More armor")
 			var/obj/item/clothing/C = H.get_item_by_slot(ITEM_SLOT_OCLOTHING)
-			C.armor = C.armor.modifyAllRatings(10)
+			C?.armor = C?.armor.modifyAllRatings(10)
 			C = H.get_item_by_slot(ITEM_SLOT_HEAD)
-			C.armor = C.armor.modifyAllRatings(10)
+			C?.armor = C?.armor.modifyAllRatings(10)
 
 /// DYNAMIC THINGS ///
 
