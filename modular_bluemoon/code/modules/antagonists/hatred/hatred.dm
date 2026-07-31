@@ -14,7 +14,7 @@
  *
  * 		TODO LATER
  * ?новое оружие - super shotgun двустволка  /obj/item/gun/ballistic/revolver/doublebarrel/super
- * hazard immune high gear
+ * ?hazard immune high gear
  * что-то выбивающее для пистолетов
  * жига?
  *
@@ -309,10 +309,11 @@
 	SIGNAL_HANDLER
 	var/turf/my_location = get_turf(owner.current)
 	if(!(my_location.z in allowed_z_levels))
-		to_chat(owner.current, span_userdanger("Так просто они от меня не избавятся!"))
+		owner.current.say("Так просто они от меня не избавятся!", spans = list(SPAN_YELL), forced = TRUE)
 		appear_on_station()
 
-/datum/antagonist/hatred/proc/alarm_station() // major antag is currently commencing genocide, so we must let everyone know.
+/// major antag is currently commencing genocide, so we must let everyone know.
+/datum/antagonist/hatred/proc/alarm_station()
 	if(istype(src) && owner?.current && owner?.current.stat != DEAD)
 		var/chosen_sound = pick('modular_bluemoon/code/modules/antagonists/hatred/hatred_spawned_1.ogg','modular_bluemoon/code/modules/antagonists/hatred/hatred_spawned_2.ogg')
 		priority_announce("На ваш объект ворвался особо опасный вооруженный преступник с целью массового убийства гражданских лиц. \
@@ -452,6 +453,12 @@
 /obj/item/gun/ballistic/automatic/ak47/hatred/dropped(mob/user, silent) // lost arm, etc...
 	. = ..()
 	REMOVE_TRAIT(src, TRAIT_NODROP, null)
+
+// clickclickclickclickclick... panic!
+/obj/item/gun/ballistic/automatic/ak47/hatred/on_autofire_start(mob/living/shooter)
+	. = ..()
+	if(. == FALSE && !can_shoot())
+		shoot_with_empty_chamber(shooter)
 
 /// SHOTGUN GEAR ///
 

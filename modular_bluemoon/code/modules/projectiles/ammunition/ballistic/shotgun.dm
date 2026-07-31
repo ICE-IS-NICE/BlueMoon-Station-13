@@ -14,6 +14,7 @@
 	icon = 'modular_bluemoon/icons/obj/ammo.dmi'
 	icon_state = "breacher"
 	projectile_type = /obj/item/projectile/bullet/frangible_slug
+
 /obj/item/ammo_casing/slug23
 	name = "23 slug"
 	desc = "A 23 gauge lead slug."
