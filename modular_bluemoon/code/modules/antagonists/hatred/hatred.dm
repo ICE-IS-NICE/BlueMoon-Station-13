@@ -172,7 +172,7 @@
 	H.add_quirk(/datum/quirk/high_pain_threshold, FALSE)
 	// H.add_quirk(/datum/quirk/jumper, announce = FALSE) // ADD_TRAIT(H, TRAIT_JUMPER, HATRED_ANTAG)
 	// ADD_TRAIT(H, TRAIT_EVIL, HATRED_ANTAG) // H.add_quirk(/datum/quirk/evil, announce = FALSE) // no unwanted post_add() text
-	tgui_alert(H, "У тебя есть последняя минута, чтобы собраться с мыслями. Ознакомься с инструкциями в чате. Закрой это окошко когда будешь готов...", "Ты готов убивать?", list("Я готов убивать."), timeout = 1 MINUTES, autofocus = FALSE)
+	tgui_alert(H, "У тебя есть последняя минута, чтобы собраться с мыслями. Ознакомься с инструкциями в чате. Закрой это окошко когда будешь готов...", "Ты готов убивать?", list("Я готов убивать."), timeout = 59 SECONDS, autofocus = FALSE)
 	if(QDELETED(H)) // админы сказали "нет"
 		return
 	// WE ARE READY.
