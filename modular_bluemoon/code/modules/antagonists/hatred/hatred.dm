@@ -211,11 +211,12 @@
 
 /datum/antagonist/hatred/proc/on_hatred_death()
 	SIGNAL_HANDLER
+	var/obj/item/clothing/suit/jacket/leather/overcoat/hatred/h = new(get_turf(owner.current))
+	h.desc = "The blood stained shabby leather overcoat with decent armor paddings and special lightweight kevlar."
+	addtimer(CALLBACK(h, TYPE_PROC_REF(/obj/item/clothing, repair)), 3 SECONDS, TIMER_STOPPABLE|TIMER_DELETE_ME)
 	switch(chosen_gun)
 		if("Pistols")
-			var/obj/item/clothing/suit/jacket/leather/overcoat/hatred/I = new(get_turf(owner.current))
-			I.desc = "The blood stained shabby leather overcoat with decent armor paddings and special lightweight kevlar."
-			addtimer(CALLBACK(I, TYPE_PROC_REF(/obj/item/clothing, repair)), 3 SECONDS, TIMER_STOPPABLE|TIMER_DELETE_ME)
+			new /obj/item/storage/bag/ammo/hatred_c4(get_turf(owner.current))
 		else
 			// предотвращаем уничтожение уникального оружия на спине
 			var/mob/living/L = owner.current
@@ -622,6 +623,41 @@
 		// atom_storage.refresh_views()
 		// update_appearance()
 
+/obj/item/storage/bag/ammo/hatred_c4
+	name = "\improper Breaching pouch of Hatred"
+	desc = "Проклятый Подсумок Ненависти раз в 20 секунд воплощает заряд C4 с коротким таймером."
+	resistance_flags = FIRE_PROOF | ACID_PROOF
+	max_integrity = 400
+
+/obj/item/storage/bag/ammo/hatred_c4/Initialize(mapload)
+	. = ..()
+	create_c4()
+
+/obj/item/storage/bag/ammo/hatred_c4/ComponentInitialize()
+	. = ..()
+	var/datum/component/storage/STR = GetComponent(/datum/component/storage)
+	STR.can_hold = typecacheof(list(/obj/item/grenade/plastic/c4))
+	STR.max_combined_w_class = INFINITY // only for weight calculations. it still has type and slots limits
+	STR.max_w_class = WEIGHT_CLASS_BULKY
+	STR.max_items = 1
+	STR.quickdraw = TRUE
+
+/obj/item/storage/bag/ammo/hatred_c4/examine(mob/user)
+	. = ..()
+	. += span_notice("[span_bold("Alt-Click")] - вытащить предмет.")
+
+/obj/item/storage/bag/ammo/hatred_c4/Exited(atom/movable/gone, atom/newLoc)
+	. = ..()
+	if(istype(gone, /obj/item/grenade/plastic/c4))
+		addtimer(CALLBACK(src, PROC_REF(create_c4)), 20 SECONDS, TIMER_STOPPABLE|TIMER_DELETE_ME|TIMER_UNIQUE)
+
+/obj/item/storage/bag/ammo/hatred_c4/proc/create_c4()
+	if(QDELETED(src) || contents.len > 0)
+		return
+	var/obj/item/grenade/plastic/c4/C = new(src)
+	C.det_time = 2
+	C.w_class = WEIGHT_CLASS_BULKY // не стакаем бесплатные заряды у себя в рюкзаке
+
 /// THE POUCH OF HATRED ///
 
 /obj/item/storage/bag/ammo/hatred
@@ -786,6 +822,7 @@
 			l_pocket = /obj/item/storage/bag/ammo/hatred
 		if("Pistols")
 			suit_store = /obj/item/storage/belt/holster/hatred
+			l_pocket = /obj/item/storage/bag/ammo/hatred_c4
 			ADD_TRAIT(H, TRAIT_DOUBLE_TAP, HATRED_ANTAG)
 	if(Ha.gear_level >= 2)
 		Ha.chosen_high_gear = tgui_input_list(H, "Выбери дополнительную экипировку и сделай это БЫСТРО!", "Выбери оружие геноцида", Ha.high_gear, Ha.high_gear[1], 10 SECONDS)
