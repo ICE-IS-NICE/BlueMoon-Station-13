@@ -225,14 +225,14 @@
 				if(istype(I))
 					I.forceMove(L.drop_location())
 
-/// Не ползаем по 10 минут беспомощно в крите. Либо встаем и дерёмся, либо умираем в последней битве. Тик раз в 2 секунды.
-/datum/antagonist/hatred/proc/recover_from_softcrit()
+/// Не ползаем по 10 минут беспомощно в крите. Либо встаем и дерёмся, либо умираем в последней битве.
+/datum/antagonist/hatred/proc/recover_from_softcrit(mob/source, delta_time, times_fired)
 	SIGNAL_HANDLER
 	if(owner.current.stat == SOFT_CRIT)
-		owner.current.heal_overall_damage(1, 1, 0, FALSE, FALSE, FALSE, TRUE)
-		owner.current.adjustToxLoss(-1, FALSE, TRUE)
-		owner.current.adjustOxyLoss(-1, FALSE, TRUE)
-		owner.current.adjustCloneLoss(-1, FALSE, TRUE)
+		owner.current.heal_overall_damage(delta_time, delta_time, 0, FALSE, FALSE, FALSE, TRUE)
+		owner.current.adjustToxLoss(-delta_time, FALSE, TRUE)
+		owner.current.adjustOxyLoss(-delta_time, FALSE, TRUE)
+		owner.current.adjustCloneLoss(-delta_time, FALSE, TRUE)
 		owner.current.updatehealth()
 
 /datum/movespeed_modifier/hatred
