@@ -102,8 +102,7 @@
 		greet_text += "[span_red("Cумка для патронов")] сама пополняет пустые магазины/картриджи/клипсы для твоего оружия. Никогда не выбрасывай их!<br>"
 	// if(chosen_gun == "Combat Shotgun")
 	// 	greet_text += "Ты захватил с собой [span_red("запасной дробовик")], чтобы у тебя всегда под рукой был План Б.<br>"
-	if(!isnull(chosen_high_gear))
-		greet_text += "[span_red("Пояс с гранатами")] пожирает сердца твоих жертв после их добивания и вознаграждает тебя новой взрывоопасной аммуницией.<br>"
+	greet_text += "[span_red("Пояс с гранатами")] пожирает сердца твоих жертв после их добивания и вознаграждает тебя новой взрывоопасной аммуницией.<br>"
 	greet_text += "[span_red(span_bold("Время убивать. Время умирать."))] И пусть ни одна мразь не доживёт до завтра. Ибо никто сегодня не защищен от твоей Ненависти.<br>"
 	to_chat(owner.current, greet_text)
 	antag_memory = greet_text
@@ -116,7 +115,7 @@
 	.["antag_name"] = name
 	.["objectives"] = get_objectives()
 	.["pistols"] = (chosen_gun == "Pistols")
-	.["belt"] = !isnull(chosen_high_gear)
+	.["belt"] = TRUE
 
 /datum/antagonist/hatred/on_gain()
 	var/mob/living/carbon/human/H = owner.current
@@ -758,7 +757,7 @@
 	gloves = /obj/item/clothing/gloves/tackler/combat/insulated
 	shoes = /obj/item/clothing/shoes/jackboots/tall_default
 	id = /obj/item/card/id/stowaway_stolen
-	belt = /obj/item/storage/belt/military/assault
+	belt = /obj/item/storage/belt/military/assault/hatred
 	back = /obj/item/storage/backpack/satchel // /obj/item/storage/backpack/rucksack
 	backpack_contents = list(/obj/item/storage/box/survival/engineer = 1,
 		/obj/item/kitchen/knife/combat = 1,
@@ -789,7 +788,6 @@
 			suit_store = /obj/item/storage/belt/holster/hatred
 			ADD_TRAIT(H, TRAIT_DOUBLE_TAP, HATRED_ANTAG)
 	if(Ha.gear_level >= 2)
-		belt = /obj/item/storage/belt/military/assault/hatred
 		Ha.chosen_high_gear = tgui_input_list(H, "Выбери дополнительную экипировку и сделай это БЫСТРО!", "Выбери оружие геноцида", Ha.high_gear, Ha.high_gear[1], 10 SECONDS)
 		if(!Ha.chosen_high_gear)
 			Ha.chosen_high_gear = Ha.high_gear[1]
