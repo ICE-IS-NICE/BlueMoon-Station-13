@@ -140,8 +140,6 @@
 	// just to be sure
 	var/datum/component/mood/mood = H.GetComponent(/datum/component/mood)
 	mood?.RemoveComponent()
-	// mood?.mood_modifier = 0 //Basically nothing can change your mood
-	// mood?.setSanity(SANITY_NEUTRAL)
 	// сверхскорость и неуловимость страшнее сверхброни и бесконечных патронов
 	for(var/ms as anything in typesof(/datum/movespeed_modifier/reagent))
 		if(initial(ms:multiplicative_slowdown) < 0)
@@ -171,23 +169,44 @@
 	H.add_quirk(/datum/quirk/high_pain_threshold, FALSE)
 	// H.add_quirk(/datum/quirk/jumper, announce = FALSE) // ADD_TRAIT(H, TRAIT_JUMPER, HATRED_ANTAG)
 	// ADD_TRAIT(H, TRAIT_EVIL, HATRED_ANTAG) // H.add_quirk(/datum/quirk/evil, announce = FALSE) // no unwanted post_add() text
-	tgui_alert(H, "У тебя есть последняя минута, чтобы собраться с мыслями. Ознакомься с инструкциями в чате. Закрой это окошко когда будешь готов...", "Ты готов убивать?", list("Я готов убивать."), timeout = 59 SECONDS, autofocus = FALSE)
-	if(QDELETED(H)) // админы сказали "нет"
-		return
-	// WE ARE READY.
-	UnregisterSignal(H, COMSIG_MOVABLE_PRE_MOVE)
-	RegisterSignal(H, COMSIG_MOB_DEATH, PROC_REF(on_hatred_death))
-	H.fully_heal(TRUE) // in case of some accidents in spawn room during preparation
-	// mood?.setSanity(SANITY_NEUTRAL)
-	appear_on_station()
 	allowed_z_levels += SSmapping.levels_by_trait(ZTRAIT_CENTCOM)
 	allowed_z_levels += SSmapping.levels_by_trait(ZTRAIT_RESERVED)
 	allowed_z_levels += SSmapping.levels_by_trait(ZTRAIT_STATION)
+	RegisterSignal(H, COMSIG_MOB_DEATH, PROC_REF(on_hatred_death))
 	RegisterSignal(H, COMSIG_MOVABLE_Z_CHANGED, PROC_REF(check_hatred_off_station)) // almost like anchor implant, but doesn't hurt
+	var/datum/action/hatred_deploy/D = new
+	D.Grant(H)
+
+/datum/action/hatred_deploy
+	name = "Отправиться на станцию"
+	desc = "Пришло время геноцида..."
+	icon_icon = 'modular_bluemoon/icons/mob/actions/deploy.dmi'
+	button_icon_state = "deploy"
+	check_flags = NONE
+	required_mobility_flags = NONE
+
+/datum/action/hatred_deploy/Trigger()
+	. = ..()
+	if(!. || QDELETED(src) || QDELETED(owner) || !ishuman(owner) || owner != usr)
+		return FALSE
+	var/mob/living/carbon/human/H = owner
+	var/datum/antagonist/hatred/Ha = H.mind?.has_antag_datum(/datum/antagonist/hatred)
+	if(!Ha)
+		return FALSE
+	// WE ARE READY.
+	H.fully_heal(TRUE) // in case of some accidents in spawn room during preparation
+	Ha.UnregisterSignal(H, COMSIG_MOVABLE_PRE_MOVE)
+	Ha.appear_on_station()
 	playsound(H, pick('modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_1.ogg', \
 					'modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_2.ogg', \
 					'modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_3.ogg'), vol = 100, vary = FALSE, ignore_walls = FALSE)
-	addtimer(CALLBACK(src, PROC_REF(alarm_station)), 5 SECONDS, TIMER_STOPPABLE|TIMER_DELETE_ME) // Give a player a moment to understand what's going on.
+	addtimer(CALLBACK(Ha, TYPE_PROC_REF(/datum/antagonist/hatred, alarm_station)), 5 SECONDS, TIMER_STOPPABLE|TIMER_DELETE_ME) // Give a player a moment to understand what's going on.
+	INVOKE_ASYNC(src, PROC_REF(Remove), H)
+
+/datum/action/hatred_deploy/Remove(mob/remove_from)
+	. = ..()
+	if(!QDELETED(src))
+		qdel(src)
 
 /datum/antagonist/hatred/on_removal()
 	var/mob/living/L = owner.current
@@ -371,7 +390,7 @@
 	else if(COOLDOWN_FINISHED(src, killing_speech_cd))
 		playsound(owner.current, pick(killing_speech), vol = 100, vary = FALSE, ignore_walls = FALSE)
 		COOLDOWN_START(src, killing_speech_cd, 10 SECONDS)
-	var/time_to_kill = chosen_high_gear == "Faster executions" ? 5 SECONDS : 7 SECONDS
+	var/time_to_kill = chosen_high_gear == "Faster executions" ? 4 SECONDS : 6 SECONDS
 	if(do_after(killer, time_to_kill, target))
 		target.visible_message(span_bolddanger("[killer] перерезает горло [target]!"), span_userdanger("[killer] перерезает твое горло!"))
 		knife.melee_attack_chain(killer, target, damage_multiplier = 100)
@@ -399,7 +418,7 @@
 	else if(COOLDOWN_FINISHED(Ha, killing_speech_cd))
 		playsound(user, pick(Ha.killing_speech), vol = 100, vary = FALSE, ignore_walls = FALSE)
 		COOLDOWN_START(Ha, killing_speech_cd, 10 SECONDS)
-	var/new_ttk = Ha.chosen_high_gear == "Faster executions" ? 8 SECONDS : 10 SECONDS
+	var/new_ttk = Ha.chosen_high_gear == "Faster executions" ? 7 SECONDS : 9 SECONDS
 	. = ..(user, target, params, bypass_timer, time_to_kill = new_ttk)
 	if(!. || user == target || !is_glory)
 		return
