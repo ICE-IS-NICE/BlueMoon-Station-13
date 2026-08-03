@@ -203,7 +203,7 @@
 				var/mob/mob_for_role
 				if(alert(usr, "Вы уверены, что собираетесь создать мажорного антагониста \"Массшутер\"?", , "Да.", "Ой, я случайно...") != "Да.")
 					return
-				if(alert(usr, "Вырать случайного или конкретного призрака?", , "Случайный", "Конкретный") == "Конкретный")
+				if(alert(usr, "Запустить голосование среди призраков или выбрать конкретного?", , "Голосование", "Конкретный") == "Конкретный")
 					var/list/cand = get_all_ghost_role_eligible(TRUE, TRUE)
 					mob_for_role = tgui_input_list(usr, "Кто?", , cand, null)
 					if(QDELETED(mob_for_role) || !isobserver(mob_for_role) || !mob_for_role.client || jobban_isbanned(mob_for_role, "pacifist"))
