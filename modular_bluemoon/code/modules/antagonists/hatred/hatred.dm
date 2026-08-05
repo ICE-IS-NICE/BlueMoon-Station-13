@@ -257,6 +257,9 @@
 /datum/movespeed_modifier/hatred
 	multiplicative_slowdown = 0.5 // плохе настроение первой степени
 
+/datum/movespeed_modifier/hatred_glory_kill
+	multiplicative_slowdown = -1
+
 /datum/antagonist/hatred/proc/evaluate_security()
 	var/gear_points = length(SSjob.get_living_sec())
 	// for(var/mob/living/carbon/human/player in GLOB.carbon_list)
@@ -429,6 +432,8 @@
 		user.fully_heal(TRUE) // the only way of healing
 		// user.do_adrenaline(150, TRUE, 0, 0, TRUE, list(/datum/reagent/medicine/inaprovaline = 10, /datum/reagent/medicine/synaptizine = 15, /datum/reagent/medicine/regen_jelly = 20, /datum/reagent/medicine/stimulants = 20), "<span class='boldnotice'>You feel a sudden surge of energy!</span>")
 		user.visible_message("Кровь жертвы окрапляет [user], даруя ему нечеловеческое облегчение и силу продолжать бойню.")
+		user.add_movespeed_modifier(/datum/movespeed_modifier/hatred_glory_kill)
+		addtimer(CALLBACK(user, TYPE_PROC_REF(/mob/living/carbon/human, remove_movespeed_modifier), /datum/movespeed_modifier/hatred_glory_kill), 10 SECONDS, TIMER_STOPPABLE|TIMER_DELETE_ME|TIMER_UNIQUE|TIMER_OVERRIDE)
 		var/datum/antagonist/hatred/Ha = user.mind?.has_antag_datum(/datum/antagonist/hatred)
 		var/datum/objective/genocide/objective = locate() in Ha?.objectives
 		objective?.glory_kills++
