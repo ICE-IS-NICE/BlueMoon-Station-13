@@ -15,8 +15,9 @@
  * 		TODO LATER
  * ?новое оружие - super shotgun двустволка  /obj/item/gun/ballistic/revolver/doublebarrel/super
  * ?hazard immune high gear
- * что-то выбивающее для пистолетов
  * жига?
+ * кс-23? - надо дрочить, шанс гибнуть голову (проебать исцеление), всего 4 патрона (исправимо), реально хорош против брони - мемно и перспективно
+ *
  *
  */
 
@@ -95,12 +96,14 @@
 	greet_text += "У тебя лишь две цели: <u>убивать</u> и <u>умереть славной смертью</u>.<br>"
 	greet_text += "Твое проклятое снаряжение неразлучно с тобою и подстегивает тебя продолжать соврешать геноцид беззащитных гражданских.<br>"
 	greet_text += "Твоё [span_red("Оружие Ненависти")] и неутолимая жажда убивать вознаграждают тебя, ибо завершающий выстрел в упор в голову (рот) исцеляет твои раны, нож добивает быстрее и надежнее.<br>"
-	greet_text += span_red("Обычная медицина бессильна!")
+	greet_text += span_red("Обычная медицина не лечит раны и ожоги!")
 	if(chosen_gun == "Pistols")
 		greet_text += "[span_red("Кобура Ненависти")] всегда готова предоставить тебе особое парное оружие. [span_red("Стрелять с двух рук - HARM INTENT")]. После использования можешь просто выбросить их, ибо их цель была выполнена.<br>"
+		greet_text += "В своем кармане ты будешь время от времени находить С4 с коротким таймером - не жалей!<br>"
 	else
 		greet_text += "[span_red("Cумка для патронов")] сама пополняет пустые магазины/картриджи/клипсы для твоего оружия. Никогда не выбрасывай их!<br>"
-	// if(chosen_gun == "Combat Shotgun")
+	if(chosen_gun == "Combat Shotgun")
+		greet_text += "Акимбо: Ты можешь стрелять из оружия одной рукой, даже если вторая занята, но забудь про автоматическую стрельбу. С твоим дробовиком это только бонус.<br>"
 	// 	greet_text += "Ты захватил с собой [span_red("запасной дробовик")], чтобы у тебя всегда под рукой был План Б.<br>"
 	greet_text += "[span_red("Пояс с гранатами")] пожирает сердца твоих жертв после их добивания и вознаграждает тебя новой взрывоопасной аммуницией.<br>"
 	greet_text += "[span_red(span_bold("Время убивать. Время умирать."))] И пусть ни одна мразь не доживёт до завтра. Ибо никто сегодня не защищен от твоей Ненависти.<br>"
@@ -115,7 +118,7 @@
 	.["antag_name"] = name
 	.["objectives"] = get_objectives()
 	.["pistols"] = (chosen_gun == "Pistols")
-	.["belt"] = TRUE
+	.["shotgun"] = (chosen_gun == "Combat Shotgun")
 
 /datum/antagonist/hatred/on_gain()
 	var/mob/living/carbon/human/H = owner.current
@@ -155,6 +158,7 @@
 	ADD_TRAIT(H, TRAIT_NODISMEMBER, HATRED_ANTAG) // if a player loses his arm, he won't be able to shoot nor drop his gun. it would be unplayable.
 	ADD_TRAIT(H, TRAIT_FAST_PUMP, HATRED_ANTAG)
 	ADD_TRAIT(H, TRAIT_NOCLONE, HATRED_ANTAG)
+	ADD_TRAIT(H, TRAIT_TRUE_NIGHT_VISION, HATRED_ANTAG)
 	H.mind.unconvertable = TRUE
 	H.status_flags &= ~CANKNOCKDOWN // пкм батоном = автовин сб
 	//EMP_PROTECT_CONTENTS
@@ -162,7 +166,7 @@
 	// ADD_TRAIT(H, TRAIT_NOSOFTCRIT, HATRED_ANTAG)
 	// ADD_TRAIT(H, TRAIT_STUNIMMUNE, HATRED_ANTAG) // Doesn't work against stunbatons anyway :(
 	//  GENERAL QUIRKS
-	H.add_quirk(/datum/quirk/night_vision, FALSE)
+	// H.add_quirk(/datum/quirk/night_vision, FALSE)
 	H.add_quirk(/datum/quirk/tough, FALSE)
 	H.add_quirk(/datum/quirk/freerunning, FALSE)
 	H.add_quirk(/datum/quirk/monochromatic, FALSE)
@@ -200,7 +204,7 @@
 	playsound(H, pick('modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_1.ogg', \
 					'modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_2.ogg', \
 					'modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_3.ogg'), vol = 100, vary = FALSE, ignore_walls = FALSE)
-	addtimer(CALLBACK(Ha, TYPE_PROC_REF(/datum/antagonist/hatred, alarm_station)), 5 SECONDS, TIMER_STOPPABLE|TIMER_DELETE_ME) // Give a player a moment to understand what's going on.
+	addtimer(CALLBACK(Ha, TYPE_PROC_REF(/datum/antagonist/hatred, alarm_station)), 8 SECONDS, TIMER_STOPPABLE|TIMER_DELETE_ME) // Give a player a moment to understand what's going on.
 	INVOKE_ASYNC(src, PROC_REF(Remove), H)
 
 /datum/action/hatred_deploy/Remove(mob/remove_from)
@@ -307,13 +311,22 @@
 
 /datum/antagonist/hatred/proc/appear_on_station()
 	var/list/possible_spawns = list()
+	var/list/best_possible_spawns = list() // no players around
 	// Method 1: find the most optimal maint turf
-	for(var/i = 1; i <= 20; i++)
+	for(var/i = 1; i <= 100; i++)
 		var/turf/T = get_safe_random_station_turf(typesof(/area/maintenance) & GLOB.the_station_areas)
 		if(istype(T))
-			possible_spawns += T
-		if(length(possible_spawns) >= 6) // enough
-			break
+			if(length(possible_spawns) < 6)
+				possible_spawns += T
+			var/players_nearby = FALSE
+			for(var/mob/living/L in range(10, T))
+				if(L.client && L.stat != DEAD)
+					players_nearby = TRUE
+					break
+			if(!players_nearby)
+				best_possible_spawns += T
+				if(length(best_possible_spawns) >= 6) // enough
+					break
 	// Method 2 (if 1 failed): find the most optimal xeno maint spawn. Atmos problems are possible.
 	for(var/turf/X in GLOB.xeno_spawn) //Some xeno spawns are in some spots that will instantly kill human, like atmos
 		if(length(possible_spawns) >= 6)
@@ -325,7 +338,8 @@
 		possible_spawns += find_safe_turf(extended_safety_checks = TRUE, dense_atoms = FALSE) // in case of some huge map problems
 	possible_spawns += get_safe_random_station_turf(typesof(/area/command/gateway)) // 1/7 is ~15%
 	listclearnulls(possible_spawns)
-	owner.current.forceMove(pick(possible_spawns))
+	var/turf/chosen_turf = !isemptylist(best_possible_spawns) ? pick(best_possible_spawns) : pick(possible_spawns)
+	owner.current.forceMove(chosen_turf)
 	do_sparks(4, TRUE, owner.current)
 
 /datum/antagonist/hatred/proc/check_hatred_off_station()
@@ -433,7 +447,7 @@
 		// user.do_adrenaline(150, TRUE, 0, 0, TRUE, list(/datum/reagent/medicine/inaprovaline = 10, /datum/reagent/medicine/synaptizine = 15, /datum/reagent/medicine/regen_jelly = 20, /datum/reagent/medicine/stimulants = 20), "<span class='boldnotice'>You feel a sudden surge of energy!</span>")
 		user.visible_message("Кровь жертвы окрапляет [user], даруя ему нечеловеческое облегчение и силу продолжать бойню.")
 		user.add_movespeed_modifier(/datum/movespeed_modifier/hatred_glory_kill)
-		addtimer(CALLBACK(user, TYPE_PROC_REF(/mob/living/carbon/human, remove_movespeed_modifier), /datum/movespeed_modifier/hatred_glory_kill), 10 SECONDS, TIMER_STOPPABLE|TIMER_DELETE_ME|TIMER_UNIQUE|TIMER_OVERRIDE)
+		addtimer(CALLBACK(user, TYPE_PROC_REF(/mob/living/carbon/human, remove_movespeed_modifier), /datum/movespeed_modifier/hatred_glory_kill), 15 SECONDS, TIMER_STOPPABLE|TIMER_DELETE_ME|TIMER_UNIQUE|TIMER_OVERRIDE)
 		var/datum/antagonist/hatred/Ha = user.mind?.has_antag_datum(/datum/antagonist/hatred)
 		var/datum/objective/genocide/objective = locate() in Ha?.objectives
 		objective?.glory_kills++
@@ -541,6 +555,7 @@
 		return
 	. = ..()
 
+/*
 /obj/item/gun/ballistic/revolver/doublebarrel/sawn/hatred // частично сломан + не нужен = не используется
 	name = "\proper The \"Plan B\""
 	desc = "The scratches on this sawn-off double-barreled shotgun say: \"Plan B\"."
@@ -564,7 +579,7 @@
 /obj/item/ammo_box/magazine/internal/shot/hatred_dual
 	ammo_type = /obj/item/ammo_casing/shotgun/frangible
 	max_ammo = 2
-
+*/
 /// PISTOLS GEAR ///
 
 /obj/item/gun/ballistic/automatic/pistol/m1911/hatred // enforcer?
@@ -821,7 +836,7 @@
 	back = /obj/item/storage/backpack/satchel // /obj/item/storage/backpack/rucksack
 	backpack_contents = list(/obj/item/storage/box/survival/engineer = 1,
 		/obj/item/kitchen/knife/combat = 1,
-		/obj/item/flashlight/seclite = 1,
+		// /obj/item/flashlight/seclite = 1,
 		/obj/item/crowbar = 1
 		)
 	implants = list(/obj/item/implant/explosive) // post_equip() doesn't work for implants since implanting occurs afrer post_equip()
@@ -844,6 +859,7 @@
 			suit_store = /obj/item/gun/ballistic/shotgun/automatic/combat/hatred
 			// suit_store = /obj/item/gun/ballistic/revolver/doublebarrel/sawn/hatred
 			l_pocket = /obj/item/storage/bag/ammo/hatred
+			ADD_TRAIT(H, TRAIT_AKIMBO, HATRED_ANTAG)
 		if("Pistols")
 			suit_store = /obj/item/storage/belt/holster/hatred
 			l_pocket = /obj/item/storage/bag/ammo/hatred_c4
