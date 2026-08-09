@@ -17,7 +17,7 @@
  * ?hazard immune high gear
  * жига?
  * кс-23? - надо дрочить, шанс гибнуть голову (проебать исцеление), всего 4 патрона (исправимо), реально хорош против брони - мемно и перспективно
- *
+ * ?/obj/item/gun/ballistic/shotgun/automatic/dual_tube
  *
  */
 
@@ -94,18 +94,16 @@
 	greet_text += "Ты - [span_red(span_bold("Безымянный Массшутер"))]. Твое имя совершенно неважно. Твое прошлое даже если и было, оно было незавидным.<br>"
 	greet_text += "Ты испытываешь непреодолимую ненависть, отвращение и презрение ко всем окружающим.<br>"
 	greet_text += "У тебя лишь две цели: <u>убивать</u> и <u>умереть славной смертью</u>.<br>"
+	greet_text += "<br>[span_red(span_bold("Не торопись и познакомься со своими инструментами геноцида. В бою у тебя не будет такой \
+					возможности. Соберись с мыслями и отправляйся на станцию когда будешь готов."))]<br><br>"
 	greet_text += "Твое проклятое снаряжение неразлучно с тобою и подстегивает тебя продолжать соврешать геноцид беззащитных гражданских.<br>"
-	greet_text += "Твоё [span_red("Оружие Ненависти")] и неутолимая жажда убивать вознаграждают тебя, ибо завершающий выстрел в упор в голову (рот) исцеляет твои раны, нож добивает быстрее и надежнее.<br>"
-	greet_text += span_red("Обычная медицина не лечит раны и ожоги!")
+	greet_text += "Твоё [span_red("Оружие Ненависти")] и неутолимая жажда убивать вознаграждают тебя, ибо завершающий выстрел в упор в голову (рот) исцеляет твои раны и дает прилив сил, нож добивает быстрее и надежнее.<br>"
+	greet_text += span_red("Обычная медицина не лечит раны и ожоги!<br>")
 	if(chosen_gun == "Pistols")
-		greet_text += "[span_red("Кобура Ненависти")] всегда готова предоставить тебе особое парное оружие. [span_red("Стрелять с двух рук - HARM INTENT")]. После использования можешь просто выбросить их, ибо их цель была выполнена.<br>"
-		greet_text += "В своем кармане ты будешь время от времени находить С4 с коротким таймером - не жалей!<br>"
-	else
-		greet_text += "[span_red("Cумка для патронов")] сама пополняет пустые магазины/картриджи/клипсы для твоего оружия. Никогда не выбрасывай их!<br>"
+		greet_text += "[span_red("Стрелять с двух рук - HARM INTENT")].<br>"
 	if(chosen_gun == "Combat Shotgun")
 		greet_text += "Акимбо: Ты можешь стрелять из оружия одной рукой, даже если вторая занята, но забудь про автоматическую стрельбу. С твоим дробовиком это только бонус.<br>"
-	// 	greet_text += "Ты захватил с собой [span_red("запасной дробовик")], чтобы у тебя всегда под рукой был План Б.<br>"
-	greet_text += "[span_red("Пояс с гранатами")] пожирает сердца твоих жертв после их добивания и вознаграждает тебя новой взрывоопасной аммуницией.<br>"
+		greet_text += "На твоем поясе висит [span_red("запасная двустволка")] для быстрой стрельбы другим типом боеприпасов. Заряжена выбивающими двери и окна патронами..<br>"
 	greet_text += "[span_red(span_bold("Время убивать. Время умирать."))] И пусть ни одна мразь не доживёт до завтра. Ибо никто сегодня не защищен от твоей Ненависти.<br>"
 	to_chat(owner.current, greet_text)
 	antag_memory = greet_text
@@ -117,8 +115,8 @@
 		return
 	.["antag_name"] = name
 	.["objectives"] = get_objectives()
-	.["pistols"] = (chosen_gun == "Pistols")
 	.["shotgun"] = (chosen_gun == "Combat Shotgun")
+	.["pistols"] = (chosen_gun == "Pistols")
 
 /datum/antagonist/hatred/on_gain()
 	var/mob/living/carbon/human/H = owner.current
@@ -147,6 +145,9 @@
 	for(var/ms as anything in typesof(/datum/movespeed_modifier/reagent))
 		if(initial(ms:multiplicative_slowdown) < 0)
 			H.add_movespeed_mod_immunities(HATRED_ANTAG, ms)
+	H.add_movespeed_mod_immunities(HATRED_ANTAG, /datum/movespeed_modifier/grab_slowdown/aggressive)
+	H.add_movespeed_mod_immunities(HATRED_ANTAG, MOVESPEED_ID_MOB_GRAB_STATE)
+	H.drag_slowdown = FALSE
 	// SPECIAL TRAITS
 	ADD_TRAIT(H, TRAIT_SLEEPIMMUNE, HATRED_ANTAG) // I challenge you to a glorious fight!
 	ADD_TRAIT(H, TRAIT_VIRUSIMMUNE, HATRED_ANTAG)
@@ -524,6 +525,9 @@
 	w_class = WEIGHT_CLASS_BULKY
 	pump()
 
+/obj/item/gun/ballistic/shotgun/automatic/combat/hatred/update_icon_state()
+	icon_state = "cshotgun_slick"
+
 /obj/item/gun/ballistic/shotgun/automatic/combat/hatred/ui_action_click(mob/user, action)
 	if(istype(action, /datum/action/item_action/no_drop_toggle))
 		return
@@ -531,7 +535,7 @@
 
 /obj/item/gun/ballistic/shotgun/automatic/combat/hatred/examine(mob/user)
 	. = ..()
-	. += span_notice("[span_bold("Ctrl-Shift-Click")] - быстрая разрядка.")
+	. += span_red("[span_bold("Ctrl-Shift-Click")] - быстрая разрядка.")
 
 /obj/item/gun/ballistic/shotgun/automatic/combat/hatred/dropped(mob/user, silent) // lost arm, etc...
 	. = ..()
@@ -555,31 +559,69 @@
 		return
 	. = ..()
 
-/*
-/obj/item/gun/ballistic/revolver/doublebarrel/sawn/hatred // частично сломан + не нужен = не используется
+// Импровизируем, чтобы избавиться от наслеования с револьверов /revolver/doublebarrel.
+// Не наследуемся с /ballistic/shotgun/automatic так кам основе лежит помповая дрочильня, даже если она автоматическая.
+// Частичный копипаст из обоих объектов.
+/obj/item/gun/ballistic/automatic/shotgun/doublebarrel_hatred
 	name = "\proper The \"Plan B\""
 	desc = "The scratches on this sawn-off double-barreled shotgun say: \"Plan B\"."
+	icon = 'modular_splurt/icons/obj/guns/projectile.dmi'
+	icon_state = "shotgun"
+	item_state = "shotgun"
 	resistance_flags = FIRE_PROOF | ACID_PROOF
-	mag_type = /obj/item/ammo_box/magazine/internal/shot/hatred_dual
+	w_class = WEIGHT_CLASS_NORMAL
+	weapon_weight = WEAPON_LIGHT
+	slot_flags = ITEM_SLOT_BELT
+	mag_type = /obj/item/ammo_box/magazine/internal/shot/dual/hatred
 	fire_sound = "sound/weapons/gunshotshotgunshot.ogg"
-	// copy-paste from proc/sawoff() since we don't have existing solutions.
-	// sawn_off = TRUE
-	// spread = -100 // will become ~0 during math things. we do it to reduce sawn_off spread.
-	// w_class = WEIGHT_CLASS_NORMAL
-	// weapon_weight = WEAPON_MEDIUM
-	// lefthand_file = 'icons/mob/inhands/weapons/guns_lefthand.dmi'
-	// righthand_file = 'icons/mob/inhands/weapons/guns_righthand.dmi'
-	// inhand_x_dimension = 32
-	// inhand_y_dimension = 32
-	// inhand_icon_state = "gun"
-	// worn_icon_state = "gun"
-	// slot_flags = ITEM_SLOT_BELT
-	// recoil = SAWN_OFF_RECOIL
+	recoil = 2
+	fire_select_modes = list(SELECT_SEMI_AUTOMATIC)
+	can_suppress = FALSE
+	sawn_off = TRUE
+	unique_reskin = null
+	burst_size = 2
+	burst_spread = 16
+	burst_shot_delay = 1
+	casing_ejector = FALSE
 
-/obj/item/ammo_box/magazine/internal/shot/hatred_dual
-	ammo_type = /obj/item/ammo_casing/shotgun/frangible
+/obj/item/gun/ballistic/automatic/shotgun/doublebarrel_hatred/update_icon_state()
+	// sawnshotgun-l_broke
+	icon_state = "[sawn_off ? "sawn" : "d"][initial(icon_state)][current_skin]"
+	item_state = "[sawn_off ? "sawn" : ""][initial(item_state)]"
+
+/obj/item/gun/ballistic/automatic/shotgun/doublebarrel_hatred/chamber_round()
+	if(chambered?.BB || !magazine || !magazine.ammo_count())
+		return
+	chambered = magazine.get_round(TRUE)
+
+/obj/item/gun/ballistic/automatic/shotgun/doublebarrel_hatred/get_ammo(countchambered)
+	return ..(FALSE)
+
+/obj/item/gun/ballistic/automatic/shotgun/doublebarrel_hatred/attack_self(mob/living/user)
+	playsound(src, "gun_dry_fire", 30, 1)
+	if(!magazine.ammo_count())
+		to_chat(user, span_warning("[src] is empty!"))
+		return
+	chambered = null
+	magazine.empty_magazine()
+	// playsound(user, 'sound/weapons/shotguninsert.ogg', 60, TRUE)
+
+/obj/item/gun/ballistic/automatic/shotgun/doublebarrel_hatred/attackby(obj/item/A, mob/user, params)
+	. = ..()
+	if(.)
+		return
+	var/num_loaded = magazine.attackby(A, user, params, TRUE)
+	if(num_loaded)
+		chamber_round()
+		to_chat(user, "You load a shell into \the [src]!")
+		playsound(user, 'sound/weapons/shotguninsert.ogg', 60, TRUE)
+		A.update_icon()
+		update_icon(UPDATE_DESC)
+
+/obj/item/ammo_box/magazine/internal/shot/dual/hatred
 	max_ammo = 2
-*/
+	ammo_type = /obj/item/ammo_casing/shotgun/frangible
+
 /// PISTOLS GEAR ///
 
 /obj/item/gun/ballistic/automatic/pistol/m1911/hatred // enforcer?
@@ -701,7 +743,7 @@
 
 /obj/item/storage/bag/ammo/hatred
 	name = "\improper Ammo pouch of Hatred"
-	desc = "Проклятый Подсумок Ненависти пополняет твои пустые магазины для твоих Машин Геноцида, подстегивая тебя продолжать бесчеловечную бойню."
+	desc = "Проклятый Подсумок Ненависти пополняет пустые магазины для твоих Машин Геноцида, подстегивая тебя продолжать бесчеловечную бойню."
 	resistance_flags = FIRE_PROOF | ACID_PROOF
 
 /obj/item/storage/bag/ammo/hatred/ComponentInitialize()
@@ -714,7 +756,7 @@
 
 /obj/item/storage/bag/ammo/hatred/examine(mob/user)
 	. = ..()
-	. += "Положи пустой магазин/картридж/клипсу в этот проклятый подсумок и он наполнится патронами."
+	. += span_red("Положи пустой магазин/картридж/клипсу в этот проклятый подсумок и он наполнится патронами.")
 	. += span_notice("[span_bold("Alt-Click")] - вытащить предмет.")
 
 /obj/item/storage/bag/ammo/hatred/Entered(atom/movable/AM, atom/oldLoc)
@@ -744,10 +786,17 @@
 	resistance_flags = FIRE_PROOF | ACID_PROOF
 	var/glory_points = 0
 
+/obj/item/storage/belt/military/assault/hatred/ComponentInitialize()
+	. = ..()
+	var/datum/component/storage/STR = GetComponent(/datum/component/storage)
+	STR.max_items = 10
+	STR.max_combined_w_class = INFINITY
+	STR.can_hold_extra += typecacheof(list(/obj/item/gun/ballistic/automatic/shotgun/doublebarrel_hatred))
+
 /obj/item/storage/belt/military/assault/hatred/examine(mob/user)
 	. = ..()
-	. += "Положи сердце в этот проклятый пояс и оно обратится во взрывчатку."
-	. += span_notice("[src] готов принять [span_bold("[glory_points]")] сердец. Брутально добей больше ничтожеств, чтобы насытить пояс.")
+	. += span_red("Положи сердце в этот проклятый пояс и оно обратится во взрывчатку.")
+	. += span_notice("[src] готов принять [span_red("[glory_points]")] сердец. Брутально добей больше ничтожеств, чтобы насытить пояс.")
 
 /obj/item/storage/belt/military/assault/hatred/Entered(atom/movable/AM, atom/oldLoc)
 	. = ..()
@@ -848,7 +897,7 @@
 	// Ha.gear_level = tgui_input_list(H, "ЭТО ОКОШКО ДЛЯ ОБМАНА ПОДСЧЕТА ОФИЦЕРОВ В РАУНДЕ И НУЖНО ТОЛЬКО ДЛЯ ДЕБАГА, В ИГРЕ ЕГО НЕ БУДЕТ", "gear level?", list(1, 2), 1)
 	var/available_sets = Ha.classic_guns
 	SEND_SOUND(H, 'sound/misc/notice2.ogg')
-	Ha.chosen_gun = tgui_input_list(H, "Выбери стартовое оружие и сделай это БЫСТРО!", "Выбери оружие геноцида", available_sets, available_sets[1], 10 SECONDS)
+	Ha.chosen_gun = tgui_input_list(H, "Выбери стартовое оружие", , available_sets, available_sets[1], 10 SECONDS)
 	if(!Ha.chosen_gun)
 		Ha.chosen_gun = available_sets[1]
 	switch(Ha.chosen_gun)
@@ -857,7 +906,6 @@
 			l_pocket = /obj/item/storage/bag/ammo/hatred
 		if("Combat Shotgun")
 			suit_store = /obj/item/gun/ballistic/shotgun/automatic/combat/hatred
-			// suit_store = /obj/item/gun/ballistic/revolver/doublebarrel/sawn/hatred
 			l_pocket = /obj/item/storage/bag/ammo/hatred
 			ADD_TRAIT(H, TRAIT_AKIMBO, HATRED_ANTAG)
 		if("Pistols")
@@ -865,7 +913,7 @@
 			l_pocket = /obj/item/storage/bag/ammo/hatred_c4
 			ADD_TRAIT(H, TRAIT_DOUBLE_TAP, HATRED_ANTAG)
 	if(Ha.gear_level >= 2)
-		Ha.chosen_high_gear = tgui_input_list(H, "Выбери дополнительную экипировку и сделай это БЫСТРО!", "Выбери оружие геноцида", Ha.high_gear, Ha.high_gear[1], 10 SECONDS)
+		Ha.chosen_high_gear = tgui_input_list(H, "Выбери дополнительную экипировку", , Ha.high_gear, Ha.high_gear[1], 10 SECONDS)
 		if(!Ha.chosen_high_gear)
 			Ha.chosen_high_gear = Ha.high_gear[1]
 
@@ -932,6 +980,8 @@
 				// new /obj/item/ammo_casing/shotgun/dragonsbreath(P)
 				new /obj/item/ammo_box/shotgun/loaded/frangible(P)
 				new /obj/item/ammo_box/shotgun/loaded/flechette(P)
+			if(B)
+				new /obj/item/gun/ballistic/automatic/shotgun/doublebarrel_hatred(B)
 		if("Pistols")
 			I = H.get_item_by_slot(ITEM_SLOT_OCLOTHING)
 			I?.resistance_flags = FIRE_PROOF | ACID_PROOF // to prevent the holster of Hatred to be dropped and lost forever.
