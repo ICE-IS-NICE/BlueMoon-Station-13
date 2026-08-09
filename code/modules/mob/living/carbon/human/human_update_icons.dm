@@ -792,7 +792,7 @@ There are several things that need to be remembered:
 					if(dna.features["taur"] in S.taur_types_icon_whitelist[special_taur_icon])
 						worn_icon = 'icons/mob/clothing/taur_custom_clothing.dmi'
 						worn_state += special_taur_icon
-						center = T?.center || TRUE
+						center = !isnull(T) ? T.center : TRUE
 						dimension_x = T?.dimension_x || 64
 						dimension_y = T?.dimension_y || 32
 						break
