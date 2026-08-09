@@ -790,7 +790,7 @@ There are several things that need to be remembered:
 			if(!isemptylist(S.taur_types_icon_whitelist))
 				for(var/special_taur_icon in S.taur_types_icon_whitelist)
 					if(dna.features["taur"] in S.taur_types_icon_whitelist[special_taur_icon])
-						worn_icon = 'icons/mob/clothing/taur_custom_clothing.dmi'
+						worn_icon = 'modular_bluemoon/icons/mob/clothing/taur_custom_clothing.dmi'
 						worn_state += special_taur_icon
 						center = !isnull(T) ? T.center : TRUE
 						dimension_x = T?.dimension_x || 64
