@@ -207,7 +207,7 @@
 							'modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_3.ogg')
 	// Нужна микрозадержка после телепорта, т.к. есть траблы со звуком.
 	// soundin, vol = 100, vary = FALSE, extrarange, falloff_exponent, frequency, channel, pressure_affected = FALSE, ignore_walls = FALSE
-	addtimer(CALLBACK(GLOBAL_PROC, GLOBAL_PROC_REF(playsound), H, picked_sound, 100, FALSE, , , , , FALSE, FALSE), 5)
+	addtimer(CALLBACK(GLOBAL_PROC, GLOBAL_PROC_REF(playsound), H, picked_sound, 100, FALSE, , , , , FALSE, FALSE), 5, TIMER_STOPPABLE|TIMER_DELETE_ME)
 	/*
 	playsound(H, pick('modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_1.ogg', \
 					'modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_2.ogg', \
