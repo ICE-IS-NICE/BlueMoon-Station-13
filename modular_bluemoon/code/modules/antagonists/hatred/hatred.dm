@@ -202,9 +202,17 @@
 	H.fully_heal(TRUE) // in case of some accidents in spawn room during preparation
 	Ha.UnregisterSignal(H, COMSIG_MOVABLE_PRE_MOVE)
 	Ha.appear_on_station()
+	var/picked_sound = pick('modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_1.ogg', \
+							'modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_2.ogg', \
+							'modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_3.ogg')
+	// Нужна микрозадержка после телепорта, т.к. есть траблы со звуком.
+	// soundin, vol = 100, vary = FALSE, extrarange, falloff_exponent, frequency, channel, pressure_affected = FALSE, ignore_walls = FALSE
+	addtimer(CALLBACK(GLOBAL_PROC, GLOBAL_PROC_REF(playsound), H, picked_sound, 100, FALSE, , , , , FALSE, FALSE), 5)
+	/*
 	playsound(H, pick('modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_1.ogg', \
 					'modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_2.ogg', \
 					'modular_bluemoon/code/modules/antagonists/hatred/hatred_begin_3.ogg'), vol = 100, vary = FALSE, ignore_walls = FALSE)
+	*/
 	addtimer(CALLBACK(Ha, TYPE_PROC_REF(/datum/antagonist/hatred, alarm_station)), 8 SECONDS, TIMER_STOPPABLE|TIMER_DELETE_ME) // Give a player a moment to understand what's going on.
 	INVOKE_ASYNC(src, PROC_REF(Remove), H)
 
@@ -253,10 +261,10 @@
 /datum/antagonist/hatred/proc/recover_from_softcrit(mob/source, delta_time, times_fired)
 	SIGNAL_HANDLER
 	if(owner.current.stat == SOFT_CRIT)
-		owner.current.heal_overall_damage(delta_time, delta_time, 0, FALSE, FALSE, FALSE, TRUE)
-		owner.current.adjustToxLoss(-delta_time, FALSE, TRUE)
-		owner.current.adjustOxyLoss(-delta_time, FALSE, TRUE)
-		owner.current.adjustCloneLoss(-delta_time, FALSE, TRUE)
+		owner.current.heal_overall_damage(2*delta_time, 2*delta_time, 0, FALSE, FALSE, FALSE, TRUE)
+		owner.current.adjustToxLoss(-2*delta_time, FALSE, TRUE)
+		owner.current.adjustOxyLoss(-2*delta_time, FALSE, TRUE)
+		owner.current.adjustCloneLoss(-2*delta_time, FALSE, TRUE)
 		owner.current.updatehealth()
 
 /datum/movespeed_modifier/hatred
