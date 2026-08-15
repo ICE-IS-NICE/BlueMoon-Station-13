@@ -753,6 +753,8 @@ There are several things that need to be remembered:
 			var/worn_icon = wear_suit.mob_overlay_icon || 'icons/mob/clothing/suit.dmi'
 			if(dna.species.icon_suit)
 				worn_icon = dna.species.icon_suit
+			if(initial(S.flags_inv) & HIDETAUR)
+				S.flags_inv |= HIDETAUR
 			var/worn_state = wear_suit.icon_state
 			var/center = FALSE
 			var/dimension_x = 32
@@ -764,7 +766,7 @@ There are several things that need to be remembered:
 
 			if(S.mutantrace_variation)
 
-				if(T?.taur_mode)
+				if(T?.taur_mode && isemptylist(S.taur_types_icon_whitelist))
 					var/init_worn_icon = worn_icon
 					variation_flag |= S.mutantrace_variation & T.taur_mode || S.mutantrace_variation & T.alt_taur_mode
 					switch(variation_flag)
@@ -786,6 +788,17 @@ There are several things that need to be remembered:
 				else if((DIGITIGRADE in dna.species.species_traits) && S.mutantrace_variation & STYLE_DIGITIGRADE && !(S.mutantrace_variation & STYLE_NO_ANTHRO_ICON)) //not a taur, but digitigrade legs.
 					worn_icon = S.anthro_mob_worn_overlay || 'icons/mob/clothing/suit_digi.dmi'
 					variation_flag |= STYLE_DIGITIGRADE
+
+			if(!isemptylist(S.taur_types_icon_whitelist))
+				for(var/special_taur_icon in S.taur_types_icon_whitelist)
+					if(dna.features["taur"] in S.taur_types_icon_whitelist[special_taur_icon])
+						worn_icon = 'modular_bluemoon/icons/mob/clothing/taur_custom_clothing.dmi'
+						worn_state += special_taur_icon
+						center = !isnull(T) ? T.center : TRUE
+						dimension_x = T?.dimension_x || 64
+						dimension_y = T?.dimension_y || 32
+						S.flags_inv &= ~HIDETAUR
+						break
 
 			overlays_standing[SUIT_LAYER] = S.build_worn_icon(SUIT_LAYER, worn_icon, FALSE, NO_FEMALE_UNIFORM, worn_state, variation_flag, FALSE)
 			var/mutable_appearance/suit_overlay = overlays_standing[SUIT_LAYER]
@@ -1071,7 +1084,8 @@ use_mob_overlay_icon: if FALSE, it will always use the default_icon_file even if
 		. += "-husk"
 
 	if(dna?.features)
-		. += "-emissive_eyes=[dna.features["emissive_eyes"]]"
+		. += "-allow_emissives=[dna.features["allow_emissives"]]"
+		. += "-emissive_parts=[safe_json_encode(dna.features["emissive_parts"])]"
 
 /mob/living/carbon/human/load_limb_from_cache()
 	..()
