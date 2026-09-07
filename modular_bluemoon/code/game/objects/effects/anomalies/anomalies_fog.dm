@@ -41,7 +41,7 @@
 		&& d.density && !d.critical_machine)
 			if(istype(d, /obj/machinery/door/airlock))
 				var/obj/machinery/door/airlock/a = d
-				if(a.id_tag || a.charge) //какая то особая дверь
+				if(a.charge) //заминировано
 					continue
 			INVOKE_ASYNC(d, TYPE_PROC_REF(/obj/machinery/door, open), 1)
 
