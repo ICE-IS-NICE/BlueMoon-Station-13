@@ -4,7 +4,7 @@
 	min_players = 30
 	max_occurrences = 2
 	weight = 20
-	description = "Аномалия лёгкого ползучего тумана."
+	description = "Аномалия ползучего тумана."
 
 /datum/round_event/anomaly/anomaly_fog
 	start_when = ANOMALY_START_MEDIUM_TIME
