@@ -350,8 +350,9 @@
 	for(var/turf/X in GLOB.xeno_spawn)
 		if(length(possible_spawns) >= 6)
 			break
-		if(is_safe_turf(X))
-			possible_spawns += X
+		if(!is_safe_turf(X))
+			continue
+		possible_spawns += X
 		var/players_nearby = FALSE
 		for(var/mob/living/L in range(10, X))
 			if(L.client && L.stat != DEAD)
