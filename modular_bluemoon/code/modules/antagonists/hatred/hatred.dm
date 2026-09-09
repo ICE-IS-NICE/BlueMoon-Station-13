@@ -350,8 +350,15 @@
 	for(var/turf/X in GLOB.xeno_spawn)
 		if(length(possible_spawns) >= 6)
 			break
-		if(istype(X.loc, /area/maintenance) && is_safe_turf(X))
+		if(is_safe_turf(X))
 			possible_spawns += X
+		var/players_nearby = FALSE
+		for(var/mob/living/L in range(10, X))
+			if(L.client && L.stat != DEAD)
+				players_nearby = TRUE
+				break
+		if(!players_nearby)
+			best_possible_spawns += X
 	// Method 3 (if 1 and 2 failed): find ANY safe station turf
 	if(isemptylist(possible_spawns))
 		possible_spawns += find_safe_turf(extended_safety_checks = TRUE, dense_atoms = FALSE) // in case of some huge staion problems
