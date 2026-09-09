@@ -323,7 +323,7 @@
 	var/list/best_possible_spawns = list() // no players around
 	// Method 1: find the most optimal maint turf
 	// var/turf/T = get_safe_random_station_turf(typesof(/area/maintenance) & GLOB.the_station_areas)
-	var/list/maint_areas = list(typesof(/area/maintenance) & GLOB.the_station_areas)
+	var/list/maint_areas = typesof(/area/maintenance) & GLOB.the_station_areas
 	if(isemptylist(maint_areas))
 		return
 	for(var/maint_area in shuffle_inplace(maint_areas))
