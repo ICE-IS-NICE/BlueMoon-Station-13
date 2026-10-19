@@ -110,7 +110,8 @@
 				return
 			// BLUEMOON ADD END
 			if(is_type_in_list(sender, list(/obj/item/organ/genital/penis, /obj/item/organ/genital/vagina)))
-				R.reaction(location, show_message = FALSE)
+				var/spilled_modifier = ishuman(target) ? 0.1 : 1 // обливаем ли мы кого то или нет?
+				R.reaction(location, volume_modifier = spilled_modifier, show_message = FALSE)
 				for(var/obj/effect/decal/cleanable/c in location)
 					if(is_type_in_list(c, list(/obj/effect/decal/cleanable/semen, /obj/effect/decal/cleanable/semendrip)))
 						c.transfer_blood_dna(get_blood_dna_list())
